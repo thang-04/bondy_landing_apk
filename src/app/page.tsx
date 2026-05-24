@@ -52,23 +52,83 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
+// Custom smooth scroll animation functions for robust cross-browser support
+const scrollToTopSmooth = (e?: React.MouseEvent) => {
+  if (e) e.preventDefault();
+  const startPosition = window.scrollY;
+  const distance = -startPosition;
+  const duration = 800; // ms
+  let startTime: number | null = null;
+
+  const easeInOutQuad = (t: number, b: number, c: number, d: number) => {
+    t /= d / 2;
+    if (t < 1) return (c / 2) * t * t + b;
+    t--;
+    return (-c / 2) * (t * (t - 2) - 1) + b;
+  };
+
+  const animation = (currentTime: number) => {
+    if (startTime === null) startTime = currentTime;
+    const timeElapsed = currentTime - startTime;
+    const run = easeInOutQuad(timeElapsed, startPosition, distance, duration);
+    window.scrollTo(0, run);
+    if (timeElapsed < duration) {
+      requestAnimationFrame(animation);
+    } else {
+      window.scrollTo(0, 0);
+    }
+  };
+
+  requestAnimationFrame(animation);
+};
+
+const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+  e.preventDefault();
+  const element = document.getElementById(id);
+  if (element) {
+    const offset = 90; // offset for the sticky navbar
+    const bodyRect = document.body.getBoundingClientRect().top;
+    const elementRect = element.getBoundingClientRect().top;
+    const elementPosition = elementRect - bodyRect;
+    const targetPosition = elementPosition - offset;
+    
+    const startPosition = window.scrollY;
+    const distance = targetPosition - startPosition;
+    const duration = 800; // ms
+    let startTime: number | null = null;
+
+    const easeInOutQuad = (t: number, b: number, c: number, d: number) => {
+      t /= d / 2;
+      if (t < 1) return (c / 2) * t * t + b;
+      t--;
+      return (-c / 2) * (t * (t - 2) - 1) + b;
+    };
+
+    const animation = (currentTime: number) => {
+      if (startTime === null) startTime = currentTime;
+      const timeElapsed = currentTime - startTime;
+      const run = easeInOutQuad(timeElapsed, startPosition, distance, duration);
+      window.scrollTo(0, run);
+      if (timeElapsed < duration) {
+        requestAnimationFrame(animation);
+      } else {
+        window.scrollTo(0, targetPosition);
+      }
+    };
+
+    requestAnimationFrame(animation);
+  }
+};
+
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-
-  const handleLogoClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
-  };
 
   return (
     <nav className="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl z-50 transition-all duration-300">
       <div className="frosted-glass shadow-sanctuary rounded-full px-8 py-3 flex justify-between items-center h-16">
         <a 
           href="#" 
-          onClick={handleLogoClick}
+          onClick={scrollToTopSmooth}
           className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
         >
           <img src="/bondy-heart-icon.png" alt="Bondy Logo" className="h-9 w-9 object-contain rounded-full bg-white p-0.5 border border-brand-outline-variant/30 shadow-sm" />
@@ -76,15 +136,15 @@ const Navbar = () => {
         </a>
 
         <div className="hidden lg:flex items-center gap-6 text-brand-on-surface/60 font-medium">
-          <a href="#features" className="hover:text-brand-primary transition-colors">Tính năng</a>
-          <a href="#healing" className="hover:text-brand-primary transition-colors">Healing</a>
-          <a href="#coach" className="hover:text-brand-primary transition-colors">AI Coach</a>
-          <a href="#explore" className="hover:text-brand-primary transition-colors">Khám phá</a>
-          <a href="#security" className="hover:text-brand-primary transition-colors">An toàn</a>
-          <a href="#faq" className="hover:text-brand-primary transition-colors">FAQ</a>
+          <a href="#features" onClick={(e) => handleLinkClick(e, 'features')} className="hover:text-brand-primary transition-colors">Tính năng</a>
+          <a href="#healing" onClick={(e) => handleLinkClick(e, 'healing')} className="hover:text-brand-primary transition-colors">Healing</a>
+          <a href="#coach" onClick={(e) => handleLinkClick(e, 'coach')} className="hover:text-brand-primary transition-colors">AI Coach</a>
+          <a href="#explore" onClick={(e) => handleLinkClick(e, 'explore')} className="hover:text-brand-primary transition-colors">Khám phá</a>
+          <a href="#security" onClick={(e) => handleLinkClick(e, 'security')} className="hover:text-brand-primary transition-colors">An toàn</a>
+          <a href="#faq" onClick={(e) => handleLinkClick(e, 'faq')} className="hover:text-brand-primary transition-colors">FAQ</a>
         </div>
 
-        <a href="#download" className="hidden lg:block accent-gradient text-white font-bold py-2.5 px-6 rounded-full hover:shadow-lg transition-all text-center">
+        <a href="#download" onClick={(e) => handleLinkClick(e, 'download')} className="hidden lg:block accent-gradient text-white font-bold py-2.5 px-6 rounded-full hover:shadow-lg transition-all text-center">
           Tải APK
         </a>
 
@@ -101,13 +161,13 @@ const Navbar = () => {
             exit={{ opacity: 0, y: -20 }}
             className="lg:hidden mt-4 frosted-glass rounded-3xl p-6 shadow-xl flex flex-col gap-4 text-center"
           >
-            <a href="#features" className="text-xl font-medium" onClick={() => setIsOpen(false)}>Tính năng</a>
-            <a href="#healing" className="text-xl font-medium" onClick={() => setIsOpen(false)}>Healing</a>
-            <a href="#coach" className="text-xl font-medium" onClick={() => setIsOpen(false)}>AI Coach</a>
-            <a href="#explore" className="text-xl font-medium" onClick={() => setIsOpen(false)}>Khám phá</a>
-            <a href="#security" className="text-xl font-medium" onClick={() => setIsOpen(false)}>An toàn</a>
-            <a href="#faq" className="text-xl font-medium" onClick={() => setIsOpen(false)}>FAQ</a>
-            <a href="#download" className="accent-gradient text-white font-bold py-4 rounded-full mt-2 text-center" onClick={() => setIsOpen(false)}>
+            <a href="#features" className="text-xl font-medium" onClick={(e) => { setIsOpen(false); handleLinkClick(e, 'features'); }}>Tính năng</a>
+            <a href="#healing" className="text-xl font-medium" onClick={(e) => { setIsOpen(false); handleLinkClick(e, 'healing'); }}>Healing</a>
+            <a href="#coach" className="text-xl font-medium" onClick={(e) => { setIsOpen(false); handleLinkClick(e, 'coach'); }}>AI Coach</a>
+            <a href="#explore" className="text-xl font-medium" onClick={(e) => { setIsOpen(false); handleLinkClick(e, 'explore'); }}>Khám phá</a>
+            <a href="#security" className="text-xl font-medium" onClick={(e) => { setIsOpen(false); handleLinkClick(e, 'security'); }}>An toàn</a>
+            <a href="#faq" className="text-xl font-medium" onClick={(e) => { setIsOpen(false); handleLinkClick(e, 'faq'); }}>FAQ</a>
+            <a href="#download" className="accent-gradient text-white font-bold py-4 rounded-full mt-2 text-center" onClick={(e) => { setIsOpen(false); handleLinkClick(e, 'download'); }}>
               Tải APK
             </a>
           </motion.div>
@@ -203,11 +263,11 @@ const Hero = () => {
             Ứng dụng hẹn hò giúp bạn tìm kiếm kết nối ý nghĩa, trò chuyện tự nhiên hơn và chăm sóc cảm xúc của mình mỗi ngày.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
-            <a href="#download" className="accent-gradient text-white font-bold py-4 px-8 rounded-full shadow-lg hover:scale-105 transition-transform flex items-center justify-center gap-2 cursor-pointer">
+            <a href="#download" onClick={(e) => handleLinkClick(e, 'download')} className="accent-gradient text-white font-bold py-4 px-8 rounded-full shadow-lg hover:scale-105 transition-transform flex items-center justify-center gap-2 cursor-pointer">
               <Download size={20} />
               Tải APK cho Android
             </a>
-            <a href="#features" className="bg-brand-surface-container text-brand-primary font-bold py-4 px-8 rounded-full hover:bg-brand-surface-container-high transition-colors cursor-pointer flex items-center justify-center">
+            <a href="#features" onClick={(e) => handleLinkClick(e, 'features')} className="bg-brand-surface-container text-brand-primary font-bold py-4 px-8 rounded-full hover:bg-brand-surface-container-high transition-colors cursor-pointer flex items-center justify-center">
               Xem tính năng nổi bật
             </a>
           </div>
@@ -894,7 +954,7 @@ const HealingSpace = () => {
           <p className="text-xl text-brand-on-surface-variant mb-12 leading-relaxed">
             Dành ra một vài phút mỗi ngày để check-in cảm xúc của bạn. Bondy kết hợp với công nghệ AI Reflection giúp bạn phân tích, ghi nhận và xoa dịu những nhịp điệu tâm hồn đang xao động. Một không gian hoàn toàn riêng tư, an toàn và thấu hiểu.
           </p>
-          <a href="#download" className="inline-flex accent-gradient text-white font-bold py-4 px-10 rounded-full shadow-lg hover:scale-105 hover:shadow-xl transition-all items-center gap-3">
+          <a href="#download" onClick={(e) => handleLinkClick(e, 'download')} className="inline-flex accent-gradient text-white font-bold py-4 px-10 rounded-full shadow-lg hover:scale-105 hover:shadow-xl transition-all items-center gap-3">
             Trải nghiệm ngay <ArrowRight size={20} />
           </a>
         </div>
@@ -1773,21 +1833,13 @@ const FAQ = () => {
 }
 
 const Footer = () => {
-    const handleScrollToTop = (e: React.MouseEvent) => {
-        e.preventDefault();
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth',
-        });
-    };
-
     return (
         <footer className="py-16 border-t border-brand-outline-variant/30">
             <div className="max-w-7xl mx-auto px-6">
                 <div className="flex flex-col md:flex-row justify-between items-center gap-8 mb-12">
                     <a 
                         href="#" 
-                        onClick={handleScrollToTop}
+                        onClick={scrollToTopSmooth}
                         className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
                     >
                         <img src="/bondy-heart-icon.png" alt="Bondy Logo" className="h-9 w-9 object-contain rounded-full bg-white p-0.5 border border-brand-outline-variant/30 shadow-sm" />
@@ -1824,13 +1876,6 @@ const ScrollToTopButton = () => {
     return () => window.removeEventListener('scroll', toggleVisibility);
   }, []);
 
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
-  };
-
   return (
     <AnimatePresence>
       {isVisible && (
@@ -1840,7 +1885,7 @@ const ScrollToTopButton = () => {
           exit={{ opacity: 0, scale: 0.8, y: 20 }}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
-          onClick={scrollToTop}
+          onClick={(e) => scrollToTopSmooth(e)}
           className="fixed bottom-6 right-6 z-50 p-4 rounded-full frosted-glass shadow-sanctuary text-brand-primary cursor-pointer hover:bg-brand-primary/10 transition-colors flex items-center justify-center"
           aria-label="Cuộn lên đầu trang"
         >
@@ -1853,7 +1898,7 @@ const ScrollToTopButton = () => {
 
 export default function App() {
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <div className="min-h-screen relative overflow-x-hidden">
       {/* Background Blobs */}
       <div className="vibrant-blob w-[400px] h-[400px] bg-brand-primary -top-[100px] -right-[100px]"></div>
       <div className="vibrant-blob w-[300px] h-[300px] bg-brand-secondary -bottom-[50px] -left-[50px]"></div>
