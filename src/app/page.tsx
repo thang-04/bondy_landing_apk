@@ -1708,9 +1708,9 @@ const DownloadSection = () => {
                             </div>
                         </div>
                     </div>
-                    <button className="accent-gradient text-white font-bold py-5 px-10 rounded-full mt-12 shadow-xl flex items-center gap-2 hover:scale-105 transition-all">
+                    <a href="/app-release.apk" download className="accent-gradient text-white font-bold py-5 px-10 rounded-full mt-12 shadow-xl flex items-center justify-center gap-2 hover:scale-105 transition-all inline-flex w-fit">
                         <Download size={24} /> Tải APK về máy
-                    </button>
+                    </a>
                 </div>
 
                 <div className="flex flex-col items-center justify-center gap-6 z-10">
