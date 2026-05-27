@@ -162,6 +162,24 @@ export default function InternalLogsPage() {
     scrollToBottom();
   }, [logs, autoScroll]);
 
+  // Lắng nghe hành vi cuộn của người dùng để tạm ngưng/bật lại tự động cuộn (Follow Logs)
+  const handleScroll = () => {
+    const container = terminalBodyRef.current;
+    if (!container) return;
+
+    // Xem người dùng có đang ở sát đáy (trong khoảng sai số 40px) không
+    const isAtBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 40;
+
+    // Nếu cuộn lên trên (không ở sát đáy) và đang bật autoScroll -> Tắt autoScroll để xem log yên tĩnh
+    if (!isAtBottom && autoScroll) {
+      setAutoScroll(false);
+    }
+    // Nếu kéo sát lại xuống đáy -> Tự động bật lại autoScroll
+    else if (isAtBottom && !autoScroll) {
+      setAutoScroll(true);
+    }
+  };
+
   // Thiết lập tự động tải lại (polling)
   useEffect(() => {
     if (!isAuthenticated || !autoRefresh) return;
@@ -593,6 +611,7 @@ export default function InternalLogsPage() {
         className="flex-1 bg-[#090b0e] overflow-y-auto px-6 py-4 font-mono text-sm leading-relaxed border-b border-slate-900"
         style={{ minHeight: "calc(100vh - 280px)" }}
         ref={terminalBodyRef}
+        onScroll={handleScroll}
       >
         <div className="max-w-full space-y-1.5">
           {filteredLogs.length === 0 ? (
