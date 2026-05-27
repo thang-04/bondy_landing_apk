@@ -142,7 +142,8 @@ export async function GET(request: Request) {
       const res = await fetch(logServerUrl, {
         method: "GET",
         headers: fetchHeaders,
-        next: { revalidate: 0 } // Không cache dữ liệu logs
+        cache: "no-store", // Vô hiệu hóa cache của Next.js hoàn toàn
+        next: { revalidate: 0 } // Đảm bảo revalidate lập tức
       });
 
       if (!res.ok) {
@@ -167,11 +168,22 @@ export async function GET(request: Request) {
         return NextResponse.json({
           isMock: false,
           logs: logs
+        }, {
+          headers: {
+            "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
+            "Pragma": "no-cache",
+            "Expires": "0"
+          }
         });
       } else {
-        // Nếu là định dạng text log thô (Nginx, console output...)
         const rawText = await res.text();
-        const lines = rawText.split("\n").filter(line => line.trim() !== "");
+        let lines = rawText.split("\n").filter(line => line.trim() !== "");
+
+        // Chỉ lấy tối đa 500 dòng log cuối cùng (mới nhất) để tránh làm chậm hệ thống và tràn RAM trình duyệt
+        const MAX_LINES = 500;
+        if (lines.length > MAX_LINES) {
+          lines = lines.slice(-MAX_LINES);
+        }
         
         // Convert text lines thành LogEntry objects đơn giản hoặc parse JSON nếu có cấu trúc JSON
         const logs: LogEntry[] = lines.map((line, idx) => {
@@ -309,6 +321,12 @@ export async function GET(request: Request) {
         return NextResponse.json({
           isMock: false,
           logs: logs
+        }, {
+          headers: {
+            "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
+            "Pragma": "no-cache",
+            "Expires": "0"
+          }
         });
       }
     }
@@ -334,6 +352,12 @@ export async function GET(request: Request) {
     return NextResponse.json({
       isMock: true,
       logs: mockLogs
+    }, {
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
+        "Pragma": "no-cache",
+        "Expires": "0"
+      }
     });
 
   } catch (error: any) {
