@@ -208,9 +208,19 @@ export async function GET(request: Request) {
               if (rawMsg) {
                 const colonIdx = rawMsg.indexOf(":");
                 if (colonIdx !== -1) {
-                  // Cắt lấy phần trước dấu : làm service và phần sau làm message hiển thị
-                  service = rawMsg.substring(0, colonIdx).trim();
-                  message = rawMsg.substring(colonIdx + 1).trim();
+                  const possibleService = rawMsg.substring(0, colonIdx).trim();
+                  const possibleMessage = rawMsg.substring(colonIdx + 1).trim();
+
+                  // Kiểm tra tên Service có hợp lệ (chỉ chứa ký tự chữ, số, gạch ngang, gạch dưới) và message không rỗng
+                  const isValidService = /^[a-zA-Z0-9_-]+$/.test(possibleService);
+
+                  if (isValidService && possibleMessage !== "") {
+                    service = possibleService;
+                    message = possibleMessage;
+                  } else {
+                    service = "server-app";
+                    message = rawMsg;
+                  }
                 } else {
                   service = "server-app";
                   message = rawMsg;
