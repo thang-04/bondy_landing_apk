@@ -288,6 +288,24 @@ export default function InternalLogsPage() {
     }
   };
 
+  // Định dạng hiển thị meta cùng 1 dòng
+  const formatInlineMeta = (meta: Record<string, any> | undefined) => {
+    if (!meta || meta.raw) return "";
+
+    // Sao chép tránh làm ảnh hưởng đến dữ liệu gốc
+    const inlineData = { ...meta };
+
+    // Rút gọn các lỗi dài ngoằng hoặc stack trace để hiển thị dòng log gọn gàng
+    if (inlineData.err && typeof inlineData.err === "object") {
+      inlineData.err = inlineData.err.message || inlineData.err.name || "Error";
+    }
+    if (inlineData.stack) {
+      delete inlineData.stack;
+    }
+
+    return JSON.stringify(inlineData);
+  };
+
   // Lấy màu sắc cho badge của từng level
   const getLevelStyle = (level: string) => {
     switch (level) {
@@ -664,6 +682,11 @@ export default function InternalLogsPage() {
                         : "text-slate-300"
                     }`}>
                       {log.message}
+                      {log.meta && !log.meta.raw && (
+                        <span className="text-slate-500 font-mono ml-2 text-[11px] lg:text-xs font-normal">
+                          {formatInlineMeta(log.meta)}
+                        </span>
+                      )}
                     </span>
 
                     {/* Action tools on hover */}
