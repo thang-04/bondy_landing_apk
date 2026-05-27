@@ -173,36 +173,132 @@ export async function GET(request: Request) {
         const rawText = await res.text();
         const lines = rawText.split("\n").filter(line => line.trim() !== "");
         
-        // Convert text lines thành LogEntry objects đơn giản
+        // Convert text lines thành LogEntry objects đơn giản hoặc parse JSON nếu có cấu trúc JSON
         const logs: LogEntry[] = lines.map((line, idx) => {
           let level: "info" | "warn" | "error" | "debug" = "info";
-          const lower = line.toLowerCase();
+          let service = "server-raw";
+          let message = line;
+          let meta: Record<string, any> | undefined = { raw: true };
           
-          if (lower.includes("error") || lower.includes("err") || lower.includes("crit") || lower.includes("fail")) {
-            level = "error";
-          } else if (lower.includes("warn") || lower.includes("warning")) {
-            level = "warn";
-          } else if (lower.includes("debug") || lower.includes("trace")) {
-            level = "debug";
+          // Khởi tạo timestamp mặc định
+          let timestamp = new Date(Date.now() - idx * 1000).toISOString();
+
+          // Tìm xem trong dòng log có chứa một JSON Object không
+          const jsonStartIndex = line.indexOf("{");
+          const jsonEndIndex = line.lastIndexOf("}");
+
+          if (jsonStartIndex !== -1 && jsonEndIndex !== -1 && jsonStartIndex < jsonEndIndex) {
+            const prefix = line.substring(0, jsonStartIndex).trim();
+            const jsonString = line.substring(jsonStartIndex, jsonEndIndex + 1);
+
+            try {
+              const jsonObject = JSON.parse(jsonString);
+
+              // 1. Phân tích cấp độ Log (Level) từ JSON
+              if (jsonObject.level) {
+                const lvl = jsonObject.level.toLowerCase();
+                if (lvl === "error" || lvl === "err" || lvl === "fatal" || lvl === "crit") level = "error";
+                else if (lvl === "warn" || lvl === "warning") level = "warn";
+                else if (lvl === "debug" || lvl === "trace") level = "debug";
+                else level = "info";
+              }
+
+              // 2. Phân tích tên Service & Message từ JSON (ví dụ "swipes:mutual-match-detected")
+              const rawMsg = jsonObject.msg || jsonObject.message || "";
+              if (rawMsg) {
+                const colonIdx = rawMsg.indexOf(":");
+                if (colonIdx !== -1) {
+                  // Cắt lấy phần trước dấu : làm service và phần sau làm message hiển thị
+                  service = rawMsg.substring(0, colonIdx).trim();
+                  message = rawMsg.substring(colonIdx + 1).trim();
+                } else {
+                  service = "server-app";
+                  message = rawMsg;
+                }
+              } else {
+                service = "server-app";
+                message = line;
+              }
+
+              // 3. Phân tích Timestamp từ JSON hoặc Prefix
+              if (jsonObject.time || jsonObject.timestamp) {
+                timestamp = new Date(jsonObject.time || jsonObject.timestamp).toISOString();
+              } else if (prefix) {
+                // Thử parse thời gian từ prefix log (Ví dụ: "2026-05-27 21:58:22 +07:00:")
+                const cleanPrefix = prefix.replace(/:$/, "").trim();
+                const d = new Date(cleanPrefix);
+                if (!isNaN(d.getTime())) {
+                  timestamp = d.toISOString();
+                }
+              }
+
+              // 4. Các trường dữ liệu còn lại trong JSON sẽ được đóng gói đưa vào Meta Details
+              const tempMeta = { ...jsonObject };
+              delete tempMeta.level;
+              delete tempMeta.time;
+              delete tempMeta.timestamp;
+              delete tempMeta.msg;
+              delete tempMeta.message;
+
+              if (Object.keys(tempMeta).length > 0) {
+                meta = tempMeta;
+              } else {
+                meta = undefined;
+              }
+
+            } catch (e) {
+              // Parse JSON lỗi -> fallback sang parse text thô thông thường
+              parseRawText(line, prefix);
+            }
+          } else {
+            // Không chứa cấu trúc JSON -> parse text thô thông thường
+            parseRawText(line, "");
           }
 
-          // Trích xuất timestamp nếu có (regex đơn giản tìm date format ISO)
-          const tsMatch = line.match(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/);
-          const timestamp = tsMatch ? new Date(tsMatch[0]).toISOString() : new Date(Date.now() - idx * 1000).toISOString();
+          // Hàm bổ trợ parse log dạng text thuần thô
+          function parseRawText(rawLine: string, prefixStr: string) {
+            const lower = rawLine.toLowerCase();
+            if (lower.includes("error") || lower.includes("err") || lower.includes("crit") || lower.includes("fail")) {
+              level = "error";
+            } else if (lower.includes("warn") || lower.includes("warning")) {
+              level = "warn";
+            } else if (lower.includes("debug") || lower.includes("trace")) {
+              level = "debug";
+            }
+
+            // Trích xuất thời gian từ chuỗi text
+            const tsMatch = rawLine.match(/\d{4}-\d{2}-\d{2}[T\s]\d{2}:\d{2}:\d{2}/);
+            if (tsMatch) {
+              const d = new Date(tsMatch[0].replace(" ", "T"));
+              if (!isNaN(d.getTime())) {
+                timestamp = d.toISOString();
+              }
+            } else if (prefixStr) {
+              const cleanPrefix = prefixStr.replace(/:$/, "").trim();
+              const d = new Date(cleanPrefix);
+              if (!isNaN(d.getTime())) {
+                timestamp = d.toISOString();
+              }
+            }
+
+            service = "server-raw";
+            message = rawLine;
+            meta = { raw: true };
+          }
 
           return {
             id: `server_${idx}_${Date.now().toString(36)}`,
             timestamp,
             level,
-            service: "server-raw",
-            message: line,
-            meta: { raw: true }
+            service,
+            message,
+            meta
           };
         });
 
         return NextResponse.json({
           isMock: false,
-          logs: logs.reverse() // Cho log mới nhất lên đầu nếu cần
+          logs: logs
         });
       }
     }
