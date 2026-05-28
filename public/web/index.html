@@ -113,6 +113,7 @@
   </script>
   <script>
     var flutterLoaded = false;
+    var errorShown = false;
 
     // Hide loading screen once Flutter renders
     window.addEventListener('flutter-first-frame', function() {
@@ -127,38 +128,66 @@
 
     // Catch any fatal errors during Flutter initialization
     window.addEventListener('error', function(e) {
-      console.error('Flutter load error:', e.message);
-      if (!flutterLoaded) {
-        showError();
+      console.error('Global JS error:', e);
+      if (!flutterLoaded && !errorShown) {
+        showError(e.error || new Error(e.message || 'Unknown global error'));
+      }
+    });
+
+    // Catch promise rejections (very common in async initialization)
+    window.addEventListener('unhandledrejection', function(e) {
+      console.error('Unhandled rejection:', e);
+      if (!flutterLoaded && !errorShown) {
+        showError(e.reason || new Error('Unhandled Promise rejection'));
       }
     });
 
     // Fallback: if Flutter hasn't loaded after 20 seconds, show error
     setTimeout(function() {
-      if (!flutterLoaded) {
-        showError();
+      if (!flutterLoaded && !errorShown) {
+        showError(new Error('Flutter initialization timed out after 20 seconds.'));
       }
     }, 20000);
 
-    function showError() {
+    function showError(err) {
+      errorShown = true;
       var loading = document.getElementById('loading');
       if (loading) {
         var subtitle = loading.querySelector('.loading-subtitle');
         var spinner = loading.querySelector('.loading-spinner');
         if (subtitle) {
-          subtitle.textContent = 'Không thể tải ứng dụng. Vui lòng thử lại.';
-          subtitle.style.color = '#E8613C';
+          var errorMsg = 'Không thể tải ứng dụng. Vui lòng thử lại.';
+          var details = '';
+          if (err) {
+            details = err.stack || err.message || String(err);
+          }
+          subtitle.innerHTML = errorMsg + '<br><div id="error-details" style="margin-top: 15px; padding: 10px; background: rgba(255, 59, 48, 0.08); border: 1px solid rgba(255, 59, 48, 0.2); border-radius: 8px; color: #d32f2f; font-size: 11px; font-family: monospace; text-align: left; max-width: 90%; word-break: break-all; overflow-x: auto; white-space: pre-wrap; line-height: 1.4; display: inline-block;">' + escapeHtml(details) + '</div>';
         }
         if (spinner) {
           spinner.style.display = 'none';
         }
-        // Add reload button
-        var btn = document.createElement('button');
-        btn.textContent = 'Tải lại trang';
-        btn.style.cssText = 'margin-top:16px;padding:12px 32px;border:none;border-radius:24px;background:#E8613C;color:#fff;font-size:16px;font-weight:600;cursor:pointer;';
-        btn.onclick = function() { location.reload(); };
-        loading.appendChild(btn);
+        
+        // Remove existing reload button if present to avoid duplicates
+        var existingBtn = loading.querySelector('.reload-btn');
+        if (!existingBtn) {
+          var btn = document.createElement('button');
+          btn.className = 'reload-btn';
+          btn.textContent = 'Tải lại trang';
+          btn.style.cssText = 'margin-top:20px;padding:12px 32px;border:none;border-radius:24px;background:#E8613C;color:#fff;font-size:16px;font-weight:600;cursor:pointer;box-shadow: 0 4px 12px rgba(232,97,60,0.3);';
+          btn.onclick = function() { location.reload(); };
+          loading.appendChild(btn);
+        }
       }
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
     }
   </script>
   <script src="flutter_bootstrap.js" async></script>
