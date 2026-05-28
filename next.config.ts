@@ -7,6 +7,10 @@ const nextConfig: NextConfig = {
         source: "/api-proxy/:path*",
         destination: "http://103.149.86.25:3000/api/:path*",
       },
+      {
+        source: "/web/assets/.env",
+        destination: "/web/assets/env.txt",
+      },
     ];
   },
   async headers() {
