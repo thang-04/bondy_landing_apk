@@ -48,9 +48,14 @@ import {
   BookOpen,
   Lock,
   Calendar,
-  HeartHandshake
+  HeartHandshake,
+  Share,
+  ExternalLink
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+
+// Configure the target URL for the Flutter Web PWA app
+const FLUTTER_WEB_URL = '/web/index.html';
 
 // Custom smooth scroll animation functions for robust cross-browser support
 const scrollToTopSmooth = (e?: React.MouseEvent) => {
@@ -145,7 +150,7 @@ const Navbar = () => {
         </div>
 
         <a href="#download" onClick={(e) => handleLinkClick(e, 'download')} className="hidden lg:block accent-gradient text-white font-bold py-2.5 px-6 rounded-full hover:shadow-lg transition-all text-center">
-          Tải APK
+          Tải ứng dụng
         </a>
 
         <button className="lg:hidden text-brand-primary" onClick={() => setIsOpen(!isOpen)}>
@@ -168,7 +173,7 @@ const Navbar = () => {
             <a href="#security" className="text-xl font-medium" onClick={(e) => { setIsOpen(false); handleLinkClick(e, 'security'); }}>An toàn</a>
             <a href="#faq" className="text-xl font-medium" onClick={(e) => { setIsOpen(false); handleLinkClick(e, 'faq'); }}>FAQ</a>
             <a href="#download" className="accent-gradient text-white font-bold py-4 rounded-full mt-2 text-center" onClick={(e) => { setIsOpen(false); handleLinkClick(e, 'download'); }}>
-              Tải APK
+              Tải ứng dụng
             </a>
           </motion.div>
         )}
@@ -263,12 +268,22 @@ const Hero = () => {
             Ứng dụng hẹn hò giúp bạn tìm kiếm kết nối ý nghĩa, trò chuyện tự nhiên hơn và chăm sóc cảm xúc của mình mỗi ngày.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
-            <a href="#download" onClick={(e) => handleLinkClick(e, 'download')} className="accent-gradient text-white font-bold py-4 px-8 rounded-full shadow-lg hover:scale-105 transition-transform flex items-center justify-center gap-2 cursor-pointer">
+            <a 
+              href="/bondy.apk" 
+              download 
+              className="accent-gradient text-white font-bold py-4 px-8 rounded-full shadow-lg hover:scale-105 transition-transform flex items-center justify-center gap-2 cursor-pointer"
+            >
               <Download size={20} />
-              Tải APK cho Android
+              Download Android APK
             </a>
-            <a href="#features" onClick={(e) => handleLinkClick(e, 'features')} className="bg-brand-surface-container text-brand-primary font-bold py-4 px-8 rounded-full hover:bg-brand-surface-container-high transition-colors cursor-pointer flex items-center justify-center">
-              Xem tính năng nổi bật
+            <a 
+              href={FLUTTER_WEB_URL} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="bg-brand-surface-container text-brand-primary font-bold py-4 px-8 rounded-full shadow-md hover:scale-105 transition-transform flex items-center justify-center gap-2 border border-brand-outline-variant/35 cursor-pointer"
+            >
+              <Smartphone size={20} />
+              Open on iPhone
             </a>
           </div>
         </motion.div>
@@ -1672,59 +1687,155 @@ const Security = () => {
 }
 
 const DownloadSection = () => {
-    return (
-        <section id="download" className="py-24 max-w-7xl mx-auto px-6">
-            <div className="frosted-glass rounded-sanctuary-xl p-12 md:p-20 shadow-sanctuary grid grid-cols-1 lg:grid-cols-2 gap-16 items-center overflow-hidden relative">
-                <div className="absolute top-0 right-0 w-96 h-96 bg-brand-primary/5 rounded-full blur-[100px] -mr-48 -mt-48"></div>
-                
-                <div className="z-10">
-                    <h2 className="text-4xl font-bold mb-12">Tải Bondy APK cho Android</h2>
-                    <div className="space-y-10">
-                        <div className="flex gap-6">
-                            <div className="w-12 h-12 rounded-xl bg-brand-surface-container flex items-center justify-center shrink-0">
-                                <Download className="text-brand-primary" size={24} />
-                            </div>
-                            <div>
-                                <h4 className="font-bold text-xl mb-1">Bước 1: Tải file APK</h4>
-                                <p className="text-brand-on-surface-variant">Nhấn vào nút tải xuống bên dưới để lưu file cài đặt Bondy về máy.</p>
-                            </div>
-                        </div>
-                        <div className="flex gap-6">
-                            <div className="w-12 h-12 rounded-xl bg-brand-surface-container flex items-center justify-center shrink-0">
-                                <Settings className="text-brand-primary" size={24} />
-                            </div>
-                            <div>
-                                <h4 className="font-bold text-xl mb-1">Bước 2: Cấp quyền cài đặt</h4>
-                                <p className="text-brand-on-surface-variant">Vào Cài đặt {'>'} Bảo mật {'>'} Cho phép cài đặt ứng dụng từ nguồn không xác định.</p>
-                            </div>
-                        </div>
-                        <div className="flex gap-6">
-                            <div className="w-12 h-12 rounded-xl bg-brand-surface-container flex items-center justify-center shrink-0">
-                                <Smartphone className="text-brand-primary" size={24} />
-                            </div>
-                            <div>
-                                <h4 className="font-bold text-xl mb-1">Bước 3: Cài đặt & Trải nghiệm</h4>
-                                <p className="text-brand-on-surface-variant">Mở file vừa tải về và tiến hành cài đặt. Tạo tài khoản và bắt đầu kết nối.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <a href="/app-release.apk" download className="accent-gradient text-white font-bold py-5 px-10 rounded-full mt-12 shadow-xl flex items-center justify-center gap-2 hover:scale-105 transition-all inline-flex w-fit">
-                        <Download size={24} /> Tải APK về máy
-                    </a>
-                </div>
+  return (
+    <section id="download" className="py-24 max-w-7xl mx-auto px-6">
+      <div className="text-center mb-16">
+        <h2 className="text-4xl md:text-5xl font-bold mb-4 font-display">Tải và Cài đặt Bondy</h2>
+        <p className="text-xl text-brand-on-surface-variant max-w-2xl mx-auto">
+          Chọn phương thức phù hợp nhất với điện thoại của bạn để tham gia cộng đồng thấu cảm ngay hôm nay.
+        </p>
+      </div>
 
-                <div className="flex flex-col items-center justify-center gap-6 z-10">
-                    <div className="flex flex-col items-center justify-center bg-white p-10 rounded-[3rem] shadow-2xl relative">
-                        <div className="absolute -top-6 bg-white p-2 rounded-full shadow-md border border-neutral-100 w-14 h-14 flex items-center justify-center">
-                            <img src="/bondy-heart-icon.png" alt="Bondy Logo" className="w-10 h-10 object-contain rounded-full" />
-                        </div>
-                        <ScanQrCode size={200} className="text-brand-primary mt-4" />
-                    </div>
-                    <p className="font-bold text-neutral-500 tracking-widest uppercase text-sm">Quét mã để tải nhanh</p>
-                </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        {/* Android Card */}
+        <motion.div 
+          whileHover={{ y: -8 }}
+          transition={{ duration: 0.3 }}
+          className="frosted-glass rounded-sanctuary-xl p-8 md:p-12 shadow-sanctuary border border-brand-outline-variant/30 flex flex-col justify-between relative overflow-hidden group"
+        >
+          <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-[80px] -mr-32 -mt-32"></div>
+          
+          <div>
+            <div className="flex items-center gap-4 mb-8">
+              <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center border border-emerald-100/50 shadow-sm shrink-0">
+                <Smartphone size={30} />
+              </div>
+              <div>
+                <span className="text-xs font-bold text-emerald-500 tracking-widest uppercase">Thiết bị Android</span>
+                <h3 className="text-2xl font-bold text-brand-on-surface mt-0.5">Cài đặt trực tiếp file APK</h3>
+              </div>
             </div>
-        </section>
-    );
+
+            <div className="space-y-8 mb-10">
+              <div className="flex gap-4">
+                <div className="w-10 h-10 rounded-xl bg-brand-surface-container flex items-center justify-center shrink-0 font-bold text-brand-primary">
+                  1
+                </div>
+                <div>
+                  <h4 className="font-bold text-lg mb-1">Tải file APK</h4>
+                  <p className="text-brand-on-surface-variant text-sm">Nhấn nút bên dưới để tải trực tiếp file <code className="bg-brand-surface-container-high px-1.5 py-0.5 rounded text-xs text-brand-primary font-mono">bondy.apk</code>.</p>
+                </div>
+              </div>
+              <div className="flex gap-4">
+                <div className="w-10 h-10 rounded-xl bg-brand-surface-container flex items-center justify-center shrink-0 font-bold text-brand-primary">
+                  2
+                </div>
+                <div>
+                  <h4 className="font-bold text-lg mb-1">Cấp quyền cài đặt</h4>
+                  <p className="text-brand-on-surface-variant text-sm">Cho phép cài đặt ứng dụng từ nguồn không xác định nếu thiết bị của bạn yêu cầu.</p>
+                </div>
+              </div>
+              <div className="flex gap-4">
+                <div className="w-10 h-10 rounded-xl bg-brand-surface-container flex items-center justify-center shrink-0 font-bold text-brand-primary">
+                  3
+                </div>
+                <div>
+                  <h4 className="font-bold text-lg mb-1">Mở app & Trải nghiệm</h4>
+                  <p className="text-brand-on-surface-variant text-sm">Mở file APK đã tải về, tiến hành cài đặt trong vài giây và đăng nhập để trải nghiệm.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center gap-6 mt-6 border-t border-brand-outline-variant/30 pt-8">
+            <a 
+              href="/bondy.apk" 
+              download 
+              className="accent-gradient text-white font-bold py-4 px-8 rounded-full shadow-lg hover:scale-105 transition-all flex items-center justify-center gap-2 w-full sm:w-auto shrink-0 cursor-pointer"
+            >
+              <Download size={20} /> Download Android APK
+            </a>
+            <div className="flex items-center gap-4 bg-white p-3 rounded-2xl border border-neutral-100 shadow-sm">
+              <ScanQrCode size={64} className="text-brand-primary shrink-0" />
+              <div className="text-left">
+                <p className="text-xs font-bold text-brand-on-surface">Quét mã tải nhanh</p>
+                <p className="text-[10px] text-neutral-400">Dành cho điện thoại Android</p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* iPhone (iOS) Card */}
+        <motion.div 
+          whileHover={{ y: -8 }}
+          transition={{ duration: 0.3 }}
+          className="frosted-glass rounded-sanctuary-xl p-8 md:p-12 shadow-sanctuary border border-brand-outline-variant/30 flex flex-col justify-between relative overflow-hidden group"
+        >
+          <div className="absolute top-0 right-0 w-64 h-64 bg-brand-primary/5 rounded-full blur-[80px] -mr-32 -mt-32"></div>
+          
+          <div>
+            <div className="flex items-center gap-4 mb-8">
+              <div className="w-14 h-14 rounded-2xl bg-brand-primary/5 text-brand-primary flex items-center justify-center border border-brand-primary/10 shadow-sm shrink-0">
+                <Smartphone size={30} />
+              </div>
+              <div>
+                <span className="text-xs font-bold text-brand-primary tracking-widest uppercase">Thiết bị iPhone</span>
+                <h3 className="text-2xl font-bold text-brand-on-surface mt-0.5">Trải nghiệm ứng dụng PWA (Safari)</h3>
+              </div>
+            </div>
+
+            <div className="space-y-8 mb-10">
+              <div className="flex gap-4">
+                <div className="w-10 h-10 rounded-xl bg-brand-surface-container flex items-center justify-center shrink-0 font-bold text-brand-primary">
+                  1
+                </div>
+                <div>
+                  <h4 className="font-bold text-lg mb-1">Mở trên iPhone</h4>
+                  <p className="text-brand-on-surface-variant text-sm">Nhấn nút bên dưới để mở ứng dụng Web PWA trên trình duyệt <span className="font-semibold text-brand-primary">Safari</span>.</p>
+                </div>
+              </div>
+              <div className="flex gap-4">
+                <div className="w-10 h-10 rounded-xl bg-brand-surface-container flex items-center justify-center shrink-0 font-bold text-brand-primary">
+                  2
+                </div>
+                <div>
+                  <h4 className="font-bold text-lg mb-1">Nhấn nút Share (Chia sẻ)</h4>
+                  <p className="text-brand-on-surface-variant text-sm">Nhấp vào biểu tượng Share <span className="inline-flex bg-neutral-100 p-1 rounded"><Share size={12} className="inline text-neutral-600" /></span> ở thanh điều hướng phía dưới cùng của Safari.</p>
+                </div>
+              </div>
+              <div className="flex gap-4">
+                <div className="w-10 h-10 rounded-xl bg-brand-surface-container flex items-center justify-center shrink-0 font-bold text-brand-primary">
+                  3
+                </div>
+                <div>
+                  <h4 className="font-bold text-lg mb-1">Thêm vào màn hình chính</h4>
+                  <p className="text-brand-on-surface-variant text-sm">Chọn mục <span className="font-semibold">"Add to Home Screen"</span> (Thêm vào MH chính). App sẽ xuất hiện ngoài màn hình như ứng dụng native!</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center gap-6 mt-6 border-t border-brand-outline-variant/30 pt-8">
+            <a 
+              href={FLUTTER_WEB_URL} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="bg-brand-surface-container text-brand-primary border border-brand-outline-variant/35 font-bold py-4 px-8 rounded-full shadow-md hover:scale-105 transition-all flex items-center justify-center gap-2 w-full sm:w-auto shrink-0 cursor-pointer"
+            >
+              <ExternalLink size={20} /> Open on iPhone
+            </a>
+            <div className="flex items-center gap-4 bg-white p-3 rounded-2xl border border-neutral-100 shadow-sm">
+              <ScanQrCode size={64} className="text-brand-primary shrink-0" />
+              <div className="text-left">
+                <p className="text-xs font-bold text-brand-on-surface">Quét mã mở nhanh</p>
+                <p className="text-[10px] text-neutral-400">Mở trực tiếp trên iPhone</p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
 }
 
 const FAQ = () => {
