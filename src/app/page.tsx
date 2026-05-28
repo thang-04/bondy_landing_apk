@@ -55,7 +55,7 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 
 // Configure the target URL for the Flutter Web PWA app
-const FLUTTER_WEB_URL = '/web/index.html';
+const FLUTTER_WEB_URL = '/web/';
 
 // Custom smooth scroll animation functions for robust cross-browser support
 const scrollToTopSmooth = (e?: React.MouseEvent) => {
