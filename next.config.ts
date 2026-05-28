@@ -26,16 +26,13 @@ const nextConfig: NextConfig = {
         headers: [
           { key: "Content-Type", value: "application/javascript" },
           { key: "Access-Control-Allow-Origin", value: "*" },
-          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
         ],
       },
       {
-        // General headers for all Flutter web assets
+        // CORS for all Flutter web assets (fonts, images, etc.)
         source: "/web/:path*",
         headers: [
           { key: "Access-Control-Allow-Origin", value: "*" },
-          { key: "Cross-Origin-Embedder-Policy", value: "credentialless" },
-          { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
         ],
       },
     ];
