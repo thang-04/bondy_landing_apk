@@ -1,20 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// Tell Next.js to always run this route dynamically (not cached)
 export const dynamic = "force-dynamic";
-
-// Allow large file uploads (up to 60 seconds runtime)
 export const maxDuration = 60;
 
 const BACKEND_URL = "http://103.149.86.25:3000";
 
-// Rewrite backend URLs to point to our Vercel proxy so images load correctly
+// Rewrite backend IP URLs → Vercel proxy URLs so images load correctly on iOS
 function rewriteBackendUrls(text: string): string {
-  // Replace https://103.149.86.25:3000/api/uploads/ → /uploads/
-  // So Flutter can load images through our proxy
   return text
-    .replace(/https?:\/\/103\.149\.86\.25:3000\/api\/uploads\//g, "/uploads/")
-    .replace(/https?:\/\/103\.149\.86\.25:3000\/uploads\//g, "/uploads/");
+    .replace(
+      /https?:\/\/103\.149\.86\.25:?\d*\/api\/uploads\//g,
+      "/uploads/"
+    )
+    .replace(/https?:\/\/103\.149\.86\.25:?\d*\/uploads\//g, "/uploads/");
 }
 
 export async function POST(req: NextRequest) {
@@ -22,53 +20,53 @@ export async function POST(req: NextRequest) {
     const url = new URL(req.url);
     const backendTarget = `${BACKEND_URL}/api/upload${url.search}`;
 
-    // Build forwarded headers - preserve Authorization and Content-Type (multipart boundary)
+    // ─── Step 1: Read the FULL request body as ArrayBuffer ─────────────────
+    // CRITICAL: Vercel Serverless does NOT support streaming req.body with
+    // duplex:"half". We must buffer the entire body first.
+    const bodyBuffer = await req.arrayBuffer();
+
+    // ─── Step 2: Forward headers, preserving Content-Type (with boundary) ──
     const forwardHeaders: Record<string, string> = {};
     req.headers.forEach((value, key) => {
       const lowerKey = key.toLowerCase();
-      // Skip headers that would conflict with the proxied request
       if (
         lowerKey !== "host" &&
-        lowerKey !== "content-length" &&
-        lowerKey !== "transfer-encoding" &&
         lowerKey !== "connection" &&
-        lowerKey !== "keep-alive"
+        lowerKey !== "keep-alive" &&
+        lowerKey !== "transfer-encoding"
+        // NOTE: Do NOT skip content-length here - let fetch recalculate it
+        // NOTE: Do NOT skip content-type - it has the multipart boundary!
       ) {
         forwardHeaders[key] = value;
       }
     });
 
     console.log(
-      `[api-proxy/upload] POST → ${backendTarget}`,
-      `Content-Type: ${forwardHeaders["content-type"] || "unknown"}`
+      `[upload-proxy] POST → ${backendTarget}`,
+      `Content-Type: ${forwardHeaders["content-type"] || "missing!"}`,
+      `Body size: ${bodyBuffer.byteLength} bytes`
     );
 
-    // Stream the request body to backend (preserves multipart/form-data boundary)
+    // ─── Step 3: Send buffered body to backend ──────────────────────────────
     const backendResponse = await fetch(backendTarget, {
       method: "POST",
       headers: forwardHeaders,
-      body: req.body,
-      // @ts-expect-error - duplex is required for streaming body in Node.js 18+
-      duplex: "half",
+      body: bodyBuffer, // ArrayBuffer - works reliably on Vercel
     });
 
-    // Read entire response as text (buffered, not streaming)
-    // This is CRITICAL: Safari iOS doesn't support ReadableStream.getReader()
-    // properly when reading chunked transfer responses.
+    // ─── Step 4: Read backend response as text ──────────────────────────────
     const responseText = await backendResponse.text();
-
-    // Rewrite any backend IP URLs in the response to use our Vercel proxy
-    const rewrittenText = rewriteBackendUrls(responseText);
-
     console.log(
-      `[api-proxy/upload] Backend → ${backendResponse.status}:`,
-      rewrittenText.substring(0, 300)
+      `[upload-proxy] Backend → ${backendResponse.status}: ${responseText.substring(0, 300)}`
     );
 
+    // ─── Step 5: Rewrite any IP-based URLs in the response ─────────────────
+    const rewrittenText = rewriteBackendUrls(responseText);
+
+    // ─── Step 6: Return fully-buffered response ─────────────────────────────
+    // Use explicit Content-Length so Safari doesn't try to stream-read the body
     const responseBody = Buffer.from(rewrittenText, "utf-8");
 
-    // Return fully-buffered response with explicit Content-Length
-    // This prevents Safari from trying to stream-read the response
     return new NextResponse(responseBody, {
       status: backendResponse.status,
       headers: {
@@ -77,24 +75,20 @@ export async function POST(req: NextRequest) {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "POST, OPTIONS",
         "Access-Control-Allow-Headers": "Authorization, Content-Type",
-        // Prevent any caching/transform issues
         "Cache-Control": "no-store",
         "X-Content-Type-Options": "nosniff",
       },
     });
   } catch (error) {
-    console.error("[api-proxy/upload] Proxy error:", error);
-
-    const errorBody = JSON.stringify({
+    console.error("[upload-proxy] ERROR:", error);
+    const errMsg = JSON.stringify({
       success: false,
       message: "Upload proxy error: " + String(error),
     });
-
-    return new NextResponse(errorBody, {
+    return new NextResponse(errMsg, {
       status: 500,
       headers: {
         "Content-Type": "application/json; charset=utf-8",
-        "Content-Length": String(Buffer.byteLength(errorBody, "utf-8")),
         "Access-Control-Allow-Origin": "*",
       },
     });

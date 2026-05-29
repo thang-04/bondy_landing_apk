@@ -252,39 +252,39 @@
       let reqId;
       if (url) reqId = logRequest('fetch', method, url);
 
-      // Detect upload requests that need the Safari fix
+      // Detect upload requests
       const isUpload = (typeof url === 'string') &&
-                       (url.includes('/api-proxy/upload') || url.includes('/upload'));
-      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+                       url.includes('/api-proxy/upload');
 
       const fetchPromise = originalFetch.call(window, input, init);
 
-      if (isUpload && isSafari) {
-        // For upload responses on Safari: read body with text() then wrap in
-        // a new Response backed by a Blob so getReader() works correctly.
+      if (isUpload) {
+        // ALWAYS wrap upload responses in a Blob-backed Response.
+        // This fixes iOS Safari's InvalidAccessError when Flutter calls
+        // response.body.getReader() on a streaming network response.
+        // Blob-backed responses support getReader() on ALL platforms.
         return fetchPromise.then(function(response) {
           if (reqId) logResponse(reqId, response.status + ' ' + response.statusText);
           const status = response.status;
           const statusText = response.statusText;
-          // Collect all response headers
           const headers = {};
-          response.headers.forEach(function(val, key) { headers[key] = val; });
-          // Use text() - universally supported on all Safari versions
+          try {
+            response.headers.forEach(function(val, key) { headers[key] = val; });
+          } catch(e) {}
+          // Use text() - fully supported on iOS Safari 14+
           return response.text().then(function(bodyText) {
-            console.log('[safari-upload-fix] Wrapping upload response, status=' + status + ', body=' + bodyText.substring(0, 100));
-            // Create a Blob from the text - Blob-backed responses support getReader() on Safari
+            console.log('[upload-fix] status=' + status + ' body=' + bodyText.substring(0, 150));
             const blob = new Blob([bodyText], { type: 'application/json; charset=utf-8' });
-            const syntheticResponse = new Response(blob, {
+            return new Response(blob, {
               status: status,
               statusText: statusText,
               headers: headers
             });
-            return syntheticResponse;
           }).catch(function(err) {
-            console.error('[safari-upload-fix] text() failed:', err);
-            // Fallback: return empty JSON success so Flutter doesn't crash
-            const fallback = new Blob(['{"success":false,"message":"Response read error"}'], { type: 'application/json' });
-            return new Response(fallback, { status: status, statusText: statusText });
+            console.error('[upload-fix] text() failed:', err);
+            const fallback = new Blob(['{"success":false,"message":"Response read error: ' + String(err) + '"}'],
+              { type: 'application/json' });
+            return new Response(fallback, { status: status || 500 });
           });
         }).catch(function(error) {
           if (reqId) logResponse(reqId, 'FAILED: ' + (error.message || String(error)));
