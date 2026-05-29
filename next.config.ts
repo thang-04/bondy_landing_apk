@@ -11,10 +11,34 @@ const nextConfig: NextConfig = {
         source: "/web/assets/.env",
         destination: "/web/assets/env.txt",
       },
+      {
+        source: "/uploads/:path*",
+        destination: "http://103.149.86.25:3000/uploads/:path*",
+      },
+      {
+        source: "/api/uploads/:path*",
+        destination: "http://103.149.86.25:3000/api/uploads/:path*",
+      },
     ];
   },
   async headers() {
     return [
+      {
+        // CORS and Cache control for proxied uploads
+        source: "/uploads/:path*",
+        headers: [
+          { key: "Access-Control-Allow-Origin", value: "*" },
+          { key: "Access-Control-Allow-Methods", value: "GET, OPTIONS" },
+        ],
+      },
+      {
+        // CORS and Cache control for proxied API uploads
+        source: "/api/uploads/:path*",
+        headers: [
+          { key: "Access-Control-Allow-Origin", value: "*" },
+          { key: "Access-Control-Allow-Methods", value: "GET, OPTIONS" },
+        ],
+      },
       {
         // Serve .wasm files with correct MIME type (critical for iOS Safari CanvasKit)
         source: "/web/:path*.wasm",
