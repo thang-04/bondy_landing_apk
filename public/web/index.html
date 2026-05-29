@@ -166,6 +166,31 @@
       return originalConsoleError.apply(console, arguments);
     };
 
+    // Intercept console.log (for debugPrint and print statements from Dart)
+    const originalConsoleLog = console.log;
+    console.log = function() {
+      let msg = Array.prototype.slice.call(arguments).map(function(arg) {
+        if (arg instanceof Error) return arg.stack || arg.message;
+        if (arg && typeof arg === 'object') {
+          try { return JSON.stringify(arg); } catch(e) { return String(arg); }
+        }
+        return String(arg);
+      }).join(' ');
+      
+      const isErr = msg.toLowerCase().includes('error') || msg.toLowerCase().includes('exception') || msg.toLowerCase().includes('fail');
+      
+      window._debugUrls.push({
+        id: Math.random().toString(36).substr(2, 9),
+        type: isErr ? 'error' : 'info',
+        method: isErr ? 'LOG-ERR' : 'LOG',
+        url: msg,
+        status: isErr ? 'WARNING' : 'INFO',
+        timestamp: new Date().toLocaleTimeString()
+      });
+      updateDebugUI();
+      return originalConsoleLog.apply(console, arguments);
+    };
+
     // Capture all errors at any time
     window.addEventListener('error', function(e) {
       const msg = e.error ? (e.error.stack || e.error.message) : (e.message || 'Unknown global error');
