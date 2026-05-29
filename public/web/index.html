@@ -218,12 +218,14 @@
       updateDebugUI();
     });
     
-    // Intercept fetch
+    // ===== SAFARI iOS UPLOAD FIX =====
+    // iOS Safari doesn't support response.body.getReader() properly for
+    // streaming responses. We intercept fetch calls to /api-proxy/upload
+    // and return a synthetic Response backed by a Blob that Safari CAN read.
     const originalFetch = window.fetch;
     window.fetch = function(input, init) {
       let url = '';
-      let method = 'GET';
-      if (init && init.method) method = init.method;
+      let method = (init && init.method) ? init.method : 'GET';
       
       if (typeof input === 'string') {
         input = rewriteUrl(input);
@@ -237,9 +239,7 @@
         const rewrittenUrl = rewriteUrl(url);
         if (rewrittenUrl !== url) {
           const newInit = {};
-          if (init) {
-            for (let key in init) { newInit[key] = init[key]; }
-          }
+          if (init) { for (let key in init) { newInit[key] = init[key]; } }
           if (!newInit.method) newInit.method = input.method;
           if (!newInit.headers) newInit.headers = input.headers;
           if (!newInit.body && input.body) newInit.body = input.body;
@@ -250,21 +250,55 @@
       }
       
       let reqId;
-      if (url) {
-        reqId = logRequest('fetch', method, url);
+      if (url) reqId = logRequest('fetch', method, url);
+
+      // Detect upload requests that need the Safari fix
+      const isUpload = (typeof url === 'string') &&
+                       (url.includes('/api-proxy/upload') || url.includes('/upload'));
+      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+      const fetchPromise = originalFetch.call(window, input, init);
+
+      if (isUpload && isSafari) {
+        // For upload responses on Safari: read body with text() then wrap in
+        // a new Response backed by a Blob so getReader() works correctly.
+        return fetchPromise.then(function(response) {
+          if (reqId) logResponse(reqId, response.status + ' ' + response.statusText);
+          const status = response.status;
+          const statusText = response.statusText;
+          // Collect all response headers
+          const headers = {};
+          response.headers.forEach(function(val, key) { headers[key] = val; });
+          // Use text() - universally supported on all Safari versions
+          return response.text().then(function(bodyText) {
+            console.log('[safari-upload-fix] Wrapping upload response, status=' + status + ', body=' + bodyText.substring(0, 100));
+            // Create a Blob from the text - Blob-backed responses support getReader() on Safari
+            const blob = new Blob([bodyText], { type: 'application/json; charset=utf-8' });
+            const syntheticResponse = new Response(blob, {
+              status: status,
+              statusText: statusText,
+              headers: headers
+            });
+            return syntheticResponse;
+          }).catch(function(err) {
+            console.error('[safari-upload-fix] text() failed:', err);
+            // Fallback: return empty JSON success so Flutter doesn't crash
+            const fallback = new Blob(['{"success":false,"message":"Response read error"}'], { type: 'application/json' });
+            return new Response(fallback, { status: status, statusText: statusText });
+          });
+        }).catch(function(error) {
+          if (reqId) logResponse(reqId, 'FAILED: ' + (error.message || String(error)));
+          throw error;
+        });
       }
-      
-      return originalFetch.call(window, input, init)
+
+      return fetchPromise
         .then(function(response) {
-          if (reqId) {
-            logResponse(reqId, response.status + ' ' + response.statusText);
-          }
+          if (reqId) logResponse(reqId, response.status + ' ' + response.statusText);
           return response;
         })
         .catch(function(error) {
-          if (reqId) {
-            logResponse(reqId, 'FAILED: ' + error.message);
-          }
+          if (reqId) logResponse(reqId, 'FAILED: ' + (error.message || String(error)));
           throw error;
         });
     };
