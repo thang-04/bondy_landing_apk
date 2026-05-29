@@ -92,6 +92,102 @@
   </style>
 </head>
 <body>
+  <script>
+    window._debugUrls = [];
+    
+    // Intercept fetch
+    const originalFetch = window.fetch;
+    window.fetch = function(input, init) {
+      let url = '';
+      if (typeof input === 'string') {
+        url = input;
+      } else if (input instanceof URL) {
+        url = input.href;
+      } else if (input && input.url) {
+        url = input.url;
+      }
+      if (url) {
+        window._debugUrls.push({ type: 'fetch', url: url, timestamp: new Date().toLocaleTimeString() });
+        updateDebugUI();
+      }
+      return originalFetch.apply(this, arguments);
+    };
+
+    // Intercept XHR
+    const originalOpen = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function(method, url) {
+      if (url) {
+        window._debugUrls.push({ type: 'xhr', url: url, timestamp: new Date().toLocaleTimeString() });
+        updateDebugUI();
+      }
+      return originalOpen.apply(this, arguments);
+    };
+
+    // Create a debug log viewer on 5 taps
+    let tapCount = 0;
+    let tapTimer;
+    window.addEventListener('click', function() {
+      tapCount++;
+      clearTimeout(tapTimer);
+      tapTimer = setTimeout(function() { tapCount = 0; }, 1200);
+      if (tapCount >= 5) {
+        showDebugOverlay();
+      }
+    });
+
+    function showDebugOverlay() {
+      let overlay = document.getElementById('debug-overlay');
+      if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'debug-overlay';
+        overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(18,18,18,0.98);color:#fff;z-index:999999;font-family:-apple-system,BlinkMacSystemFont,monospace;padding:20px;box-sizing:border-box;overflow:auto;font-size:12px;';
+        
+        const close = document.createElement('button');
+        close.textContent = 'ĐÓNG ĐIAGNOSTICS';
+        close.style.cssText = 'padding:12px 24px;background:#E8613C;color:#fff;border:none;border-radius:8px;margin-bottom:15px;font-weight:bold;font-size:14px;cursor:pointer;';
+        close.onclick = function() { overlay.style.display = 'none'; };
+        overlay.appendChild(close);
+
+        const title = document.createElement('h3');
+        title.textContent = 'Bondy Diagnostics - Lịch sử cuộc gọi mạng';
+        title.style.color = '#E8613C';
+        overlay.appendChild(title);
+
+        const list = document.createElement('div');
+        list.id = 'debug-log-list';
+        overlay.appendChild(list);
+
+        document.body.appendChild(overlay);
+      }
+      overlay.style.display = 'block';
+      updateDebugUI();
+    }
+
+    function updateDebugUI() {
+      const list = document.getElementById('debug-log-list');
+      if (list) {
+        list.innerHTML = '';
+        if (window._debugUrls.length === 0) {
+          list.innerHTML = '<div style="color:#888">Chưa có cuộc gọi mạng nào được ghi nhận.</div>';
+          return;
+        }
+        window._debugUrls.forEach(function(item) {
+          const div = document.createElement('div');
+          div.style.borderBottom = '1px solid #2a2a2a';
+          div.style.padding = '8px 0';
+          div.style.wordBreak = 'break-all';
+          
+          let color = '#ffffff';
+          if (item.url.includes('uploads')) color = '#ffb300';
+          else if (item.url.includes('api')) color = '#00e5ff';
+          
+          div.innerHTML = '<span style="color:#888">[' + item.timestamp + ']</span> <span style="color:#00e676;font-weight:bold;">' + item.type.toUpperCase() + '</span>: <span style="color:' + color + '">' + escapeHtml(item.url) + '</span>';
+          list.appendChild(div);
+        });
+      }
+    }
+  </script>
+
   <!-- Loading indicator shown while Flutter boots up -->
   <div id="loading" class="loading-container">
     <img src="icons/Icon-192.png" alt="Bondy" class="loading-logo" onerror="this.style.display='none'">
