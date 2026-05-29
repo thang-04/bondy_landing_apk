@@ -143,6 +143,56 @@
       }
     }
     
+    // Intercept console.error
+    const originalConsoleError = console.error;
+    console.error = function() {
+      let msg = Array.prototype.slice.call(arguments).map(function(arg) {
+        if (arg instanceof Error) return arg.stack || arg.message;
+        if (arg && typeof arg === 'object') {
+          try { return JSON.stringify(arg); } catch(e) { return String(arg); }
+        }
+        return String(arg);
+      }).join(' ');
+      
+      window._debugUrls.push({
+        id: Math.random().toString(36).substr(2, 9),
+        type: 'error',
+        method: 'CONSOLE',
+        url: msg,
+        status: 'CRITICAL',
+        timestamp: new Date().toLocaleTimeString()
+      });
+      updateDebugUI();
+      return originalConsoleError.apply(console, arguments);
+    };
+
+    // Capture all errors at any time
+    window.addEventListener('error', function(e) {
+      const msg = e.error ? (e.error.stack || e.error.message) : (e.message || 'Unknown global error');
+      window._debugUrls.push({
+        id: Math.random().toString(36).substr(2, 9),
+        type: 'error',
+        method: 'GLOBAL',
+        url: msg,
+        status: 'CRITICAL',
+        timestamp: new Date().toLocaleTimeString()
+      });
+      updateDebugUI();
+    });
+
+    window.addEventListener('unhandledrejection', function(e) {
+      const msg = e.reason ? (e.reason.stack || e.reason.message || String(e.reason)) : 'Unhandled rejection';
+      window._debugUrls.push({
+        id: Math.random().toString(36).substr(2, 9),
+        type: 'error',
+        method: 'REJECTION',
+        url: msg,
+        status: 'CRITICAL',
+        timestamp: new Date().toLocaleTimeString()
+      });
+      updateDebugUI();
+    });
+    
     // Intercept fetch
     const originalFetch = window.fetch;
     window.fetch = function(input, init) {
@@ -243,7 +293,7 @@
         overlay.appendChild(close);
 
         const title = document.createElement('h3');
-        title.textContent = 'Bondy Diagnostics - Lịch sử cuộc gọi mạng';
+        title.textContent = 'Bondy Diagnostics - Lịch sử cuộc gọi mạng & lỗi';
         title.style.color = '#E8613C';
         overlay.appendChild(title);
 
@@ -262,7 +312,7 @@
       if (list) {
         list.innerHTML = '';
         if (window._debugUrls.length === 0) {
-          list.innerHTML = '<div style="color:#888">Chưa có cuộc gọi mạng nào được ghi nhận.</div>';
+          list.innerHTML = '<div style="color:#888">Chưa có hoạt động mạng hay lỗi nào được ghi nhận.</div>';
           return;
         }
         window._debugUrls.forEach(function(item) {
@@ -272,18 +322,32 @@
           div.style.wordBreak = 'break-all';
           
           let color = '#ffffff';
-          if (item.url.includes('uploads')) color = '#ffb300';
-          else if (item.url.includes('api')) color = '#00e5ff';
+          if (item.type === 'error') {
+            color = '#ff3b30'; // bright red for exceptions
+          } else if (item.url.includes('uploads')) {
+            color = '#ffb300';
+          } else if (item.url.includes('api')) {
+            color = '#00e5ff';
+          }
           
           let statusColor = '#ff3b30'; // red for errors/failed
           if (item.status.startsWith('2') || item.status.includes('OK')) {
             statusColor = '#00e676'; // green for OK
           } else if (item.status.includes('PENDING')) {
             statusColor = '#ffcc00'; // yellow for pending
+          } else if (item.status === 'CRITICAL') {
+            statusColor = '#ff1744'; // deep red for fatal errors
+          }
+          
+          let typeLabel = item.type.toUpperCase();
+          let typeColor = '#00e676';
+          if (item.type === 'error') {
+            typeLabel = 'ERROR';
+            typeColor = '#ff1744';
           }
           
           div.innerHTML = '<span style="color:#888">[' + item.timestamp + ']</span> ' +
-            '<span style="color:#00e676;font-weight:bold;">' + item.type.toUpperCase() + '</span> ' +
+            '<span style="color:' + typeColor + ';font-weight:bold;">' + typeLabel + '</span> ' +
             '<span style="color:#9e9e9e;font-weight:bold;background:#333;padding:2px 6px;border-radius:4px;margin-right:5px;">' + item.method + '</span>: ' +
             '<span style="color:' + color + '">' + escapeHtml(item.url) + '</span>' +
             '<br><span style="color:#888;margin-left:20px;">Trạng thái: </span>' +
