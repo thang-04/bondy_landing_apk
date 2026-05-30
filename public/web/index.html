@@ -259,10 +259,10 @@
       const fetchPromise = originalFetch.call(window, input, init);
 
       if (isUpload) {
-        // ALWAYS wrap upload responses in a Blob-backed Response.
-        // This fixes iOS Safari's InvalidAccessError when Flutter calls
-        // response.body.getReader() on a streaming network response.
-        // Blob-backed responses support getReader() on ALL platforms.
+        // ALWAYS wrap upload responses in a custom ReadableStream-backed Response.
+        // This fixes iOS Safari's WebKit-specific InvalidAccessError where calling 
+        // response.body.getReader() on a constructed new Response(blob) fails.
+        // Manually constructing a standard ReadableStream works perfectly on ALL platforms.
         return fetchPromise.then(function(response) {
           if (reqId) logResponse(reqId, response.status + ' ' + response.statusText);
           const status = response.status;
@@ -274,17 +274,57 @@
           // Use text() - fully supported on iOS Safari 14+
           return response.text().then(function(bodyText) {
             console.log('[upload-fix] status=' + status + ' body=' + bodyText.substring(0, 150));
-            const blob = new Blob([bodyText], { type: 'application/json; charset=utf-8' });
-            return new Response(blob, {
+            
+            let bytes;
+            if (typeof TextEncoder !== 'undefined') {
+              bytes = new TextEncoder().encode(bodyText);
+            } else {
+              const buf = new ArrayBuffer(bodyText.length);
+              const bufView = new Uint8Array(buf);
+              for (let i = 0; i < bodyText.length; i++) {
+                bufView[i] = bodyText.charCodeAt(i);
+              }
+              bytes = bufView;
+            }
+
+            const stream = new ReadableStream({
+              start(controller) {
+                controller.enqueue(bytes);
+                controller.close();
+              }
+            });
+
+            return new Response(stream, {
               status: status,
               statusText: statusText,
               headers: headers
             });
           }).catch(function(err) {
             console.error('[upload-fix] text() failed:', err);
-            const fallback = new Blob(['{"success":false,"message":"Response read error: ' + String(err) + '"}'],
-              { type: 'application/json' });
-            return new Response(fallback, { status: status || 500 });
+            const errMsg = '{"success":false,"message":"Response read error: ' + String(err) + '"}';
+            
+            let bytes;
+            if (typeof TextEncoder !== 'undefined') {
+              bytes = new TextEncoder().encode(errMsg);
+            } else {
+              const buf = new ArrayBuffer(errMsg.length);
+              const bufView = new Uint8Array(buf);
+              for (let i = 0; i < errMsg.length; i++) {
+                bufView[i] = errMsg.charCodeAt(i);
+              }
+              bytes = bufView;
+            }
+
+            const stream = new ReadableStream({
+              start(controller) {
+                controller.enqueue(bytes);
+                controller.close();
+              }
+            });
+            return new Response(stream, { 
+              status: status || 500,
+              headers: { 'content-type': 'application/json' }
+            });
           });
         }).catch(function(error) {
           if (reqId) logResponse(reqId, 'FAILED: ' + (error.message || String(error)));
