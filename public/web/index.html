@@ -218,10 +218,86 @@
       updateDebugUI();
     });
     
-    // ===== SAFARI iOS UPLOAD FIX =====
-    // iOS Safari doesn't support response.body.getReader() properly for
-    // streaming responses. We intercept fetch calls to /api-proxy/upload
-    // and return a synthetic Response backed by a Blob that Safari CAN read.
+    // ===== SAFARI iOS 18 UPLOAD FIX =====
+    // WebKit bug: new Response(anyBody).body.getReader() throws InvalidAccessError
+    // on iOS 18 Safari. We create Response(null) and manually override body/methods.
+    
+    function _createSafeResponse(bodyText, status, statusText, headers) {
+      var bytes = new TextEncoder().encode(bodyText);
+      
+      // Create Response with NULL body — avoids WebKit's broken stream processing
+      var resp = new Response(null, {
+        status: status,
+        statusText: statusText,
+        headers: headers
+      });
+      
+      // Track if body has been consumed
+      var consumed = false;
+      
+      // Create a fresh ReadableStream on demand (not through Response constructor)
+      function makeStream() {
+        return new ReadableStream({
+          start: function(controller) {
+            controller.enqueue(new Uint8Array(bytes));
+            controller.close();
+          }
+        });
+      }
+      
+      // Override body getter — return a direct ReadableStream, not WebKit-processed
+      Object.defineProperty(resp, 'body', {
+        get: function() {
+          if (consumed) return null;
+          return makeStream();
+        },
+        configurable: true
+      });
+      
+      // Override bodyUsed
+      Object.defineProperty(resp, 'bodyUsed', {
+        get: function() { return consumed; },
+        configurable: true
+      });
+      
+      // Override text()
+      resp.text = function() {
+        if (consumed) return Promise.reject(new TypeError('body already consumed'));
+        consumed = true;
+        return Promise.resolve(bodyText);
+      };
+      
+      // Override json()
+      resp.json = function() {
+        if (consumed) return Promise.reject(new TypeError('body already consumed'));
+        consumed = true;
+        try { return Promise.resolve(JSON.parse(bodyText)); }
+        catch(e) { return Promise.reject(e); }
+      };
+      
+      // Override arrayBuffer()
+      resp.arrayBuffer = function() {
+        if (consumed) return Promise.reject(new TypeError('body already consumed'));
+        consumed = true;
+        return Promise.resolve(bytes.buffer.slice(0));
+      };
+      
+      // Override blob()
+      resp.blob = function() {
+        if (consumed) return Promise.reject(new TypeError('body already consumed'));
+        consumed = true;
+        return Promise.resolve(new Blob([bytes], {type: headers['content-type'] || 'application/json'}));
+      };
+      
+      // Override clone()
+      resp.clone = function() {
+        return _createSafeResponse(bodyText, status, statusText, headers);
+      };
+      
+      console.log('[upload-fix] SafeResponse created: status=' + status + ' bodyLen=' + bodyText.length);
+      return resp;
+    }
+    
     const originalFetch = window.fetch;
     window.fetch = function(input, init) {
       let url = '';
@@ -259,72 +335,31 @@
       const fetchPromise = originalFetch.call(window, input, init);
 
       if (isUpload) {
-        // ALWAYS wrap upload responses in a custom ReadableStream-backed Response.
-        // This fixes iOS Safari's WebKit-specific InvalidAccessError where calling 
-        // response.body.getReader() on a constructed new Response(blob) fails.
-        // Manually constructing a standard ReadableStream works perfectly on ALL platforms.
+        // ===== SAFARI iOS 18 WEBKIT BUG WORKAROUND =====
+        // WebKit has a deep bug where new Response(body).body.getReader() throws
+        // "InvalidAccessError: The object does not support the operation or argument"
+        // regardless of whether body is a Blob, String, ArrayBuffer, or ReadableStream.
+        // WebKit's Response constructor internally wraps the body stream in a way that
+        // corrupts getReader() support.
+        //
+        // FIX: Create Response(null) (no body at all), then OVERRIDE the body property
+        // and all body-reading methods to return data from a manually-managed buffer.
+        // This completely bypasses WebKit's broken internal stream handling.
         return fetchPromise.then(function(response) {
           if (reqId) logResponse(reqId, response.status + ' ' + response.statusText);
-          const status = response.status;
-          const statusText = response.statusText;
-          const headers = {};
+          var status = response.status;
+          var statusText = response.statusText;
+          var respHeaders = {};
           try {
-            response.headers.forEach(function(val, key) { headers[key] = val; });
+            response.headers.forEach(function(val, key) { respHeaders[key] = val; });
           } catch(e) {}
-          // Use text() - fully supported on iOS Safari 14+
           return response.text().then(function(bodyText) {
-            console.log('[upload-fix] status=' + status + ' body=' + bodyText.substring(0, 150));
-            
-            let bytes;
-            if (typeof TextEncoder !== 'undefined') {
-              bytes = new TextEncoder().encode(bodyText);
-            } else {
-              const buf = new ArrayBuffer(bodyText.length);
-              const bufView = new Uint8Array(buf);
-              for (let i = 0; i < bodyText.length; i++) {
-                bufView[i] = bodyText.charCodeAt(i);
-              }
-              bytes = bufView;
-            }
-
-            const stream = new ReadableStream({
-              start(controller) {
-                controller.enqueue(bytes);
-                controller.close();
-              }
-            });
-
-            return new Response(stream, {
-              status: status,
-              statusText: statusText,
-              headers: headers
-            });
+            console.log('[upload-fix] status=' + status + ' body=' + bodyText.substring(0, 200));
+            return _createSafeResponse(bodyText, status, statusText, respHeaders);
           }).catch(function(err) {
             console.error('[upload-fix] text() failed:', err);
-            const errMsg = '{"success":false,"message":"Response read error: ' + String(err) + '"}';
-            
-            let bytes;
-            if (typeof TextEncoder !== 'undefined') {
-              bytes = new TextEncoder().encode(errMsg);
-            } else {
-              const buf = new ArrayBuffer(errMsg.length);
-              const bufView = new Uint8Array(buf);
-              for (let i = 0; i < errMsg.length; i++) {
-                bufView[i] = errMsg.charCodeAt(i);
-              }
-              bytes = bufView;
-            }
-
-            const stream = new ReadableStream({
-              start(controller) {
-                controller.enqueue(bytes);
-                controller.close();
-              }
-            });
-            return new Response(stream, { 
-              status: status || 500,
-              headers: { 'content-type': 'application/json' }
-            });
+            var errBody = '{"success":false,"message":"Response read error: ' + String(err) + '"}';
+            return _createSafeResponse(errBody, status || 500, 'Error', {'content-type':'application/json'});
           });
         }).catch(function(error) {
           if (reqId) logResponse(reqId, 'FAILED: ' + (error.message || String(error)));
