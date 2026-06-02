@@ -140,16 +140,18 @@ const Navbar = () => {
           <span className="font-display font-bold text-2xl text-brand-primary">Bondy</span>
         </a>
 
-        <div className="hidden lg:flex items-center gap-6 text-brand-on-surface/60 font-medium">
+        <div className="hidden lg:flex items-center gap-5 text-brand-on-surface/60 font-medium text-sm xl:text-base">
           <a href="#features" onClick={(e) => handleLinkClick(e, 'features')} className="hover:text-brand-primary transition-colors">Tính năng</a>
           <a href="#healing" onClick={(e) => handleLinkClick(e, 'healing')} className="hover:text-brand-primary transition-colors">Healing</a>
           <a href="#coach" onClick={(e) => handleLinkClick(e, 'coach')} className="hover:text-brand-primary transition-colors">AI Coach</a>
           <a href="#explore" onClick={(e) => handleLinkClick(e, 'explore')} className="hover:text-brand-primary transition-colors">Khám phá</a>
+          <a href="#comparison" onClick={(e) => handleLinkClick(e, 'comparison')} className="hover:text-brand-primary transition-colors">So sánh</a>
+          <a href="#feedback" onClick={(e) => handleLinkClick(e, 'feedback')} className="hover:text-brand-primary transition-colors">Đánh giá</a>
           <a href="#security" onClick={(e) => handleLinkClick(e, 'security')} className="hover:text-brand-primary transition-colors">An toàn</a>
           <a href="#faq" onClick={(e) => handleLinkClick(e, 'faq')} className="hover:text-brand-primary transition-colors">FAQ</a>
         </div>
 
-        <a href="#download" onClick={(e) => handleLinkClick(e, 'download')} className="hidden lg:block accent-gradient text-white font-bold py-2.5 px-6 rounded-full hover:shadow-lg transition-all text-center">
+        <a href="#download" onClick={(e) => handleLinkClick(e, 'download')} className="hidden lg:block accent-gradient text-white font-bold py-2.5 px-6 rounded-full hover:shadow-lg transition-all text-center text-sm">
           Tải ứng dụng
         </a>
 
@@ -170,6 +172,8 @@ const Navbar = () => {
             <a href="#healing" className="text-xl font-medium" onClick={(e) => { setIsOpen(false); handleLinkClick(e, 'healing'); }}>Healing</a>
             <a href="#coach" className="text-xl font-medium" onClick={(e) => { setIsOpen(false); handleLinkClick(e, 'coach'); }}>AI Coach</a>
             <a href="#explore" className="text-xl font-medium" onClick={(e) => { setIsOpen(false); handleLinkClick(e, 'explore'); }}>Khám phá</a>
+            <a href="#comparison" className="text-xl font-medium" onClick={(e) => { setIsOpen(false); handleLinkClick(e, 'comparison'); }}>So sánh</a>
+            <a href="#feedback" className="text-xl font-medium" onClick={(e) => { setIsOpen(false); handleLinkClick(e, 'feedback'); }}>Đánh giá</a>
             <a href="#security" className="text-xl font-medium" onClick={(e) => { setIsOpen(false); handleLinkClick(e, 'security'); }}>An toàn</a>
             <a href="#faq" className="text-xl font-medium" onClick={(e) => { setIsOpen(false); handleLinkClick(e, 'faq'); }}>FAQ</a>
             <a href="#download" className="accent-gradient text-white font-bold py-4 rounded-full mt-2 text-center" onClick={(e) => { setIsOpen(false); handleLinkClick(e, 'download'); }}>
@@ -1689,6 +1693,38 @@ const Security = () => {
 const DownloadSection = () => {
   return (
     <section id="download" className="py-24 max-w-7xl mx-auto px-6">
+      {/* Thống kê chỉ số uy tín (Social Proof Stats) */}
+      <div className="mb-24">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+          {[
+            { value: 500000, suffix: "+", label: "Lượt tải ứng dụng", desc: "Android APK & iOS PWA", color: "text-brand-primary" },
+            { value: 4.8, suffix: "★", label: "Đánh giá cộng đồng", desc: "Trên AppStore / PlayStore", color: "text-amber-500", isDecimal: true },
+            { value: 1200000, suffix: "+", label: "Kết nối thấu cảm", desc: "Ghép đôi thành công", color: "text-brand-secondary" },
+            { value: 92, suffix: "%", label: "Cảm thấy bình yên hơn", desc: "Giảm lo âu & stress", color: "text-brand-tertiary" }
+          ].map((item, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 25 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+              className="frosted-glass rounded-2xl p-6 text-center shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden group border border-brand-outline-variant/40"
+            >
+              <div className="absolute inset-0 bg-brand-primary/3 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <h3 className={`text-4xl md:text-5xl font-extrabold mb-2 font-display ${item.color}`}>
+                {item.isDecimal ? (
+                  <span>4.8★</span>
+                ) : (
+                  <AnimatedCounter value={item.value} suffix={item.suffix} />
+                )}
+              </h3>
+              <p className="font-bold text-brand-on-surface text-sm mb-1">{item.label}</p>
+              <p className="text-xs text-brand-on-surface-variant font-medium">{item.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
       <div className="text-center mb-16">
         <h2 className="text-4xl md:text-5xl font-bold mb-4 font-display">Tải và Cài đặt Bondy</h2>
         <p className="text-xl text-brand-on-surface-variant max-w-2xl mx-auto">
@@ -2007,6 +2043,498 @@ const ScrollToTopButton = () => {
   );
 };
 
+// --- ANIME COUNTER COMPONENT ---
+const AnimatedCounter = ({ value, duration = 2000, suffix = "" }: { value: number; duration?: number; suffix?: string }) => {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    let start = 0;
+    const end = value;
+    if (start === end) return;
+
+    let startTime: number | null = null;
+
+    const animate = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = timestamp - startTime;
+      const rate = Math.min(progress / duration, 1);
+      
+      const easeRate = rate * (2 - rate);
+      const currentCount = Math.floor(easeRate * (end - start) + start);
+      
+      setCount(currentCount);
+
+      if (rate < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        setCount(end);
+      }
+    };
+
+    requestAnimationFrame(animate);
+  }, [value, duration]);
+
+  const formattedCount = count.toLocaleString('en-US');
+
+  return <span>{formattedCount}{suffix}</span>;
+};
+
+// --- COMPARISON SECTION COMPONENT ---
+const ComparisonSection = () => {
+  const comparisonItems = [
+    {
+      feature: "Triết lý kết nối",
+      bondy: "Chậm và thấu cảm (Slow & Mindful). Khuyến khích trò chuyện chân thành và thấu hiểu chiều sâu.",
+      others: "Vuốt nhanh liên tục (Fast Swipe & Dopamine loop). Tập trung kích thích sự bốc đồng dựa trên ngoại hình."
+    },
+    {
+      feature: "Cơ sở ghép đôi",
+      bondy: "Tần số cảm xúc & Trị số tâm lý. Kết nối dựa trên khảo sát MBTI, giá trị sống và trạng thái tinh thần.",
+      others: "Ngoại hình hào nhoáng & Vị trí địa lý. Thường dẫn đến những cuộc gặp gỡ hời hợt, không bền vững."
+    },
+    {
+      feature: "Hỗ trợ giao tiếp",
+      bondy: "Bondy AI Coach 24/7. Đồng hành lắng nghe cảm xúc, gợi ý câu phá băng tinh tế và gỡ rối khi trò chuyện.",
+      others: "Tự biên tự diễn. Dễ rơi vào ngõ cụt, đối phương im lặng hoặc bị 'ghost' mà không rõ lý do."
+    },
+    {
+      feature: "Chăm sóc tinh thần",
+      bondy: "Healing Space & Mood Tracker. Có không gian riêng để check-in cảm xúc, hít thở chánh niệm và đọc podcast chữa lành.",
+      others: "Không có. Chỉ đơn thuần là một nền tảng nhắn tin và quẹt thẻ, bỏ quên sức khỏe tinh thần của người dùng."
+    },
+    {
+      feature: "Bảo mật & Môi trường",
+      bondy: "An toàn tuyệt đối. AI lọc ngôn từ độc hại tự động, chặn tin nhắn rác, xác thực ảnh nghiêm ngặt tránh catfishing.",
+      others: "Báo cáo thủ công. Việc xử lý tài khoản ảo, lừa đảo hoặc quấy rối thường diễn ra chậm trễ."
+    }
+  ];
+
+  return (
+    <section id="comparison" className="py-24 bg-brand-surface-container-low rounded-sanctuary-xl mt-24">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <div className="inline-flex items-center gap-2 bg-[#FFEFE9] text-brand-primary px-4 py-2 rounded-full mb-6 font-semibold text-sm border border-[#FCDCCE]">
+            <Sparkles size={16} /> Triết lý khác biệt
+          </div>
+          <h2 className="text-4xl md:text-6xl font-bold mb-6">Bước ra khỏi vòng xoáy &ldquo;vuốt vô hồn&rdquo;</h2>
+          <p className="text-lg text-brand-on-surface-variant leading-relaxed">
+            Hẹn hò không chỉ là những lượt quẹt dựa trên vẻ ngoài. Bondy được thiết kế để mang lại sự gắn kết chân thành, an lành và có chiều sâu thực sự.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+          {/* Card 1: Bondy */}
+          <motion.div 
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="frosted-glass rounded-sanctuary-xl p-8 md:p-12 shadow-sanctuary border-2 border-brand-primary/30 relative overflow-hidden group flex flex-col justify-between"
+            style={{ background: 'linear-gradient(180deg, rgba(255, 253, 251, 0.9) 0%, rgba(255, 240, 235, 0.95) 100%)' }}
+          >
+            <div className="absolute top-0 right-0 w-80 h-80 bg-brand-primary/10 rounded-full blur-[90px] -mr-32 -mt-32 group-hover:bg-brand-primary/15 transition-all duration-700"></div>
+            
+            <div className="relative z-10">
+              <div className="flex justify-between items-center mb-8">
+                <div className="flex items-center gap-3">
+                  <img src="/bondy-heart-icon.png" alt="Bondy Logo" className="h-12 w-12 rounded-full bg-white p-0.5 border border-brand-primary/20 shadow-md" />
+                  <div>
+                    <h3 className="text-3xl font-bold text-brand-primary tracking-tight">Hẹn hò Bondy</h3>
+                    <p className="text-xs text-brand-secondary font-bold tracking-wider uppercase mt-0.5">Thánh đường thấu cảm</p>
+                  </div>
+                </div>
+                <span className="bg-brand-primary text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">
+                  Lựa chọn Chữa lành
+                </span>
+              </div>
+
+              <div className="space-y-6">
+                {comparisonItems.map((item, index) => (
+                  <div key={index} className="flex gap-4 border-b border-brand-primary/10 pb-5 last:border-0 last:pb-0">
+                    <div className="w-8 h-8 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center shrink-0 font-bold text-sm">
+                      ✓
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-brand-on-surface text-base mb-1">{item.feature}</h4>
+                      <p className="text-brand-on-surface-variant text-sm leading-relaxed">{item.bondy}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Card 2: Other Dating Apps */}
+          <motion.div 
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="bg-brand-surface border-2 border-brand-outline rounded-sanctuary-xl p-8 md:p-12 shadow-sm relative overflow-hidden group flex flex-col justify-between"
+          >
+            <div className="relative z-10">
+              <div className="flex justify-between items-center mb-8">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-neutral-100 flex items-center justify-center border border-neutral-200 shrink-0 shadow-sm text-neutral-400">
+                    <Users size={24} />
+                  </div>
+                  <div>
+                    <h3 className="text-3xl font-bold text-neutral-500 tracking-tight">Dating Apps Khác</h3>
+                    <p className="text-xs text-neutral-400 font-bold tracking-wider uppercase mt-0.5">Hẹn hò nhanh hời hợt</p>
+                  </div>
+                </div>
+                <span className="bg-neutral-100 text-neutral-500 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider border border-neutral-200">
+                  Thông thường
+                </span>
+              </div>
+
+              <div className="space-y-6">
+                {comparisonItems.map((item, index) => (
+                  <div key={index} className="flex gap-4 border-b border-neutral-100 pb-5 last:border-0 last:pb-0">
+                    <div className="w-8 h-8 rounded-full bg-neutral-50 text-neutral-400 flex items-center justify-center shrink-0 font-bold text-sm">
+                      ✗
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-neutral-600 text-base mb-1">{item.feature}</h4>
+                      <p className="text-neutral-500 text-sm leading-relaxed">{item.others}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// --- INTERACTIVE FEEDBACK & REVIEW SECTION ---
+const FeedbackSection = () => {
+  const defaultReviews = [
+    {
+      id: 1,
+      name: "Nguyễn Khánh Linh",
+      avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
+      rating: 5,
+      status: "Đã kết đôi thành công",
+      emoji: "🧘‍♀️",
+      mood: "Bình yên",
+      text: "Mình từng áp lực kinh khủng với việc quẹt Tinder chỉ nhìn mặt rồi nói dăm ba câu nhạt nhẽo. Sang Bondy, tính năng AI Coach gợi ý mở lời cực thấu cảm, mình và bạn trai hiện tại đã nói chuyện thâu đêm suốt sáng về tâm lý học và sở thích đọc sách."
+    },
+    {
+      id: 2,
+      name: "Trần Thế Minh",
+      avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
+      rating: 5,
+      status: "Đang hẹn hò",
+      emoji: "🥰",
+      mood: "Yêu đời",
+      text: "Healing Space của Bondy thực sự là một cứu cảnh cho một lập trình viên overthinking như mình. Vừa có nơi thở chánh niệm lúc stress, vừa tìm được một bạn nữ đồng điệu đến 95% trị số tính cách. Vote 5 sao!"
+    },
+    {
+      id: 3,
+      name: "Phạm Thảo Vy",
+      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
+      rating: 4,
+      status: "Đã kết đôi",
+      emoji: "😊",
+      mood: "Hạnh phúc",
+      text: "App giao diện siêu xinh, xịn sò, không có quảng cáo rác. Thích nhất là không có cảm giác xô bồ, hối hả. Những câu hỏi khám phá bản thân trước khi ghép đôi thực sự giúp lọc được những người không cùng tần số."
+    }
+  ];
+
+  const [reviews, setReviews] = useState<typeof defaultReviews>([]);
+  const [showForm, setShowForm] = useState(false);
+  
+  // Form states
+  const [name, setName] = useState("");
+  const [text, setText] = useState("");
+  const [rating, setRating] = useState(5);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [status, setStatus] = useState("Độc thân");
+  const [selectedEmoji, setSelectedEmoji] = useState("🧘‍♀️");
+  const [emojiMood, setEmojiMood] = useState("Bình yên");
+
+  // Hearts animation state
+  const [floatingHearts, setFloatingHearts] = useState<Array<{ id: number; left: number; delay: number }>>([]);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("bondy_reviews");
+    if (saved) {
+      try {
+        setReviews(JSON.parse(saved));
+      } catch (e) {
+        setReviews(defaultReviews);
+      }
+    } else {
+      setReviews(defaultReviews);
+    }
+  }, []);
+
+  const handleEmojiSelect = (emoji: string, mood: string) => {
+    setSelectedEmoji(emoji);
+    setEmojiMood(mood);
+  };
+
+  const triggerHeartsAnimation = () => {
+    const newHearts = Array.from({ length: 15 }).map((_, i) => ({
+      id: Date.now() + i,
+      left: Math.random() * 100,
+      delay: Math.random() * 0.8
+    }));
+    setFloatingHearts(newHearts);
+    setTimeout(() => {
+      setFloatingHearts([]);
+    }, 2500);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim() || !text.trim()) return;
+
+    const newReview = {
+      id: Date.now(),
+      name: name.trim(),
+      avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
+      rating,
+      status: status,
+      emoji: selectedEmoji,
+      mood: emojiMood,
+      text: text.trim()
+    };
+
+    const updated = [newReview, ...reviews];
+    setReviews(updated);
+    localStorage.setItem("bondy_reviews", JSON.stringify(updated));
+
+    setName("");
+    setText("");
+    setRating(5);
+    setStatus("Độc thân");
+    setSelectedEmoji("🧘‍♀️");
+    setEmojiMood("Bình yên");
+    setShowForm(false);
+
+    triggerHeartsAnimation();
+  };
+
+  return (
+    <section id="feedback" className="py-24 max-w-7xl mx-auto px-6 relative overflow-hidden">
+      {/* Floating Hearts Container */}
+      <div className="absolute inset-0 pointer-events-none z-50 overflow-hidden">
+        {floatingHearts.map((heart) => (
+          <motion.div
+            key={heart.id}
+            initial={{ opacity: 0, y: "100vh", scale: 0.5 }}
+            animate={{ 
+              opacity: [0, 1, 1, 0], 
+              y: "-20vh", 
+              x: ["0px", `${(Math.random() - 0.5) * 80}px`, `${(Math.random() - 0.5) * 160}px`],
+              scale: [0.5, 1.2, 1, 0.6] 
+            }}
+            transition={{ duration: 2.2, delay: heart.delay, ease: "easeOut" }}
+            className="absolute text-brand-primary text-3xl bottom-0"
+            style={{ left: `${heart.left}%` }}
+          >
+            ❤️
+          </motion.div>
+        ))}
+      </div>
+
+      <div className="text-center max-w-3xl mx-auto mb-16">
+        <div className="inline-flex items-center gap-2 bg-[#F3EFEA] text-brand-on-surface-variant px-4 py-2 rounded-full mb-6 font-semibold text-sm border border-brand-outline-variant/40">
+          <HeartHandshake size={16} className="text-brand-primary" /> Tiếng nói từ Cộng đồng
+        </div>
+        <h2 className="text-4xl md:text-5xl font-bold mb-4 font-display">Những câu chuyện gắn kết thực tế</h2>
+        <p className="text-lg text-brand-on-surface-variant leading-relaxed">
+          Lắng nghe những chia sẻ chân thật nhất từ những người dùng đã tìm thấy sự bình yên và tri kỷ của mình thông qua ứng dụng Bondy.
+        </p>
+        
+        <button
+          onClick={() => setShowForm(!showForm)}
+          className="mt-8 accent-gradient text-white font-bold py-3.5 px-8 rounded-full shadow-md hover:scale-105 transition-all cursor-pointer inline-flex items-center gap-2"
+        >
+          {showForm ? "Đóng Form Đánh Giá" : "Viết Đánh Giá Của Bạn"}
+        </button>
+      </div>
+
+      {/* Review Submission Form with Smooth Transition */}
+      <AnimatePresence>
+        {showForm && (
+          <motion.div
+            initial={{ opacity: 0, height: 0, y: -20 }}
+            animate={{ opacity: 1, height: "auto", y: 0 }}
+            exit={{ opacity: 0, height: 0, y: -20 }}
+            transition={{ duration: 0.4 }}
+            className="max-w-2xl mx-auto mb-16 frosted-glass rounded-sanctuary-lg p-6 md:p-8 shadow-sanctuary overflow-hidden border border-brand-primary/20 relative"
+          >
+            <h3 className="text-2xl font-bold mb-6 text-brand-on-surface flex items-center gap-2">
+              <Sparkles size={22} className="text-brand-primary" /> Chia sẻ trải nghiệm của bạn
+            </h3>
+
+            <form onSubmit={handleSubmit} className="space-y-6 text-left">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label htmlFor="reviewer-name" className="block text-sm font-bold text-brand-on-surface mb-2">Họ và Tên</label>
+                  <input
+                    type="text"
+                    id="reviewer-name"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Ví dụ: Hoàng Long, Minh Thư..."
+                    className="w-full bg-white border border-brand-outline-variant/60 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-primary transition-colors"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="reviewer-status" className="block text-sm font-bold text-brand-on-surface mb-2">Trạng thái mối quan hệ</label>
+                  <select
+                    id="reviewer-status"
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value)}
+                    className="w-full bg-white border border-brand-outline-variant/60 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-primary transition-colors cursor-pointer"
+                  >
+                    <option value="Độc thân">Độc thân (Đang trải nghiệm)</option>
+                    <option value="Đang hẹn hò">Đang hẹn hò</option>
+                    <option value="Đã kết đôi">Đã kết đôi</option>
+                    <option value="Đã tìm thấy tri kỷ">Đã tìm thấy tri kỷ trên Bondy</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-brand-on-surface mb-2">Điểm đánh giá (Rating)</label>
+                <div className="flex items-center gap-1.5">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setRating(star)}
+                      onMouseEnter={() => setHoverRating(star)}
+                      onMouseLeave={() => setHoverRating(0)}
+                      className="cursor-pointer transition-transform hover:scale-125 focus:outline-none"
+                    >
+                      <Star
+                        size={28}
+                        className={`transition-colors ${
+                          star <= (hoverRating || rating)
+                            ? "text-amber-400 fill-amber-400"
+                            : "text-neutral-200 fill-transparent"
+                        }`}
+                      />
+                    </button>
+                  ))}
+                  <span className="text-xs text-neutral-400 font-bold ml-2">
+                    {rating === 5 ? "Rất hài lòng!" : rating === 4 ? "Hài lòng" : rating === 3 ? "Bình thường" : "Cần cải thiện"}
+                  </span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-brand-on-surface mb-2">Cảm xúc của bạn lúc này</label>
+                <div className="flex flex-wrap gap-2.5">
+                  {[
+                    { emoji: "🧘‍♀️", mood: "Bình yên" },
+                    { emoji: "🥰", mood: "Yêu đời" },
+                    { emoji: "😊", mood: "Hạnh phúc" },
+                    { emoji: "🚀", mood: "Hào hứng" },
+                    { emoji: "🌿", mood: "Tự nhiên" }
+                  ].map((item) => (
+                    <button
+                      key={item.mood}
+                      type="button"
+                      onClick={() => handleEmojiSelect(item.emoji, item.mood)}
+                      className={`px-3 py-2 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+                        selectedEmoji === item.emoji
+                          ? "bg-brand-primary/10 border-brand-primary text-brand-primary scale-105"
+                          : "bg-white border-brand-outline-variant/60 hover:bg-neutral-50"
+                      }`}
+                    >
+                      <span className="text-base">{item.emoji}</span>
+                      <span>{item.mood}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="reviewer-content" className="block text-sm font-bold text-brand-on-surface mb-2">Đánh giá / Câu chuyện của bạn</label>
+                <textarea
+                  id="reviewer-content"
+                  required
+                  rows={4}
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
+                  placeholder="Hãy chia sẻ cảm nhận chân thật của bạn về Healing Space, AI Coach hoặc cuộc trò chuyện tuyệt vời bạn có trên Bondy..."
+                  className="w-full bg-white border border-brand-outline-variant/60 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-primary transition-colors resize-none leading-relaxed"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full bg-brand-primary hover:bg-brand-primary/95 text-white font-bold py-4 rounded-xl shadow-md hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer flex items-center justify-center gap-2"
+              >
+                <Send size={16} /> Gửi đánh giá của tôi
+              </button>
+            </form>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Grid of Reviews Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left items-stretch">
+        <AnimatePresence mode="popLayout">
+          {reviews.map((item, index) => (
+            <motion.div
+              key={item.id}
+              initial={{ opacity: 0, scale: 0.9, y: 30 }}
+              whileInView={{ opacity: 1, scale: 1, y: 0 }}
+              viewport={{ once: true }}
+              exit={{ opacity: 0, scale: 0.9, y: -20 }}
+              transition={{ duration: 0.5, delay: index * 0.05 }}
+              className="frosted-glass rounded-sanctuary-lg p-8 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between border border-brand-outline-variant/40 relative group"
+            >
+              <div>
+                <div className="flex justify-between items-start mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-11 h-11 rounded-full overflow-hidden border border-brand-outline-variant shrink-0 bg-neutral-100 shadow-sm">
+                      <img src={item.avatar} alt={item.name} className="w-full h-full object-cover" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-brand-on-surface text-sm leading-tight">{item.name}</h4>
+                      <span className="text-[10px] text-brand-primary font-bold mt-1 inline-block bg-brand-primary/10 px-2 py-0.5 rounded-full border border-brand-primary/15">
+                        {item.status}
+                      </span>
+                    </div>
+                  </div>
+                  <span className="text-xl shrink-0 bg-brand-surface-container p-1 rounded-full w-8 h-8 flex items-center justify-center shadow-xs border border-brand-outline" title={`Tâm trạng: ${item.mood}`}>
+                    {item.emoji}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-0.5 mb-4">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star
+                      key={i}
+                      size={14}
+                      className={i < item.rating ? "text-amber-400 fill-amber-400" : "text-neutral-200 fill-transparent"}
+                    />
+                  ))}
+                </div>
+
+                <p className="text-brand-on-surface-variant text-sm leading-relaxed italic mb-4">
+                  &ldquo;{item.text}&rdquo;
+                </p>
+              </div>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
+    </section>
+  );
+};
+
 export default function App() {
   return (
     <div className="min-h-screen relative overflow-x-hidden">
@@ -2021,8 +2549,10 @@ export default function App() {
       <HealingSpace />
       <LoveSpace />
       <BentoFeatures />
+      <ComparisonSection />
       <Security />
       <DownloadSection />
+      <FeedbackSection />
       <FAQ />
       <Footer />
       <ScrollToTopButton />
