@@ -1695,7 +1695,7 @@ const DownloadSection = () => {
     <section id="download" className="py-24 max-w-7xl mx-auto px-6">
       {/* Thống kê chỉ số uy tín (Social Proof Stats) */}
       <div className="mb-24">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
             { value: 500000, suffix: "+", label: "Lượt tải ứng dụng", desc: "Android APK & iOS PWA", color: "text-brand-primary" },
             { value: 4.8, suffix: "★", label: "Đánh giá cộng đồng", desc: "Trên AppStore / PlayStore", color: "text-amber-500", isDecimal: true },
@@ -1711,7 +1711,7 @@ const DownloadSection = () => {
               className="frosted-glass rounded-2xl p-6 text-center shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden group border border-brand-outline-variant/40"
             >
               <div className="absolute inset-0 bg-brand-primary/3 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <h3 className={`text-4xl md:text-5xl font-extrabold mb-2 font-display ${item.color}`}>
+              <h3 className={`text-2xl sm:text-3xl md:text-4xl lg:text-3xl xl:text-4xl font-extrabold mb-2 tracking-tight font-display ${item.color}`}>
                 {item.isDecimal ? (
                   <span>4.8★</span>
                 ) : (
