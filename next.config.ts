@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/api-proxy/:path*",
-        destination: "http://103.149.86.25:3000/api/:path*",
+        destination: "https://103.149.86.25/api/:path*",
       },
       {
         source: "/web/assets/.env",
@@ -13,11 +13,11 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/uploads/:path*",
-        destination: "http://103.149.86.25:3000/uploads/:path*",
+        destination: "https://103.149.86.25/api/uploads/:path*",
       },
       {
         source: "/api/uploads/:path*",
-        destination: "http://103.149.86.25:3000/api/uploads/:path*",
+        destination: "https://103.149.86.25/api/uploads/:path*",
       },
     ];
   },
