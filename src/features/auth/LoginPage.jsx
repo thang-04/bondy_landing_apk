@@ -35,7 +35,7 @@ export function LoginPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-primary/5 p-2">
-            <img src={logo} alt="Bondy Logo" className="h-8 w-8 object-contain" />
+            <img src={logo.src || logo} alt="Bondy Logo" className="h-8 w-8 object-contain" />
           </div>
           <CardTitle className="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-[#FF6B6B] via-[#EA2A5A] to-[#9F2AEA] bg-clip-text text-transparent inline-block">
             Bondy Admin

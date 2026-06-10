@@ -28,7 +28,7 @@ export function Sidebar() {
   return (
     <aside className="hidden md:flex h-screen w-64 flex-col border-r bg-card">
       <div className="flex h-16 items-center gap-3 border-b px-6">
-        <img src={logo} alt="Bondy Logo" className="h-7 w-7 object-contain" />
+        <img src={logo.src || logo} alt="Bondy Logo" className="h-7 w-7 object-contain" />
         <span className="text-lg font-bold tracking-tight bg-gradient-to-r from-[#FF6B6B] via-[#EA2A5A] to-[#9F2AEA] bg-clip-text text-transparent">
           Bondy Admin
         </span>
