@@ -90,26 +90,26 @@ section[id] {
 }
 
 .admin-theme-scope {
-  --background: 0 0% 100%;
-  --foreground: 222.2 47.4% 11.2%;
-  --muted: 210 40% 96.1%;
-  --muted-foreground: 215.4 16.3% 46.9%;
+  --background: 36 30% 99%;
+  --foreground: 220 15% 16%;
+  --muted: 36 20% 95%;
+  --muted-foreground: 220 10% 50%;
   --popover: 0 0% 100%;
-  --popover-foreground: 222.2 47.4% 11.2%;
+  --popover-foreground: 220 15% 16%;
   --card: 0 0% 100%;
-  --card-foreground: 222.2 47.4% 11.2%;
-  --border: 214.3 31.8% 91.4%;
-  --input: 214.3 31.8% 91.4%;
-  --primary: 0 100% 71%;
+  --card-foreground: 220 15% 16%;
+  --border: 36 15% 91%;
+  --input: 36 15% 91%;
+  --primary: 11 100% 61%; /* Bondy Coral #FF5A36 */
   --primary-foreground: 0 0% 100%;
-  --secondary: 210 40% 96.1%;
-  --secondary-foreground: 222.2 47.4% 11.2%;
-  --accent: 210 40% 96.1%;
-  --accent-foreground: 222.2 47.4% 11.2%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 210 40% 98%;
-  --ring: 0 100% 71%;
-  --radius: 0.5rem;
+  --secondary: 262 100% 65%; /* Bondy Violet #8B4AFF */
+  --secondary-foreground: 0 0% 100%;
+  --accent: 262 100% 97%;
+  --accent-foreground: 262 90% 45%;
+  --destructive: 354 85% 56%;
+  --destructive-foreground: 0 0% 100%;
+  --ring: 11 100% 61%;
+  --radius: 1rem;
 
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
@@ -119,3 +119,31 @@ section[id] {
 .admin-theme-scope * {
   border-color: hsl(var(--border));
 }
+
+/* Custom premium design system elements for admin dashboard */
+.admin-sidebar-gradient {
+  background: linear-gradient(180deg, #090710 0%, #110B22 60%, #1A0D32 100%);
+}
+
+.admin-card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.admin-card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px -10px rgba(255, 90, 54, 0.08), 0 4px 12px -5px rgba(139, 74, 255, 0.03);
+}
+
+.admin-glass-panel {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.admin-glow-primary {
+  box-shadow: 0 0 15px -3px rgba(255, 90, 54, 0.3);
+}
+
+.admin-glow-secondary {
+  box-shadow: 0 0 15px -3px rgba(139, 74, 255, 0.3);
+}
+

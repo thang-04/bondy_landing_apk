@@ -49,10 +49,10 @@ function fetchRecentReports() {
 }
 
 const reportStatusConfig = {
-  CREATED: { label: 'Mới tạo', variant: 'destructive', icon: AlertTriangle },
-  UNDER_REVIEW: { label: 'Đang xem xét', variant: 'warning', icon: Activity },
-  RESOLVED: { label: 'Đã giải quyết', variant: 'success', icon: CheckCircle2 },
-  REJECTED: { label: 'Đã từ chối', variant: 'muted', icon: XCircle },
+  CREATED: { label: 'Mới tạo', className: 'bg-rose-500/10 text-rose-600 border border-rose-500/20', icon: AlertTriangle },
+  UNDER_REVIEW: { label: 'Đang xem xét', className: 'bg-amber-500/10 text-amber-600 border border-amber-500/20', icon: Activity },
+  RESOLVED: { label: 'Đã giải quyết', className: 'bg-emerald-500/10 text-emerald-600 border border-emerald-500/20', icon: CheckCircle2 },
+  REJECTED: { label: 'Đã từ chối', className: 'bg-zinc-500/10 text-zinc-500 border border-zinc-500/20', icon: XCircle },
 }
 
 const reasonConfig = {
@@ -111,7 +111,7 @@ export function DashboardPage() {
 
   if (isStatsLoading) {
     return (
-      <div className="flex h-64 items-center justify-center text-sm text-muted-foreground">
+      <div className="flex h-64 items-center justify-center text-sm text-muted-foreground animate-pulse">
         Đang tải thông tin tổng quan...
       </div>
     )
@@ -119,7 +119,7 @@ export function DashboardPage() {
 
   if (isStatsError) {
     return (
-      <div className="flex h-64 items-center justify-center text-sm text-destructive font-medium">
+      <div className="flex h-64 items-center justify-center text-sm text-destructive font-medium border border-destructive/20 rounded-xl bg-destructive/5">
         Lỗi tải thống kê: {statsError?.message || 'Không thể kết nối API'}
       </div>
     )
@@ -134,43 +134,48 @@ export function DashboardPage() {
       value: s.users?.total ?? 0,
       hint: `${s.users?.active ?? 0} đang hoạt động`,
       icon: Users,
-      gradient: 'from-orange-500/10 to-coral-500/10',
+      gradient: 'from-[#FF5A36]/8 to-transparent border-t-2 border-t-[#FF5A36]/60',
+      iconBg: 'bg-[#FF5A36]/10 text-[#FF5A36]',
     },
     {
       label: 'Bộ khảo sát',
       value: s.surveys?.total ?? 0,
-      hint: `${s.surveys?.submissionsTotal ?? 0} lượt nộp tổng cộng`,
+      hint: `${s.surveys?.submissionsTotal ?? 0} lượt nộp`,
       icon: ClipboardList,
-      gradient: 'from-pink-500/10 to-red-500/10',
+      gradient: 'from-[#EA2A5A]/8 to-transparent border-t-2 border-t-[#EA2A5A]/60',
+      iconBg: 'bg-[#EA2A5A]/10 text-[#EA2A5A]',
     },
     {
       label: 'Lượt khảo sát hôm nay',
       value: s.surveys?.submissionsToday ?? 0,
       hint: 'tính từ 00:00 hôm nay',
       icon: FileBarChart,
-      gradient: 'from-purple-500/10 to-indigo-500/10',
+      gradient: 'from-[#8B4AFF]/8 to-transparent border-t-2 border-t-[#8B4AFF]/60',
+      iconBg: 'bg-[#8B4AFF]/10 text-[#8B4AFF]',
     },
     {
       label: 'Lượt tải APK',
       value: localStatsData?.downloads ?? 0,
-      hint: 'Đếm từ 0 qua click nút APK',
+      hint: 'Đếm từ click nút APK',
       icon: Download,
-      gradient: 'from-emerald-500/10 to-teal-500/10',
+      gradient: 'from-[#10B981]/8 to-transparent border-t-2 border-t-[#10B981]/60',
+      iconBg: 'bg-[#10B981]/10 text-[#10B981]',
     },
     {
       label: 'Lượt truy cập Web',
       value: localStatsData?.visits ?? 0,
-      hint: 'Tổng lượt load trang Landing',
+      hint: 'Tổng lượt load Landing',
       icon: Eye,
-      gradient: 'from-blue-500/10 to-cyan-500/10',
+      gradient: 'from-[#3B82F6]/8 to-transparent border-t-2 border-t-[#3B82F6]/60',
+      iconBg: 'bg-[#3B82F6]/10 text-[#3B82F6]',
     },
   ]
 
   const healingCards = [
-    { label: 'Bài đọc', value: s.healing?.articles ?? 0, icon: BookOpen, color: 'text-orange-500', border: 'border-l-orange-400' },
-    { label: 'Audio', value: s.healing?.audios ?? 0, icon: Headphones, color: 'text-pink-500', border: 'border-l-pink-400' },
-    { label: 'Bài tập', value: s.healing?.exercises ?? 0, icon: Activity, color: 'text-red-500', border: 'border-l-red-400' },
-    { label: 'Lộ trình', value: s.healing?.courses ?? 0, icon: Route, color: 'text-purple-500', border: 'border-l-purple-400' },
+    { label: 'Bài đọc', value: s.healing?.articles ?? 0, icon: BookOpen, color: 'text-[#FF5A36]', border: 'border-l-[#FF5A36]', bg: 'bg-[#FF5A36]/5' },
+    { label: 'Audio', value: s.healing?.audios ?? 0, icon: Headphones, color: 'text-[#EA2A5A]', border: 'border-l-[#EA2A5A]', bg: 'bg-[#EA2A5A]/5' },
+    { label: 'Bài tập', value: s.healing?.exercises ?? 0, icon: Activity, color: 'text-[#F59E0B]', border: 'border-l-[#F59E0B]', bg: 'bg-[#F59E0B]/5' },
+    { label: 'Lộ trình', value: s.healing?.courses ?? 0, icon: Route, color: 'text-[#8B4AFF]', border: 'border-l-[#8B4AFF]', bg: 'bg-[#8B4AFF]/5' },
   ]
 
   const openReportDetail = (report) => {
@@ -179,18 +184,21 @@ export function DashboardPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <div className="space-y-8 max-w-7xl mx-auto px-1">
       {/* Welcome Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#FF6B6B]/10 via-[#EA2A5A]/10 to-[#9F2AEA]/10 p-6 md:p-8 border border-primary/10">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#FF5A36]/8 via-[#EA2A5A]/6 to-[#8B4AFF]/8 p-6 md:p-8 border border-[#FF5A36]/10">
         <div className="relative z-10">
           <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-foreground flex items-center gap-2">
-            Chào mừng trở lại, <span className="bg-gradient-to-r from-[#FF6B6B] to-[#EA2A5A] bg-clip-text text-transparent">Admin</span>
+            Chào mừng trở lại, <span className="bg-gradient-to-r from-[#FF5A36] to-[#8B4AFF] bg-clip-text text-transparent">Admin</span>
           </h1>
-          <p className="text-sm text-muted-foreground mt-2 max-w-xl">
+          <p className="text-sm text-muted-foreground mt-2 max-w-xl leading-relaxed">
             Số liệu thống kê toàn bộ hệ thống chữa lành và báo cáo mới nhất. Hệ thống tự động làm mới sau mỗi 60 giây.
           </p>
         </div>
-        <div className="absolute right-0 bottom-0 top-0 w-1/3 bg-[radial-gradient(circle_at_right_bottom,rgba(255,107,107,0.15),transparent)] pointer-events-none" />
+        
+        {/* Floating Decorative Blobs */}
+        <div className="absolute right-12 top-0 h-28 w-28 rounded-full bg-[#FF5A36]/10 blur-2xl pointer-events-none" />
+        <div className="absolute right-36 bottom-0 h-24 w-24 rounded-full bg-[#8B4AFF]/10 blur-2xl pointer-events-none" />
       </div>
 
       {/* KPI Stats */}
@@ -198,17 +206,17 @@ export function DashboardPage() {
         {kpiCards.map((c) => {
           const Icon = c.icon
           return (
-            <Card key={c.label} className="overflow-hidden hover:shadow-md transition-all duration-300 group border-muted/50">
-              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                <CardTitle className="text-sm font-semibold text-muted-foreground">{c.label}</CardTitle>
-                <div className="p-2 rounded-lg bg-primary/5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                  <Icon className="h-4 w-4" />
+            <Card key={c.label} className={`overflow-hidden border border-muted/70 bg-card text-card-foreground admin-card-hover bg-gradient-to-br ${c.gradient}`}>
+              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0 p-5">
+                <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{c.label}</CardTitle>
+                <div className={`p-2.5 rounded-xl ${c.iconBg} transition-all duration-300`}>
+                  <Icon className="h-4.5 w-4.5" />
                 </div>
               </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold tracking-tight">{c.value.toLocaleString('vi-VN')}</div>
-                <p className="text-xs text-muted-foreground mt-1.5 flex items-center gap-1">
-                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary" />
+              <CardContent className="px-5 pb-5 pt-0">
+                <div className="text-3xl font-extrabold tracking-tight text-foreground">{c.value.toLocaleString('vi-VN')}</div>
+                <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1.5 font-medium">
+                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                   {c.hint}
                 </p>
               </CardContent>
@@ -218,22 +226,24 @@ export function DashboardPage() {
       </div>
 
       {/* Healing Contents Grid */}
-      <div>
-        <h2 className="text-lg font-bold text-foreground mb-3 flex items-center gap-2">
-          <Activity className="h-5 w-5 text-primary" />
-          Nội dung Healing
+      <div className="space-y-3">
+        <h2 className="text-md font-bold text-foreground flex items-center gap-2 tracking-tight">
+          <Activity className="h-5 w-5 text-[#FF5A36]" />
+          Nội dung Chữa lành
         </h2>
         <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
           {healingCards.map((c) => {
             const Icon = c.icon
             return (
-              <Card key={c.label} className={`border-l-4 ${c.border} hover:shadow-sm hover:-translate-y-0.5 transition-all duration-300`}>
-                <CardContent className="flex items-center justify-between p-4">
-                  <div className="space-y-0.5">
-                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{c.label}</p>
-                    <p className="text-xl font-extrabold">{c.value}</p>
+              <Card key={c.label} className={`border-l-4 ${c.border} bg-card admin-card-hover`}>
+                <CardContent className="flex items-center justify-between p-5">
+                  <div className="space-y-1">
+                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{c.label}</p>
+                    <p className="text-2xl font-black text-foreground">{c.value.toLocaleString('vi-VN')}</p>
                   </div>
-                  <Icon className={`h-8 w-8 ${c.color} opacity-80`} />
+                  <div className={`p-2 rounded-lg ${c.bg}`}>
+                    <Icon className={`h-6 w-6 ${c.color}`} />
+                  </div>
                 </CardContent>
               </Card>
             )
@@ -244,147 +254,145 @@ export function DashboardPage() {
       {/* Reports and Quick Actions */}
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Reports Table (Col span 2) */}
-        <Card className="lg:col-span-2 border-muted/50">
-          <CardHeader className="flex flex-row items-center justify-between pb-3">
-            <div>
+        <Card className="lg:col-span-2 border-muted/70 bg-card overflow-hidden">
+          <CardHeader className="flex flex-row items-center justify-between border-b border-muted/50 pb-4 p-5">
+            <div className="space-y-1">
               <CardTitle className="text-base font-bold flex items-center gap-2">
-                <ShieldAlert className="h-5 w-5 text-destructive" />
+                <ShieldAlert className="h-5 w-5 text-rose-500" />
                 Báo cáo mới nhất cần xử lý
               </CardTitle>
-              <CardDescription>
-                Báo cáo vi phạm từ người dùng trong hệ thống
+              <CardDescription className="text-xs">
+                Danh sách báo cáo vi phạm từ cộng đồng người dùng
               </CardDescription>
             </div>
             {reports.length > 0 && (
-              <Badge variant="outline" className="text-xs font-normal border-destructive/20 text-destructive bg-destructive/5">
+              <Badge className="text-[10px] font-bold border-rose-500/20 text-rose-600 bg-rose-500/10 shadow-none px-2 rounded-full">
                 Cần kiểm duyệt
               </Badge>
             )}
           </CardHeader>
           <CardContent className="p-0">
             {isReportsLoading ? (
-              <div className="p-8 text-center text-sm text-muted-foreground">Đang tải báo cáo...</div>
+              <div className="p-12 text-center text-sm text-muted-foreground">Đang tải báo cáo...</div>
             ) : reports.length === 0 ? (
-              <div className="p-8 text-center text-sm text-muted-foreground border-t">
+              <div className="p-12 text-center text-sm text-muted-foreground bg-muted/5">
                 Không có báo cáo nào chưa xử lý. Hệ thống an toàn!
               </div>
             ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Người báo cáo</TableHead>
-                    <TableHead>Người bị tố cáo</TableHead>
-                    <TableHead>Lý do</TableHead>
-                    <TableHead>Trạng thái</TableHead>
-                    <TableHead className="w-16"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {reports.map((r) => {
-                    const statusVal = r.status || 'CREATED'
-                    const config = reportStatusConfig[statusVal] || reportStatusConfig.CREATED
-                    const StatusIcon = config.icon
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader className="bg-muted/30">
+                    <TableRow>
+                      <TableHead className="text-xs font-bold uppercase tracking-wider text-muted-foreground py-3">Người báo cáo</TableHead>
+                      <TableHead className="text-xs font-bold uppercase tracking-wider text-muted-foreground py-3">Người bị tố cáo</TableHead>
+                      <TableHead className="text-xs font-bold uppercase tracking-wider text-muted-foreground py-3">Lý do</TableHead>
+                      <TableHead className="text-xs font-bold uppercase tracking-wider text-muted-foreground py-3">Trạng thái</TableHead>
+                      <TableHead className="w-16 py-3"></TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {reports.map((r) => {
+                      const statusVal = r.status || 'CREATED'
+                      const config = reportStatusConfig[statusVal] || reportStatusConfig.CREATED
+                      const StatusIcon = config.icon
 
-                    return (
-                      <TableRow key={r.id} className="hover:bg-muted/10">
-                        <TableCell className="font-medium">
-                          <div className="text-xs font-bold">{r.reporter?.name || '—'}</div>
-                          <div className="text-[10px] text-muted-foreground">{r.reporter?.email || '—'}</div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="text-xs font-bold">{r.targetUser?.name || '—'}</div>
-                          <div className="text-[10px] text-muted-foreground flex items-center gap-1">
-                            {r.targetUser?.email || '—'}
-                            {r.targetUser?.isActive === false && (
-                              <Badge variant="destructive" className="py-0 px-1 text-[8px]">Đã khóa</Badge>
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-xs font-medium max-w-[120px] truncate">
-                          {reasonConfig[r.reason] || r.reason}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={config.variant} className="gap-1 py-0.5 px-2 text-[10px]">
-                            <StatusIcon className="h-3 w-3" />
-                            {config.label}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => openReportDetail(r)}
-                            className="h-8 w-8 p-0"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    )
-                  })}
-                </TableBody>
-              </Table>
+                      return (
+                        <TableRow key={r.id} className="hover:bg-muted/10 transition-colors">
+                          <TableCell className="py-3.5">
+                            <div className="text-xs font-bold text-foreground">{r.reporter?.name || '—'}</div>
+                            <div className="text-[10px] text-muted-foreground/80 mt-0.5">{r.reporter?.email || '—'}</div>
+                          </TableCell>
+                          <TableCell className="py-3.5">
+                            <div className="text-xs font-bold text-foreground">{r.targetUser?.name || '—'}</div>
+                            <div className="text-[10px] text-muted-foreground/80 flex items-center gap-1.5 mt-0.5">
+                              {r.targetUser?.email || '—'}
+                              {r.targetUser?.isActive === false && (
+                                <Badge className="py-0 px-1.5 text-[8px] bg-rose-100 text-rose-600 border-none font-bold rounded-full">Đã khóa</Badge>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-xs font-semibold text-foreground py-3.5 max-w-[140px] truncate">
+                            {reasonConfig[r.reason] || r.reason}
+                          </TableCell>
+                          <TableCell className="py-3.5">
+                            <Badge className={`gap-1 py-0.5 px-2 text-[10px] shadow-none rounded-full font-semibold ${config.className}`}>
+                              <StatusIcon className="h-3 w-3 shrink-0" />
+                              {config.label}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="py-3.5 text-center">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => openReportDetail(r)}
+                              className="h-8 w-8 p-0 rounded-full hover:bg-muted"
+                            >
+                              <Eye className="h-4 w-4 text-muted-foreground hover:text-[#8B4AFF]" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      )
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
             )}
           </CardContent>
         </Card>
 
         {/* Quick Actions & Quick Guide (Col span 1) */}
-        <div className="space-y-4">
-          <Card className="border-muted/50">
-            <CardHeader className="pb-2">
+        <div className="space-y-6">
+          <Card className="border-muted/70 bg-card overflow-hidden">
+            <CardHeader className="pb-3 border-b border-muted/50 p-5">
               <CardTitle className="text-sm font-bold flex items-center gap-2">
-                <PlusCircle className="h-4 w-4 text-primary" />
+                <PlusCircle className="h-4.5 w-4.5 text-[#FF5A36]" />
                 Thao tác nhanh
               </CardTitle>
             </CardHeader>
-            <CardContent className="grid gap-2">
-              <Button asChild size="sm" variant="outline" className="justify-start gap-2 h-9">
+            <CardContent className="grid gap-2.5 p-5">
+              <Button asChild size="sm" variant="outline" className="justify-start gap-2.5 h-10 rounded-xl hover:bg-muted hover:border-muted transition-all">
                 <Link to="/surveys/new">
-                  <PlusCircle className="h-4 w-4 text-primary" />
+                  <PlusCircle className="h-4.5 w-4.5 text-[#FF5A36]" />
                   Tạo khảo sát mới
                 </Link>
               </Button>
-              <Button asChild size="sm" variant="outline" className="justify-start gap-2 h-9">
+              <Button asChild size="sm" variant="outline" className="justify-start gap-2.5 h-10 rounded-xl hover:bg-muted hover:border-muted transition-all">
                 <Link to="/healing/articles/new">
-                  <BookOpen className="h-4 w-4 text-orange-500" />
+                  <BookOpen className="h-4.5 w-4.5 text-[#FF5A36]" />
                   Đăng bài đọc mới
                 </Link>
               </Button>
-              <Button asChild size="sm" variant="outline" className="justify-start gap-2 h-9">
+              <Button asChild size="sm" variant="outline" className="justify-start gap-2.5 h-10 rounded-xl hover:bg-muted hover:border-muted transition-all">
                 <Link to="/healing/audios/new">
-                  <Headphones className="h-4 w-4 text-pink-500" />
+                  <Headphones className="h-4.5 w-4.5 text-[#EA2A5A]" />
                   Tải lên audio mới
                 </Link>
               </Button>
-              <Button asChild size="sm" variant="outline" className="justify-start gap-2 h-9">
+              <Button asChild size="sm" variant="outline" className="justify-start gap-2.5 h-10 rounded-xl hover:bg-muted hover:border-muted transition-all">
                 <Link to="/healing/plans/new">
-                  <Route className="h-4 w-4 text-purple-500" />
+                  <Route className="h-4.5 w-4.5 text-[#8B4AFF]" />
                   Tạo lộ trình chữa lành
                 </Link>
               </Button>
             </CardContent>
           </Card>
 
-          <Card className="border-muted/50">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-bold">Hướng dẫn nhanh</CardTitle>
+          <Card className="border-muted/70 bg-card overflow-hidden">
+            <CardHeader className="pb-3 border-b border-muted/50 p-5">
+              <CardTitle className="text-sm font-bold">Hướng dẫn kiểm duyệt</CardTitle>
             </CardHeader>
-            <CardContent className="text-xs space-y-3 text-muted-foreground">
-              <div className="flex gap-2.5 items-start">
-                <Badge variant="muted" className="h-5 w-5 p-0 flex items-center justify-center shrink-0">1</Badge>
-                <p>Vào <strong>Khảo sát</strong> để quản lý bộ câu hỏi & xác định dải điểm phân loại người dùng.</p>
+            <CardContent className="text-xs space-y-3.5 text-muted-foreground p-5">
+              <div className="flex gap-3 items-start">
+                <span className="h-5 w-5 rounded-full bg-[#FF5A36]/10 text-[#FF5A36] text-[10px] font-bold flex items-center justify-center shrink-0">1</span>
+                <p className="leading-relaxed">Xem xét chi tiết lý do và mô tả báo cáo từ người dùng báo cáo.</p>
               </div>
-              <div className="flex gap-2.5 items-start">
-                <Badge variant="muted" className="h-5 w-5 p-0 flex items-center justify-center shrink-0">2</Badge>
-                <p>Upload nội dung Chữa lành mới trong phần <strong>Bài đọc / Audio / Bài tập</strong>.</p>
+              <div className="flex gap-3 items-start">
+                <span className="h-5 w-5 rounded-full bg-[#EA2A5A]/10 text-[#EA2A5A] text-[10px] font-bold flex items-center justify-center shrink-0">2</span>
+                <p className="leading-relaxed">Sử dụng nút <strong>Khóa User</strong> nếu phát hiện tài khoản bị tố cáo có hành vi vi phạm nghiêm trọng.</p>
               </div>
-              <div className="flex gap-2.5 items-start">
-                <Badge variant="muted" className="h-5 w-5 p-0 flex items-center justify-center shrink-0">3</Badge>
-                <p>Vào <strong>Lộ trình</strong> để xâu chuỗi bài viết và audio cho người dùng trải nghiệm theo ngày.</p>
-              </div>
-              <div className="flex gap-2.5 items-start">
-                <Badge variant="muted" className="h-5 w-5 p-0 flex items-center justify-center shrink-0">4</Badge>
-                <p>Quản lý người dùng và theo dõi submissions của họ trong tab <strong>Người dùng</strong>.</p>
+              <div className="flex gap-3 items-start">
+                <span className="h-5 w-5 rounded-full bg-[#8B4AFF]/10 text-[#8B4AFF] text-[10px] font-bold flex items-center justify-center shrink-0">3</span>
+                <p className="leading-relaxed">Chọn <strong>Bác bỏ</strong> nếu báo cáo không chính xác, hoặc <strong>Giải quyết</strong> để hoàn tất xử lý.</p>
               </div>
             </CardContent>
           </Card>
@@ -394,76 +402,79 @@ export function DashboardPage() {
       {/* Moderation Dialog */}
       {selectedReport && (
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-base font-bold text-destructive">
-                <AlertTriangle className="h-5 w-5" />
-                Chi tiết báo cáo vi phạm
+          <DialogContent className="max-w-md p-6 rounded-2xl overflow-hidden gap-5">
+            <DialogHeader className="pb-4 border-b border-muted/60">
+              <DialogTitle className="flex items-center gap-3 text-lg font-bold text-foreground">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rose-100 text-rose-600">
+                  <ShieldAlert className="h-5 w-5" />
+                </div>
+                <div className="flex flex-col text-left">
+                  <span>Chi tiết báo cáo vi phạm</span>
+                  <span className="text-xs font-normal text-muted-foreground mt-0.5">
+                    Kiểm tra nội dung báo cáo & xử lý tài khoản
+                  </span>
+                </div>
               </DialogTitle>
-              <DialogDescription>
-                Xem chi tiết thông tin và xử lý kiểm duyệt báo cáo này
-              </DialogDescription>
             </DialogHeader>
 
-            <div className="space-y-4 py-2 text-sm">
-              <div className="grid grid-cols-3 gap-2 border-b pb-2">
-                <div className="font-semibold text-muted-foreground">Lý do:</div>
-                <div className="col-span-2 font-medium text-destructive">
-                  {reasonConfig[selectedReport.reason] || selectedReport.reason}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-2 border-b pb-2">
-                <div className="font-semibold text-muted-foreground">Mô tả:</div>
-                <div className="col-span-2 text-foreground italic bg-muted/20 p-2 rounded">
-                  {selectedReport.description || 'Không có mô tả chi tiết.'}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-2 border-b pb-2">
-                <div className="font-semibold text-muted-foreground">Người báo:</div>
-                <div className="col-span-2">
-                  <span className="font-bold">{selectedReport.reporter?.name || '—'}</span>{' '}
-                  <span className="text-muted-foreground text-xs">({selectedReport.reporter?.email || '—'})</span>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-2 border-b pb-2">
-                <div className="font-semibold text-muted-foreground">Người bị tố:</div>
-                <div className="col-span-2">
-                  <span className="font-bold text-red-500">{selectedReport.targetUser?.name || '—'}</span>{' '}
-                  <span className="text-muted-foreground text-xs">({selectedReport.targetUser?.email || '—'})</span>
-                  <div className="mt-1">
-                    Trạng thái: {' '}
-                    {selectedReport.targetUser?.isActive === false ? (
-                      <Badge variant="destructive" className="py-0 px-1 text-[10px]">Đã bị khóa tài khoản</Badge>
-                    ) : (
-                      <Badge variant="success" className="py-0 px-1 text-[10px]">Đang hoạt động</Badge>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-2">
-                <div className="font-semibold text-muted-foreground">Trạng thái báo cáo:</div>
-                <div className="col-span-2">
-                  <Badge variant={reportStatusConfig[selectedReport.status]?.variant || 'default'}>
+            <div className="space-y-4 py-1 text-sm">
+              {/* Reason and Description Card */}
+              <div className="rounded-xl border border-rose-100 bg-rose-50/20 p-4 space-y-2.5">
+                <div className="flex items-start justify-between">
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-rose-500">Lý do báo cáo</span>
+                  <Badge className={`gap-1 py-0.5 px-2 text-[9px] shadow-none rounded-full font-bold uppercase ${reportStatusConfig[selectedReport.status]?.className}`}>
                     {reportStatusConfig[selectedReport.status]?.label || selectedReport.status}
                   </Badge>
+                </div>
+                <p className="text-sm font-bold text-rose-950">
+                  {reasonConfig[selectedReport.reason] || selectedReport.reason}
+                </p>
+                {selectedReport.description && (
+                  <div className="text-xs text-rose-900 bg-white/70 p-3 rounded-lg border border-rose-100/50 italic leading-relaxed">
+                    "{selectedReport.description}"
+                  </div>
+                )}
+              </div>
+
+              {/* Involved Users Details Grid */}
+              <div className="grid gap-3 sm:grid-cols-2">
+                {/* Reporter card */}
+                <div className="rounded-xl border border-muted bg-muted/20 p-3.5 space-y-2">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Người báo cáo</span>
+                  <div>
+                    <p className="text-xs font-bold text-foreground truncate">{selectedReport.reporter?.name || '—'}</p>
+                    <p className="text-[10px] text-muted-foreground/80 truncate mt-0.5">{selectedReport.reporter?.email || '—'}</p>
+                  </div>
+                </div>
+
+                {/* Accused User card */}
+                <div className="rounded-xl border border-rose-100 bg-rose-50/10 p-3.5 space-y-2">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-rose-500">Người bị tố cáo</span>
+                  <div>
+                    <p className="text-xs font-bold text-foreground truncate">{selectedReport.targetUser?.name || '—'}</p>
+                    <p className="text-[10px] text-muted-foreground/80 truncate mt-0.5">{selectedReport.targetUser?.email || '—'}</p>
+                    <div className="mt-1.5">
+                      {selectedReport.targetUser?.isActive === false ? (
+                        <Badge className="py-0 px-2 text-[9px] bg-rose-100 text-rose-700 border-none font-bold rounded-full">Đã bị khóa</Badge>
+                      ) : (
+                        <Badge className="py-0 px-2 text-[9px] bg-emerald-100 text-emerald-700 border-none font-bold rounded-full">Đang hoạt động</Badge>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <DialogFooter className="flex flex-col sm:flex-row gap-2 mt-4 sm:justify-between w-full">
-              {/* Ban User option - Destructive action */}
+            <DialogFooter className="flex flex-col sm:flex-row gap-2 mt-2 sm:justify-between w-full border-t border-muted/60 pt-4">
+              {/* Ban action */}
               {selectedReport.targetUser?.isActive !== false && (
                 <Button
                   variant="destructive"
-                  className="sm:mr-auto"
+                  className="sm:mr-auto rounded-full text-xs h-9 hover:bg-rose-600 transition-all font-semibold"
                   disabled={moderateMutation.isLoading}
                   onClick={() => moderateMutation.mutate({ id: selectedReport.id, action: 'BAN_USER' })}
                 >
-                  <ShieldAlert className="h-4 w-4 mr-1.5" />
+                  <ShieldAlert className="h-4 w-4 mr-1.5 shrink-0" />
                   Khóa User này
                 </Button>
               )}
@@ -472,6 +483,7 @@ export function DashboardPage() {
                 {selectedReport.status === 'CREATED' && (
                   <Button
                     variant="outline"
+                    className="rounded-full text-xs h-9 hover:bg-muted hover:border-muted transition-all font-medium"
                     disabled={moderateMutation.isLoading}
                     onClick={() => moderateMutation.mutate({ id: selectedReport.id, action: 'REVIEW' })}
                   >
@@ -482,16 +494,18 @@ export function DashboardPage() {
                   <>
                     <Button
                       variant="outline"
-                      className="hover:bg-red-50 hover:text-red-600 hover:border-red-200"
+                      className="rounded-full text-xs h-9 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all font-medium"
                       disabled={moderateMutation.isLoading}
                       onClick={() => moderateMutation.mutate({ id: selectedReport.id, action: 'REJECT' })}
                     >
                       Bác bỏ
                     </Button>
                     <Button
+                      className="rounded-full text-xs h-9 bg-[#FF5A36] hover:bg-[#E04F2E] text-white transition-all shadow-sm shadow-primary/20 font-semibold"
                       disabled={moderateMutation.isLoading}
                       onClick={() => moderateMutation.mutate({ id: selectedReport.id, action: 'RESOLVE' })}
                     >
+                      <CheckCircle2 className="h-4 w-4 mr-1.5 shrink-0" />
                       Giải quyết
                     </Button>
                   </>
