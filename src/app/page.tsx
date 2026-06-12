@@ -2272,7 +2272,7 @@ const FeedbackSection = () => {
   const [floatingHearts, setFloatingHearts] = useState<Array<{ id: number; left: number; delay: number }>>([]);
 
   useEffect(() => {
-    fetch('/api/reviews')
+    fetch('/api-proxy/reviews')
       .then((res) => res.json())
       .then((resData) => {
         if (resData.success && Array.isArray(resData.data)) {
@@ -2317,7 +2317,7 @@ const FeedbackSection = () => {
       text: text.trim()
     };
 
-    fetch('/api/reviews', {
+    fetch('/api-proxy/reviews', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
