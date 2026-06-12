@@ -4,6 +4,14 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
+        source: "/api-proxy/admin/reviews/:path*",
+        destination: "/api/reviews/:path*",
+      },
+      {
+        source: "/api-proxy/admin/reviews",
+        destination: "/api/reviews",
+      },
+      {
         source: "/api-proxy/:path*",
         destination: "https://103.149.86.25/api/:path*",
       },

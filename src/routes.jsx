@@ -17,6 +17,7 @@ import { ExercisesListPage } from '@/features/healing/exercises/ExercisesListPag
 import { ExerciseFormPage } from '@/features/healing/exercises/ExerciseFormPage'
 import { PlansListPage } from '@/features/healing/plans/PlansListPage'
 import { PlanFormPage } from '@/features/healing/plans/PlanFormPage'
+import { ReviewsListPage } from '@/features/reviews/ReviewsListPage'
 
 export function AppRoutes() {
   return (
@@ -32,6 +33,7 @@ export function AppRoutes() {
         <Route path="/" element={<DashboardPage />} />
 
         <Route path="/users" element={<UsersListPage />} />
+        <Route path="/reviews" element={<ReviewsListPage />} />
         <Route path="/users/:id" element={<UserDetailPage />} />
 
         <Route path="/surveys" element={<SurveysListPage />} />

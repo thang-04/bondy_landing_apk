@@ -2272,16 +2272,19 @@ const FeedbackSection = () => {
   const [floatingHearts, setFloatingHearts] = useState<Array<{ id: number; left: number; delay: number }>>([]);
 
   useEffect(() => {
-    const saved = localStorage.getItem("bondy_reviews");
-    if (saved) {
-      try {
-        setReviews(JSON.parse(saved));
-      } catch (e) {
+    fetch('/api/reviews')
+      .then((res) => res.json())
+      .then((resData) => {
+        if (resData.success && Array.isArray(resData.data)) {
+          setReviews(resData.data);
+        } else {
+          setReviews(defaultReviews);
+        }
+      })
+      .catch((err) => {
+        console.error("Lỗi khi tải đánh giá từ server:", err);
         setReviews(defaultReviews);
-      }
-    } else {
-      setReviews(defaultReviews);
-    }
+      });
   }, []);
 
   const handleEmojiSelect = (emoji: string, mood: string) => {
@@ -2305,20 +2308,31 @@ const FeedbackSection = () => {
     e.preventDefault();
     if (!name.trim() || !text.trim()) return;
 
-    const newReview = {
-      id: Date.now(),
+    const payload = {
       name: name.trim(),
-      avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
       rating,
-      status: status,
+      status,
       emoji: selectedEmoji,
       mood: emojiMood,
       text: text.trim()
     };
 
-    const updated = [newReview, ...reviews];
-    setReviews(updated);
-    localStorage.setItem("bondy_reviews", JSON.stringify(updated));
+    fetch('/api/reviews', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    })
+      .then((res) => res.json())
+      .then((resData) => {
+        if (resData.success && resData.data) {
+          setReviews((prev) => [resData.data, ...prev]);
+        }
+      })
+      .catch((err) => {
+        console.error("Lỗi khi gửi đánh giá lên server:", err);
+      });
 
     setName("");
     setText("");
@@ -2330,6 +2344,22 @@ const FeedbackSection = () => {
 
     triggerHeartsAnimation();
   };
+
+  const defaultReviewsList = reviews.filter(r => r.id === 1 || r.id === 2 || r.id === 3);
+  const realReviews = reviews.filter(r => r.id !== 1 && r.id !== 2 && r.id !== 3 && r.rating >= 3);
+
+  let reviewsToShow = [];
+  if (realReviews.length === 0) {
+    reviewsToShow = defaultReviewsList.length > 0 ? defaultReviewsList : defaultReviews;
+  } else if (realReviews.length === 1) {
+    const defaults = defaultReviewsList.length > 0 ? defaultReviewsList : defaultReviews;
+    reviewsToShow = [realReviews[0], ...defaults.slice(1)];
+  } else if (realReviews.length === 2) {
+    const defaults = defaultReviewsList.length > 0 ? defaultReviewsList : defaultReviews;
+    reviewsToShow = [realReviews[0], realReviews[1], ...defaults.slice(2)];
+  } else {
+    reviewsToShow = realReviews;
+  }
 
   return (
     <section id="feedback" className="py-24 max-w-7xl mx-auto px-6 relative overflow-hidden">
@@ -2497,7 +2527,7 @@ const FeedbackSection = () => {
       {/* Grid of Reviews Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left items-stretch">
         <AnimatePresence mode="popLayout">
-          {reviews.map((item, index) => (
+          {reviewsToShow.map((item, index) => (
             <motion.div
               key={item.id}
               initial={{ opacity: 0, scale: 0.9, y: 30 }}
