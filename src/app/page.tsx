@@ -2548,34 +2548,45 @@ const FeedbackSection = () => {
 };
 
 export default function App() {
-  const [downloadCount, setDownloadCount] = useState<number>(100);
+  const [downloadCount, setDownloadCount] = useState<number>(0);
 
   useEffect(() => {
-    // Tải số lượt tải hiện có
-    fetch('/api/downloads')
+    // Tải số lượt tải hiện có từ backend
+    fetch('/api-proxy/landing-stats', { cache: 'no-store' })
       .then(res => res.json())
       .then(data => {
-        if (data.success && typeof data.count === 'number') {
-          setDownloadCount(data.count);
+        if (data.success && typeof data.downloads === 'number') {
+          setDownloadCount(data.downloads);
         }
       })
-      .catch(err => console.error("Lỗi khi tải lượt tải về:", err));
+      .catch(err => console.error("Lỗi khi tải lượt tải về từ backend:", err));
 
-    // Ghi nhận lượt truy cập web mới
-    fetch('/api/visits', { method: 'POST' })
-      .catch(err => console.error("Lỗi khi ghi nhận lượt truy cập:", err));
+    // Ghi nhận lượt truy cập web mới vào database của backend
+    fetch('/api-proxy/landing-stats', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ type: 'visit' }),
+    }).catch(err => console.error("Lỗi khi ghi nhận lượt truy cập vào backend:", err));
   }, []);
 
   const handleDownload = () => {
     setDownloadCount(prev => prev + 1);
-    fetch('/api/downloads', { method: 'POST' })
+    fetch('/api-proxy/landing-stats', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ type: 'download' }),
+    })
       .then(res => res.json())
       .then(data => {
         if (data.success && typeof data.count === 'number') {
           setDownloadCount(data.count);
         }
       })
-      .catch(err => console.error("Lỗi khi cập nhật lượt tải về:", err));
+      .catch(err => console.error("Lỗi khi cập nhật lượt tải về vào backend:", err));
   };
 
   return (

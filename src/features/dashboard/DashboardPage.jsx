@@ -79,7 +79,7 @@ export function DashboardPage() {
   const { data: localStatsData } = useQuery({
     queryKey: ['admin', 'localStats'],
     queryFn: async () => {
-      const res = await fetch('/api/local-stats')
+      const res = await fetch('/api-proxy/landing-stats', { cache: 'no-store' })
       if (!res.ok) throw new Error('Failed to fetch local stats')
       return res.json()
     },
