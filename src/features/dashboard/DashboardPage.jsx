@@ -16,6 +16,7 @@ import {
   ShieldAlert,
   PlusCircle,
   ChevronRight,
+  Download,
 } from 'lucide-react'
 import { api, unwrap } from '@/lib/api'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
@@ -72,6 +73,17 @@ export function DashboardPage() {
     queryKey: ['admin', 'stats'],
     queryFn: fetchStats,
     refetchInterval: 60_000,
+  })
+
+  // Fetch Local APK & Visit Stats
+  const { data: localStatsData } = useQuery({
+    queryKey: ['admin', 'localStats'],
+    queryFn: async () => {
+      const res = await fetch('/api/admin/stats')
+      if (!res.ok) throw new Error('Failed to fetch local stats')
+      return res.json()
+    },
+    refetchInterval: 15_000,
   })
 
   // Fetch Reports
@@ -138,6 +150,20 @@ export function DashboardPage() {
       icon: FileBarChart,
       gradient: 'from-purple-500/10 to-indigo-500/10',
     },
+    {
+      label: 'Lượt tải APK',
+      value: localStatsData?.downloads ?? 0,
+      hint: 'Đếm từ 0 qua click nút APK',
+      icon: Download,
+      gradient: 'from-emerald-500/10 to-teal-500/10',
+    },
+    {
+      label: 'Lượt truy cập Web',
+      value: localStatsData?.visits ?? 0,
+      hint: 'Tổng lượt load trang Landing',
+      icon: Eye,
+      gradient: 'from-blue-500/10 to-cyan-500/10',
+    },
   ]
 
   const healingCards = [
@@ -168,7 +194,7 @@ export function DashboardPage() {
       </div>
 
       {/* KPI Stats */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
         {kpiCards.map((c) => {
           const Icon = c.icon
           return (

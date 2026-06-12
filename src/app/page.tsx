@@ -186,7 +186,7 @@ const Navbar = () => {
   );
 }
 
-const Hero = () => {
+const Hero = ({ downloadCount, onDownload }: { downloadCount: number; onDownload: () => void }) => {
   const [mockupTab, setMockupTab] = useState<'home' | 'explore' | 'healing' | 'chat' | 'profile'>('home');
   const [profileIndex, setProfileIndex] = useState(0);
   const [showMatchOverlay, setShowMatchOverlay] = useState(false);
@@ -271,20 +271,26 @@ const Hero = () => {
           <p className="text-xl text-brand-on-surface-variant max-w-lg mb-10 leading-relaxed">
             Ứng dụng hẹn hò giúp bạn tìm kiếm kết nối ý nghĩa, trò chuyện tự nhiên hơn và chăm sóc cảm xúc của mình mỗi ngày.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <a 
-              href="/bondy.apk" 
-              download 
-              className="accent-gradient text-white font-bold py-4 px-8 rounded-full shadow-lg hover:scale-105 transition-transform flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <Download size={20} />
-              Download Android APK
-            </a>
+          <div className="flex flex-col sm:flex-row gap-4 items-start">
+            <div className="flex flex-col gap-1.5 w-full sm:w-auto">
+              <a 
+                href="/bondy.apk" 
+                download 
+                onClick={onDownload}
+                className="accent-gradient text-white font-bold py-4 px-8 rounded-full shadow-lg hover:scale-105 transition-transform flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto"
+              >
+                <Download size={20} />
+                Download Android APK
+              </a>
+              <p className="text-xs text-brand-on-surface-variant/85 font-medium text-center sm:text-left pl-4">
+                Đã có <span className="font-semibold text-brand-primary">{(100 + downloadCount).toLocaleString()}</span> lượt tải về
+              </p>
+            </div>
             <a 
               href={FLUTTER_WEB_URL} 
               target="_blank" 
               rel="noopener noreferrer" 
-              className="bg-brand-surface-container text-brand-primary font-bold py-4 px-8 rounded-full shadow-md hover:scale-105 transition-transform flex items-center justify-center gap-2 border border-brand-outline-variant/35 cursor-pointer"
+              className="bg-brand-surface-container text-brand-primary font-bold py-4 px-8 rounded-full shadow-md hover:scale-105 transition-transform flex items-center justify-center gap-2 border border-brand-outline-variant/35 cursor-pointer w-full sm:w-auto text-center"
             >
               <Smartphone size={20} />
               Open on iPhone
@@ -1690,14 +1696,14 @@ const Security = () => {
     );
 }
 
-const DownloadSection = () => {
+const DownloadSection = ({ downloadCount, onDownload }: { downloadCount: number; onDownload: () => void }) => {
   return (
     <section id="download" className="py-24 max-w-7xl mx-auto px-6">
       {/* Thống kê chỉ số uy tín (Social Proof Stats) */}
       <div className="mb-24">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
-            { value: 500000, suffix: "+", label: "Lượt tải ứng dụng", desc: "Android APK & iOS PWA", color: "text-brand-primary" },
+            { value: 100 + downloadCount, suffix: "+", label: "Lượt tải ứng dụng", desc: "Android APK & iOS PWA", color: "text-brand-primary" },
             { value: 4.8, suffix: "★", label: "Đánh giá cộng đồng", desc: "Trên AppStore / PlayStore", color: "text-amber-500", isDecimal: true },
             { value: 1200000, suffix: "+", label: "Kết nối thấu cảm", desc: "Ghép đôi thành công", color: "text-brand-secondary" },
             { value: 92, suffix: "%", label: "Cảm thấy bình yên hơn", desc: "Giảm lo âu & stress", color: "text-brand-tertiary" }
@@ -1784,13 +1790,19 @@ const DownloadSection = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row items-center gap-6 mt-6 border-t border-brand-outline-variant/30 pt-8">
-            <a 
-              href="/bondy.apk" 
-              download 
-              className="accent-gradient text-white font-bold py-4 px-8 rounded-full shadow-lg hover:scale-105 transition-all flex items-center justify-center gap-2 w-full sm:w-auto shrink-0 cursor-pointer"
-            >
-              <Download size={20} /> Download Android APK
-            </a>
+            <div className="flex flex-col gap-1.5 w-full sm:w-auto">
+              <a 
+                href="/bondy.apk" 
+                download 
+                onClick={onDownload}
+                className="accent-gradient text-white font-bold py-4 px-8 rounded-full shadow-lg hover:scale-105 transition-all flex items-center justify-center gap-2 w-full sm:w-auto shrink-0 cursor-pointer"
+              >
+                <Download size={20} /> Download Android APK
+              </a>
+              <p className="text-xs text-brand-on-surface-variant/85 font-medium text-center sm:text-left pl-4">
+                Đã có <span className="font-semibold text-brand-primary">{(100 + downloadCount).toLocaleString()}</span> lượt tải về
+              </p>
+            </div>
             <div className="flex items-center gap-4 bg-white p-3 rounded-2xl border border-neutral-100 shadow-sm">
               <ScanQrCode size={64} className="text-brand-primary shrink-0" />
               <div className="text-left">
@@ -2000,7 +2012,7 @@ const Footer = () => {
                     </nav>
                 </div>
                 <div className="text-center text-sm text-brand-on-surface-alpha opacity-60">
-                    © 2024 Bondy - Thánh đường Kỹ thuật số. Bảo lưu mọi quyền.
+                    © 2026 Bondy - Ứng dụng kết nối và chữa lành. Được phát hành bởi Bondy Team
                 </div>
             </div>
         </footer>
@@ -2536,6 +2548,36 @@ const FeedbackSection = () => {
 };
 
 export default function App() {
+  const [downloadCount, setDownloadCount] = useState<number>(100);
+
+  useEffect(() => {
+    // Tải số lượt tải hiện có
+    fetch('/api/downloads')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && typeof data.count === 'number') {
+          setDownloadCount(data.count);
+        }
+      })
+      .catch(err => console.error("Lỗi khi tải lượt tải về:", err));
+
+    // Ghi nhận lượt truy cập web mới
+    fetch('/api/visits', { method: 'POST' })
+      .catch(err => console.error("Lỗi khi ghi nhận lượt truy cập:", err));
+  }, []);
+
+  const handleDownload = () => {
+    setDownloadCount(prev => prev + 1);
+    fetch('/api/downloads', { method: 'POST' })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && typeof data.count === 'number') {
+          setDownloadCount(data.count);
+        }
+      })
+      .catch(err => console.error("Lỗi khi cập nhật lượt tải về:", err));
+  };
+
   return (
     <div className="min-h-screen relative overflow-x-hidden">
       {/* Background Blobs */}
@@ -2543,7 +2585,7 @@ export default function App() {
       <div className="vibrant-blob w-[300px] h-[300px] bg-brand-secondary -bottom-[50px] -left-[50px]"></div>
       
       <Navbar />
-      <Hero />
+      <Hero downloadCount={downloadCount} onDownload={handleDownload} />
       <SmartMatching />
       <AICoach />
       <HealingSpace />
@@ -2551,7 +2593,7 @@ export default function App() {
       <BentoFeatures />
       <ComparisonSection />
       <Security />
-      <DownloadSection />
+      <DownloadSection downloadCount={downloadCount} onDownload={handleDownload} />
       <FeedbackSection />
       <FAQ />
       <Footer />
