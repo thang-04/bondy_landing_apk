@@ -50,7 +50,7 @@ export function ReviewsListPage() {
     },
   })
 
-  const reviews = response?.data || []
+  const reviews = Array.isArray(response) ? response : (response?.data || [])
 
   // Filter reviews based on search text
   const filteredReviews = reviews.filter((review) => {
