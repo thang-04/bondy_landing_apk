@@ -26,6 +26,28 @@ import {
 import { usersApi } from './api'
 import { useAuth } from '@/features/auth/useAuth'
 
+const genderLabels = {
+  MALE: { label: 'Nam', className: 'bg-sky-500/10 text-sky-600 border border-sky-500/20 shadow-none font-semibold rounded-full px-2.5 py-0.5 text-[10px]' },
+  FEMALE: { label: 'Nữ', className: 'bg-pink-500/10 text-pink-600 border border-pink-500/20 shadow-none font-semibold rounded-full px-2.5 py-0.5 text-[10px]' },
+  OTHER: { label: 'Khác', className: 'bg-purple-500/10 text-purple-600 border border-purple-500/20 shadow-none font-semibold rounded-full px-2.5 py-0.5 text-[10px]' },
+  NON_BINARY: { label: 'Phi nhị nguyên', className: 'bg-indigo-500/10 text-indigo-600 border border-indigo-500/20 shadow-none font-semibold rounded-full px-2.5 py-0.5 text-[10px]' },
+}
+
+const datingGoalLabels = {
+  FRIENDSHIP: { label: 'Kết bạn', className: 'bg-teal-500/10 text-teal-600 border border-teal-500/20 shadow-none font-semibold rounded-full px-2.5 py-0.5 text-[10px]' },
+  DATING: { label: 'Hẹn hò', className: 'bg-rose-500/10 text-rose-600 border border-rose-500/20 shadow-none font-semibold rounded-full px-2.5 py-0.5 text-[10px]' },
+  LONG_TERM: { label: 'Lâu dài', className: 'bg-amber-500/10 text-amber-600 border border-amber-500/20 shadow-none font-semibold rounded-full px-2.5 py-0.5 text-[10px]' },
+  MARRIAGE: { label: 'Hôn nhân', className: 'bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 shadow-none font-semibold rounded-full px-2.5 py-0.5 text-[10px]' },
+  NOT_SURE: { label: 'Chưa rõ', className: 'bg-slate-500/10 text-slate-600 border border-slate-500/20 shadow-none font-semibold rounded-full px-2.5 py-0.5 text-[10px]' },
+}
+
+const subTierLabels = {
+  FREE: { label: 'Miễn phí', className: 'bg-gray-500/10 text-gray-600 border border-gray-500/20 shadow-none font-semibold rounded-full px-2.5 py-0.5 text-[10px]' },
+  PLUS: { label: 'Plus', className: 'bg-cyan-500/10 text-cyan-600 border border-cyan-500/20 shadow-none font-semibold rounded-full px-2.5 py-0.5 text-[10px]' },
+  PREMIUM: { label: 'Premium', className: 'bg-violet-500/10 text-violet-600 border border-violet-500/20 shadow-none font-semibold rounded-full px-2.5 py-0.5 text-[10px]' },
+  ELITE: { label: 'Elite', className: 'bg-amber-500/20 text-amber-700 border border-amber-500/30 shadow-none font-bold rounded-full px-2.5 py-0.5 text-[10px]' },
+}
+
 function formatDateTime(iso) {
   if (!iso) return '—'
   try {
@@ -118,6 +140,42 @@ export function UserDetailPage() {
               <Field
                 label="Email verified"
                 value={data.emailVerified ? formatDateTime(data.emailVerified) : 'Chưa xác thực'}
+              />
+              <Field
+                label="Giới tính"
+                value={
+                  data.profile?.gender ? (
+                    <Badge className={genderLabels[data.profile.gender]?.className || 'bg-gray-500/10 text-gray-600 border border-gray-500/20 shadow-none font-semibold rounded-full px-2.5 py-0.5 text-[10px]'}>
+                      {genderLabels[data.profile.gender]?.label || data.profile.gender}
+                    </Badge>
+                  ) : (
+                    <Badge className="bg-gray-500/10 text-gray-400 border border-gray-500/10 shadow-none font-medium rounded-full px-2.5 py-0.5 text-[10px]">
+                      Chưa cập nhật
+                    </Badge>
+                  )
+                }
+              />
+              <Field
+                label="Gói đăng ký hiện tại"
+                value={
+                  <Badge className={subTierLabels[data.subscriptionTier]?.className || subTierLabels.FREE.className}>
+                    {subTierLabels[data.subscriptionTier]?.label || 'Miễn phí'}
+                  </Badge>
+                }
+              />
+              <Field
+                label="Mục tiêu tìm kiếm"
+                value={
+                  data.profile?.datingGoal ? (
+                    <Badge className={datingGoalLabels[data.profile.datingGoal]?.className || 'bg-gray-500/10 text-gray-600 border border-gray-500/20 shadow-none font-semibold rounded-full px-2.5 py-0.5 text-[10px]'}>
+                      {datingGoalLabels[data.profile.datingGoal]?.label || data.profile.datingGoal}
+                    </Badge>
+                  ) : (
+                    <Badge className="bg-gray-500/10 text-gray-400 border border-gray-500/10 shadow-none font-medium rounded-full px-2.5 py-0.5 text-[10px]">
+                      Chưa cập nhật
+                    </Badge>
+                  )
+                }
               />
               <Field label="Trust score" value={`${data.trustScore ?? 100} / 100`} />
               <Field label="Lần online gần nhất" value={formatDateTime(data.lastSeenAt)} />

@@ -23,10 +23,26 @@ import {
 } from '@/components/ui/select'
 import { usersApi } from './api'
 
-const roleVariant = {
-  ADMIN: 'default',
-  MODERATOR: 'secondary',
-  USER: 'muted',
+const genderLabels = {
+  MALE: { label: 'Nam', className: 'bg-sky-500/10 text-sky-600 border border-sky-500/20 shadow-none font-semibold rounded-full px-2.5 py-0.5 text-[10px]' },
+  FEMALE: { label: 'Nữ', className: 'bg-pink-500/10 text-pink-600 border border-pink-500/20 shadow-none font-semibold rounded-full px-2.5 py-0.5 text-[10px]' },
+  OTHER: { label: 'Khác', className: 'bg-purple-500/10 text-purple-600 border border-purple-500/20 shadow-none font-semibold rounded-full px-2.5 py-0.5 text-[10px]' },
+  NON_BINARY: { label: 'Phi nhị nguyên', className: 'bg-indigo-500/10 text-indigo-600 border border-indigo-500/20 shadow-none font-semibold rounded-full px-2.5 py-0.5 text-[10px]' },
+}
+
+const datingGoalLabels = {
+  FRIENDSHIP: { label: 'Kết bạn', className: 'bg-teal-500/10 text-teal-600 border border-teal-500/20 shadow-none font-semibold rounded-full px-2.5 py-0.5 text-[10px]' },
+  DATING: { label: 'Hẹn hò', className: 'bg-rose-500/10 text-rose-600 border border-rose-500/20 shadow-none font-semibold rounded-full px-2.5 py-0.5 text-[10px]' },
+  LONG_TERM: { label: 'Lâu dài', className: 'bg-amber-500/10 text-amber-600 border border-amber-500/20 shadow-none font-semibold rounded-full px-2.5 py-0.5 text-[10px]' },
+  MARRIAGE: { label: 'Hôn nhân', className: 'bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 shadow-none font-semibold rounded-full px-2.5 py-0.5 text-[10px]' },
+  NOT_SURE: { label: 'Chưa rõ', className: 'bg-slate-500/10 text-slate-600 border border-slate-500/20 shadow-none font-semibold rounded-full px-2.5 py-0.5 text-[10px]' },
+}
+
+const subTierLabels = {
+  FREE: { label: 'Miễn phí', className: 'bg-gray-500/10 text-gray-600 border border-gray-500/20 shadow-none font-semibold rounded-full px-2.5 py-0.5 text-[10px]' },
+  PLUS: { label: 'Plus', className: 'bg-cyan-500/10 text-cyan-600 border border-cyan-500/20 shadow-none font-semibold rounded-full px-2.5 py-0.5 text-[10px]' },
+  PREMIUM: { label: 'Premium', className: 'bg-violet-500/10 text-violet-600 border border-violet-500/20 shadow-none font-semibold rounded-full px-2.5 py-0.5 text-[10px]' },
+  ELITE: { label: 'Elite', className: 'bg-amber-500/20 text-amber-700 border border-amber-500/30 shadow-none font-bold rounded-full px-2.5 py-0.5 text-[10px]' },
 }
 
 function formatDate(iso) {
@@ -126,6 +142,9 @@ export function UsersListPage() {
                   <TableRow>
                     <TableHead className="text-xs font-bold uppercase tracking-wider text-muted-foreground py-3">Email</TableHead>
                     <TableHead className="text-xs font-bold uppercase tracking-wider text-muted-foreground py-3">Tên hiển thị</TableHead>
+                    <TableHead className="text-xs font-bold uppercase tracking-wider text-muted-foreground py-3">Giới tính</TableHead>
+                    <TableHead className="text-xs font-bold uppercase tracking-wider text-muted-foreground py-3">Gói</TableHead>
+                    <TableHead className="text-xs font-bold uppercase tracking-wider text-muted-foreground py-3">Mục tiêu</TableHead>
                     <TableHead className="text-xs font-bold uppercase tracking-wider text-muted-foreground py-3">Vai trò</TableHead>
                     <TableHead className="text-xs font-bold uppercase tracking-wider text-muted-foreground py-3">Trạng thái</TableHead>
                     <TableHead className="text-xs font-bold uppercase tracking-wider text-muted-foreground py-3 text-center">Surveys nộp</TableHead>
@@ -136,7 +155,7 @@ export function UsersListPage() {
                 <TableBody>
                   {users.length === 0 && (
                     <TableRow>
-                      <TableCell colSpan={7} className="text-center text-sm text-muted-foreground py-12">
+                      <TableCell colSpan={10} className="text-center text-sm text-muted-foreground py-12">
                         Không tìm thấy người dùng nào phù hợp.
                       </TableCell>
                     </TableRow>
@@ -150,6 +169,33 @@ export function UsersListPage() {
                       <TableRow key={u.id} className="hover:bg-muted/10 transition-colors">
                         <TableCell className="font-semibold text-xs text-foreground py-3.5">{u.email}</TableCell>
                         <TableCell className="text-xs text-foreground py-3.5">{u.profile?.fullName || u.name || '—'}</TableCell>
+                        <TableCell className="py-3.5">
+                          {u.profile?.gender ? (
+                            <Badge className={genderLabels[u.profile.gender]?.className || 'bg-gray-500/10 text-gray-600 border border-gray-500/20 shadow-none font-semibold rounded-full px-2.5 py-0.5 text-[10px]'}>
+                              {genderLabels[u.profile.gender]?.label || u.profile.gender}
+                            </Badge>
+                          ) : (
+                            <Badge className="bg-gray-500/10 text-gray-400 border border-gray-500/10 shadow-none font-medium rounded-full px-2.5 py-0.5 text-[10px]">
+                              Chưa cập nhật
+                            </Badge>
+                          )}
+                        </TableCell>
+                        <TableCell className="py-3.5">
+                          <Badge className={subTierLabels[u.subscriptionTier]?.className || subTierLabels.FREE.className}>
+                            {subTierLabels[u.subscriptionTier]?.label || 'Miễn phí'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="py-3.5">
+                          {u.profile?.datingGoal ? (
+                            <Badge className={datingGoalLabels[u.profile.datingGoal]?.className || 'bg-gray-500/10 text-gray-600 border border-gray-500/20 shadow-none font-semibold rounded-full px-2.5 py-0.5 text-[10px]'}>
+                              {datingGoalLabels[u.profile.datingGoal]?.label || u.profile.datingGoal}
+                            </Badge>
+                          ) : (
+                            <Badge className="bg-gray-500/10 text-gray-400 border border-gray-500/10 shadow-none font-medium rounded-full px-2.5 py-0.5 text-[10px]">
+                              Chưa cập nhật
+                            </Badge>
+                          )}
+                        </TableCell>
                         <TableCell className="py-3.5">
                           <Badge className={rClass}>{u.role}</Badge>
                         </TableCell>

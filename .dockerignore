@@ -1,0 +1,34 @@
+# Node.js
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Next.js build output
+.next
+out
+build
+
+# Git & GitHub
+.git
+.github
+.gitignore
+.gitattributes
+
+# IDE & system files
+.idea
+.vscode
+.DS_Store
+*.pem
+
+# Docker configuration files
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Documentation & misc
+README.md
+LICENSE
+eslint.config.mjs
+*.js
