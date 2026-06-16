@@ -62,6 +62,8 @@ export function UsersListPage() {
   const [search, setSearch] = useState('')
   const [role, setRole] = useState('all')
   const [isActive, setIsActive] = useState('all')
+  const [gender, setGender] = useState('all')
+  const [subscriptionTier, setSubscriptionTier] = useState('all')
   const [page, setPage] = useState(1)
   const limit = 20
 
@@ -71,6 +73,8 @@ export function UsersListPage() {
     ...(search && { search }),
     ...(role !== 'all' && { role }),
     ...(isActive !== 'all' && { isActive }),
+    ...(gender !== 'all' && { gender }),
+    ...(subscriptionTier !== 'all' && { subscriptionTier }),
   }
 
   const { data, isLoading, isError, error } = useQuery({
@@ -196,6 +200,26 @@ export function UsersListPage() {
               <SelectItem value="false">Bị khoá</SelectItem>
             </SelectContent>
           </Select>
+          <Select value={gender} onValueChange={(v) => { setGender(v); setPage(1) }}>
+            <SelectTrigger className="w-[180px] rounded-xl border-muted/80 h-10 text-sm"><SelectValue placeholder="Giới tính" /></SelectTrigger>
+            <SelectContent className="rounded-xl">
+              <SelectItem value="all">Tất cả giới tính</SelectItem>
+              <SelectItem value="MALE">Nam</SelectItem>
+              <SelectItem value="FEMALE">Nữ</SelectItem>
+              <SelectItem value="OTHER">Khác</SelectItem>
+              <SelectItem value="UNKNOWN">Chưa cập nhật</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={subscriptionTier} onValueChange={(v) => { setSubscriptionTier(v); setPage(1) }}>
+            <SelectTrigger className="w-[180px] rounded-xl border-muted/80 h-10 text-sm"><SelectValue placeholder="Gói đăng ký" /></SelectTrigger>
+            <SelectContent className="rounded-xl">
+              <SelectItem value="all">Tất cả gói</SelectItem>
+              <SelectItem value="FREE">Miễn phí</SelectItem>
+              <SelectItem value="PLUS">Gói Plus</SelectItem>
+              <SelectItem value="PREMIUM">Gói Premium</SelectItem>
+              <SelectItem value="ELITE">Gói Elite</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </Card>
 
@@ -212,8 +236,7 @@ export function UsersListPage() {
               <Table>
                 <TableHeader className="bg-muted/30">
                   <TableRow>
-                    <TableHead className="text-xs font-bold uppercase tracking-wider text-muted-foreground py-3">Email</TableHead>
-                    <TableHead className="text-xs font-bold uppercase tracking-wider text-muted-foreground py-3">Tên hiển thị</TableHead>
+                    <TableHead className="text-xs font-bold uppercase tracking-wider text-muted-foreground py-3">Người dùng</TableHead>
                     <TableHead className="text-xs font-bold uppercase tracking-wider text-muted-foreground py-3">Giới tính</TableHead>
                     <TableHead className="text-xs font-bold uppercase tracking-wider text-muted-foreground py-3">Gói</TableHead>
                     <TableHead className="text-xs font-bold uppercase tracking-wider text-muted-foreground py-3">Mục tiêu</TableHead>
@@ -227,7 +250,7 @@ export function UsersListPage() {
                 <TableBody>
                   {users.length === 0 && (
                     <TableRow>
-                      <TableCell colSpan={10} className="text-center text-sm text-muted-foreground py-12">
+                      <TableCell colSpan={9} className="text-center text-sm text-muted-foreground py-12">
                         Không tìm thấy người dùng nào phù hợp.
                       </TableCell>
                     </TableRow>
@@ -239,8 +262,26 @@ export function UsersListPage() {
 
                     return (
                       <TableRow key={u.id} className="hover:bg-muted/10 transition-colors">
-                        <TableCell className="font-semibold text-xs text-foreground py-3.5">{u.email}</TableCell>
-                        <TableCell className="text-xs text-foreground py-3.5">{u.profile?.fullName || u.name || '—'}</TableCell>
+                        <TableCell className="py-3.5">
+                          <div className="flex items-center gap-3">
+                            <img
+                              src={u.profile?.photos?.[0] || u.image || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80'}
+                              alt={u.profile?.fullName || u.name || u.email}
+                              className="h-10 w-10 rounded-full object-cover border border-muted/80 shadow-sm"
+                              onError={(e) => {
+                                e.target.src = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80'
+                              }}
+                            />
+                            <div className="space-y-0.5">
+                              <p className="font-bold text-sm text-foreground leading-tight">
+                                {u.profile?.fullName || u.name || '—'}
+                              </p>
+                              <p className="text-xs text-muted-foreground font-medium">
+                                {u.email}
+                              </p>
+                            </div>
+                          </div>
+                        </TableCell>
                         <TableCell className="py-3.5">
                           {u.profile?.gender ? (
                             <Badge className={genderLabels[u.profile.gender]?.className || 'bg-gray-500/10 text-gray-600 border border-gray-500/20 shadow-none font-semibold rounded-full px-2.5 py-0.5 text-[10px]'}>
