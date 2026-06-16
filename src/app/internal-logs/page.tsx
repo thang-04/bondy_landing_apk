@@ -70,7 +70,7 @@ export default function InternalLogsPage() {
   }, []);
 
   // Hàm xác thực mật khẩu với API
-  const verifyAccess = async (codeToVerify: string, isAuto: boolean = false) => {
+  async function verifyAccess(codeToVerify: string, isAuto: boolean = false) {
     if (!codeToVerify) return;
     setIsAuthenticating(true);
     setAuthError("");
@@ -106,7 +106,7 @@ export default function InternalLogsPage() {
     } finally {
       setIsAuthenticating(false);
     }
-  };
+  }
 
   const triggerShake = () => {
     setShake(true);
