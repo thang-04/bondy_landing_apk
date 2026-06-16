@@ -7,7 +7,7 @@ COPY package.json package-lock.json* ./
 RUN npm ci --legacy-peer-deps
 
 # ================================
-# Stage 2: Build
+# Stage 2: Build vps
 # ================================
 FROM deps AS builder
 COPY . .
