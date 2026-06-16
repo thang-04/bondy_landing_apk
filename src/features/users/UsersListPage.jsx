@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { Search, ChevronLeft, ChevronRight, Eye } from 'lucide-react'
-import { Card } from '@/components/ui/card'
+import { Search, ChevronLeft, ChevronRight, Eye, Users, Shield, Sparkles, Zap, Crown } from 'lucide-react'
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -81,6 +81,54 @@ export function UsersListPage() {
 
   const users = data?.users || []
   const pagination = data?.pagination || { total: 0, pages: 1 }
+  const stats = data?.stats || {
+    total: 0,
+    gender: { male: 0, female: 0, other: 0 },
+    subscription: { free: 0, plus: 0, premium: 0, elite: 0 }
+  }
+
+  const kpiCards = [
+    {
+      label: 'Tổng người dùng',
+      value: stats.total,
+      hint: `Nam: ${stats.gender.male} • Nữ: ${stats.gender.female} • Khác: ${stats.gender.other}`,
+      icon: Users,
+      gradient: 'from-[#FF5A36]/8 to-transparent border-t-2 border-t-[#FF5A36]/60',
+      iconBg: 'bg-[#FF5A36]/10 text-[#FF5A36]',
+    },
+    {
+      label: 'Gói Miễn phí',
+      value: stats.subscription.free,
+      hint: 'Người dùng gói cơ bản',
+      icon: Shield,
+      gradient: 'from-zinc-500/8 to-transparent border-t-2 border-t-zinc-500/60',
+      iconBg: 'bg-zinc-500/10 text-zinc-500',
+    },
+    {
+      label: 'Gói Plus',
+      value: stats.subscription.plus,
+      hint: 'Tính năng bổ sung',
+      icon: Sparkles,
+      gradient: 'from-cyan-500/8 to-transparent border-t-2 border-t-cyan-500/60',
+      iconBg: 'bg-cyan-500/10 text-cyan-600',
+    },
+    {
+      label: 'Gói Premium',
+      value: stats.subscription.premium,
+      hint: 'Trải nghiệm đầy đủ',
+      icon: Zap,
+      gradient: 'from-violet-500/8 to-transparent border-t-2 border-t-violet-500/60',
+      iconBg: 'bg-violet-500/10 text-violet-600',
+    },
+    {
+      label: 'Gói Elite',
+      value: stats.subscription.elite,
+      hint: 'Đặc quyền cao cấp nhất',
+      icon: Crown,
+      gradient: 'from-amber-500/8 to-transparent border-t-2 border-t-amber-500/60',
+      iconBg: 'bg-amber-500/10 text-amber-600',
+    },
+  ]
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto px-1">
@@ -91,6 +139,30 @@ export function UsersListPage() {
             Quản lý tài khoản, phân quyền và trạng thái hoạt động trong hệ thống
           </p>
         </div>
+      </div>
+
+      {/* KPI Stats */}
+      <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+        {kpiCards.map((c) => {
+          const Icon = c.icon
+          return (
+            <Card key={c.label} className={`overflow-hidden border border-muted/70 bg-card text-card-foreground admin-card-hover bg-gradient-to-br ${c.gradient}`}>
+              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0 p-5">
+                <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{c.label}</CardTitle>
+                <div className={`p-2.5 rounded-xl ${c.iconBg} transition-all duration-300`}>
+                  <Icon className="h-4.5 w-4.5" />
+                </div>
+              </CardHeader>
+              <CardContent className="px-5 pb-5 pt-0">
+                <div className="text-3xl font-extrabold tracking-tight text-foreground">{c.value.toLocaleString('vi-VN')}</div>
+                <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1.5 font-medium">
+                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  {c.hint}
+                </p>
+              </CardContent>
+            </Card>
+          )
+        })}
       </div>
 
       <Card className="p-5 border-muted/70 bg-card rounded-2xl shadow-sm">
