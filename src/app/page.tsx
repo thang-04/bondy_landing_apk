@@ -1982,7 +1982,7 @@ const FAQ = () => {
           <a href="mailto:support@bondy.chat" className="bg-white border border-brand-outline hover:border-brand-primary/30 text-brand-on-surface text-xs font-bold py-3 px-6 rounded-full transition-colors">
             support@bondy.chat
           </a>
-          <a href="#" className="accent-gradient text-white text-xs font-bold py-3 px-6 rounded-full hover:shadow-md transition-all">
+          <a href="https://www.facebook.com/profile.php?id=61590864683644" target="_blank" rel="noopener noreferrer" className="accent-gradient text-white text-xs font-bold py-3 px-6 rounded-full hover:shadow-md transition-all">
             Nhắn tin qua Fanpage
           </a>
         </div>
@@ -2007,7 +2007,7 @@ const Footer = () => {
                     <nav className="flex flex-wrap justify-center gap-8 text-sm font-semibold text-brand-on-surface-variant">
                         <a href="#" className="hover:text-brand-primary transition-colors">Điều khoản dịch vụ</a>
                         <a href="#" className="hover:text-brand-primary transition-colors">Chính sách bảo mật</a>
-                        <a href="#" className="hover:text-brand-primary transition-colors">Liên hệ</a>
+                        <a href="https://www.facebook.com/profile.php?id=61590864683644" target="_blank" rel="noopener noreferrer" className="hover:text-brand-primary transition-colors">Liên hệ</a>
                         <a href="#" className="hover:text-brand-primary transition-colors">Trung tâm hỗ trợ</a>
                     </nav>
                 </div>
