@@ -57,6 +57,39 @@ function formatDateTime(iso) {
   }
 }
 
+function UserAvatar({ user }) {
+  const [error, setError] = useState(false)
+  const rawUrl = user.profile?.photos?.[0] || user.image
+
+  const getAvatarUrl = (url) => {
+    if (!url) return ''
+    return url
+      .replace(/https?:\/\/103\.149\.86\.25:?\d*\/api\/uploads\//g, '/uploads/')
+      .replace(/https?:\/\/103\.149\.86\.25:?\d*\/uploads\//g, '/uploads/')
+  }
+
+  const url = getAvatarUrl(rawUrl)
+  const displayName = user.profile?.fullName || user.name || user.email || 'U'
+  const initial = displayName.charAt(0).toUpperCase()
+
+  if (url && !error) {
+    return (
+      <img
+        src={url}
+        alt={displayName}
+        className="h-10 w-10 rounded-full object-cover border border-muted/80 shadow-sm"
+        onError={() => setError(true)}
+      />
+    )
+  }
+
+  return (
+    <div className="h-10 w-10 rounded-full bg-violet-500/10 text-violet-600 flex items-center justify-center font-bold text-sm border border-violet-500/20 shadow-sm">
+      {initial}
+    </div>
+  )
+}
+
 export function UserDetailPage() {
   const { id } = useParams()
   const queryClient = useQueryClient()
@@ -103,6 +136,7 @@ export function UserDetailPage() {
           <Button asChild variant="ghost" size="icon">
             <Link to="/users"><ArrowLeft className="h-4 w-4" /></Link>
           </Button>
+          <UserAvatar user={data} />
           <div>
             <h1 className="text-2xl font-semibold">{data.profile?.fullName || data.name || data.email}</h1>
             <p className="text-sm text-muted-foreground">{data.email}</p>
