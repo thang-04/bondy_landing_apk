@@ -24,6 +24,45 @@ import {
 } from '@/components/ui/dialog'
 import { reviewsApi } from './api'
 
+function ReviewAvatar({ review }) {
+  const [error, setError] = useState(false)
+  const rawUrl = review.avatar
+
+  const getAvatarUrl = (url) => {
+    if (!url) return ''
+    const apiUploadsIdx = url.indexOf('/api/uploads/')
+    if (apiUploadsIdx !== -1) {
+      return '/uploads/' + url.substring(apiUploadsIdx + 13)
+    }
+    const uploadsIdx = url.indexOf('/uploads/')
+    if (uploadsIdx !== -1) {
+      return '/uploads/' + url.substring(uploadsIdx + 9)
+    }
+    return url
+  }
+
+  const url = getAvatarUrl(rawUrl)
+  const displayName = review.name || 'U'
+  const initial = displayName.charAt(0).toUpperCase()
+
+  if (url && !error) {
+    return (
+      <img
+        src={url}
+        alt={displayName}
+        className="h-10 w-10 rounded-full object-cover border border-muted/80 shadow-sm"
+        onError={() => setError(true)}
+      />
+    )
+  }
+
+  return (
+    <div className="h-10 w-10 rounded-full bg-violet-500/10 text-violet-600 flex items-center justify-center font-bold text-sm border border-violet-500/20 shadow-sm">
+      {initial}
+    </div>
+  )
+}
+
 export function ReviewsListPage() {
   const queryClient = useQueryClient()
   const [search, setSearch] = useState('')
@@ -200,14 +239,7 @@ export function ReviewsListPage() {
                   <TableRow key={review.id} className="hover:bg-muted/10 transition-colors">
                     <TableCell>
                       <div className="flex items-center gap-3">
-                        <img
-                          src={review.avatar}
-                          alt={review.name}
-                          className="h-10 w-10 rounded-full object-cover border border-muted/80 shadow-sm"
-                          onError={(e) => {
-                            e.target.src = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80'
-                          }}
-                        />
+                        <ReviewAvatar review={review} />
                         <div className="space-y-0.5">
                           <p className="font-bold text-sm text-foreground leading-tight">{review.name}</p>
                           <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-brand-primary/20 text-[#FF5A36] bg-[#FF5A36]/5 rounded-md font-bold">

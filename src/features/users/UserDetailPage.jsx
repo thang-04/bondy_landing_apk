@@ -63,9 +63,15 @@ function UserAvatar({ user }) {
 
   const getAvatarUrl = (url) => {
     if (!url) return ''
+    const apiUploadsIdx = url.indexOf('/api/uploads/')
+    if (apiUploadsIdx !== -1) {
+      return '/uploads/' + url.substring(apiUploadsIdx + 13)
+    }
+    const uploadsIdx = url.indexOf('/uploads/')
+    if (uploadsIdx !== -1) {
+      return '/uploads/' + url.substring(uploadsIdx + 9)
+    }
     return url
-      .replace(/https?:\/\/103\.149\.86\.25:?\d*\/api\/uploads\//g, '/uploads/')
-      .replace(/https?:\/\/103\.149\.86\.25:?\d*\/uploads\//g, '/uploads/')
   }
 
   const url = getAvatarUrl(rawUrl)
