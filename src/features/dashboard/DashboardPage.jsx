@@ -94,40 +94,96 @@ function getMockAnalyticsData(range) {
       successMatches: 506,
       failedMatches: 124,
       successRate: 80.3,
+      chatAcceptedMatches: 440,
+      chatConversionRate: 69.8,
+      responseLatencyMinutes: 12,
+      likesCount: 1540,
+      passesCount: 890,
       totalRelationships: 48,
       relationshipPending: 10,
       relationshipConfirmed: 32,
-      relationshipDeclined: 6
+      relationshipDeclined: 6,
+      courseCompletionRate: 65.4,
+      freeSubsCount: 380,
+      plusSubsCount: 120,
+      premiumSubsCount: 90,
+      eliteSubsCount: 40,
+      premiumRate: 39.7,
+      referralsCount: 18,
+      promosCount: 12,
+      aiAdoptionRate: 72.5
     },
     '7d': {
       totalMatches: 1718,
       successMatches: 1390,
       failedMatches: 328,
       successRate: 80.9,
+      chatAcceptedMatches: 1220,
+      chatConversionRate: 71.0,
+      responseLatencyMinutes: 15,
+      likesCount: 5640,
+      passesCount: 3120,
       totalRelationships: 320,
       relationshipPending: 45,
       relationshipConfirmed: 245,
-      relationshipDeclined: 30
+      relationshipDeclined: 30,
+      courseCompletionRate: 68.2,
+      freeSubsCount: 350,
+      plusSubsCount: 125,
+      premiumSubsCount: 95,
+      eliteSubsCount: 60,
+      premiumRate: 44.4,
+      referralsCount: 52,
+      promosCount: 35,
+      aiAdoptionRate: 74.8
     },
     '30d': {
       totalMatches: 5370,
       successMatches: 4180,
       failedMatches: 1190,
       successRate: 77.8,
+      chatAcceptedMatches: 3680,
+      chatConversionRate: 68.5,
+      responseLatencyMinutes: 18,
+      likesCount: 22400,
+      passesCount: 12800,
       totalRelationships: 1250,
       relationshipPending: 180,
       relationshipConfirmed: 920,
-      relationshipDeclined: 150
+      relationshipDeclined: 150,
+      courseCompletionRate: 71.5,
+      freeSubsCount: 320,
+      plusSubsCount: 130,
+      premiumSubsCount: 105,
+      eliteSubsCount: 75,
+      premiumRate: 49.2,
+      referralsCount: 195,
+      promosCount: 140,
+      aiAdoptionRate: 76.2
     },
     all: {
       totalMatches: 37550,
       successMatches: 30300,
       failedMatches: 7250,
       successRate: 80.7,
+      chatAcceptedMatches: 25400,
+      chatConversionRate: 67.6,
+      responseLatencyMinutes: 22,
+      likesCount: 154000,
+      passesCount: 88500,
       totalRelationships: 8450,
       relationshipPending: 850,
       relationshipConfirmed: 6600,
-      relationshipDeclined: 1000
+      relationshipDeclined: 1000,
+      courseCompletionRate: 75.0,
+      freeSubsCount: 280,
+      plusSubsCount: 140,
+      premiumSubsCount: 120,
+      eliteSubsCount: 90,
+      premiumRate: 55.6,
+      referralsCount: 1420,
+      promosCount: 980,
+      aiAdoptionRate: 81.3
     }
   }
 
@@ -158,12 +214,178 @@ function getMockAnalyticsData(range) {
     ]
   }
 
+  const moodShareData = {
+    today: [
+      { mood: 'Bình yên', count: 18, percentage: 37.5 },
+      { mood: 'Hạnh phúc', count: 15, percentage: 31.3 },
+      { mood: 'Mệt mỏi', count: 10, percentage: 20.8 },
+      { mood: 'Lo âu', count: 5, percentage: 10.4 }
+    ],
+    '7d': [
+      { mood: 'Bình yên', count: 128, percentage: 40.0 },
+      { mood: 'Hạnh phúc', count: 96, percentage: 30.0 },
+      { mood: 'Mệt mỏi', count: 64, percentage: 20.0 },
+      { mood: 'Lo âu', count: 32, percentage: 10.0 }
+    ],
+    '30d': [
+      { mood: 'Bình yên', count: 512, percentage: 41.0 },
+      { mood: 'Hạnh phúc', count: 375, percentage: 30.0 },
+      { mood: 'Mệt mỏi', count: 238, percentage: 19.0 },
+      { mood: 'Lo âu', count: 125, percentage: 10.0 }
+    ],
+    all: [
+      { mood: 'Bình yên', count: 3549, percentage: 42.0 },
+      { mood: 'Hạnh phúc', count: 2535, percentage: 30.0 },
+      { mood: 'Mệt mỏi', count: 1521, percentage: 18.0 },
+      { mood: 'Lo âu', count: 845, percentage: 10.0 }
+    ]
+  }
+
+  const aiCoachTonesData = {
+    today: [
+      { tone: 'Thấu cảm', count: 65, percentage: 46.4 },
+      { tone: 'Hài hước', count: 35, percentage: 25.0 },
+      { tone: 'Nghiêm túc', count: 25, percentage: 17.9 },
+      { tone: 'Lắng nghe', count: 15, percentage: 10.7 }
+    ],
+    '7d': [
+      { tone: 'Thấu cảm', count: 420, percentage: 45.2 },
+      { tone: 'Hài hước', count: 245, percentage: 26.3 },
+      { tone: 'Nghiêm túc', count: 165, percentage: 17.7 },
+      { tone: 'Lắng nghe', count: 100, percentage: 10.8 }
+    ],
+    '30d': [
+      { tone: 'Thấu cảm', count: 1850, percentage: 46.3 },
+      { tone: 'Hài hước', count: 1050, percentage: 26.3 },
+      { tone: 'Nghiêm túc', count: 680, percentage: 17.0 },
+      { tone: 'Lắng nghe', count: 420, percentage: 10.5 }
+    ],
+    all: [
+      { tone: 'Thấu cảm', count: 13500, percentage: 46.7 },
+      { tone: 'Hài hước', count: 7500, percentage: 26.0 },
+      { tone: 'Nghiêm túc', count: 4900, percentage: 17.0 },
+      { tone: 'Lắng nghe', count: 3000, percentage: 10.3 }
+    ]
+  }
+
   const rangeKey = timelineData[range] ? range : '7d'
+  
+  const scale = range === 'today' ? 0.1 : range === '7d' ? 0.5 : range === '30d' ? 2 : 15;
+  const scaleInt = (val) => Math.max(1, Math.round(val * scale));
+
+  const demographics = {
+    gender: [
+      { gender: 'Nam', count: scaleInt(320) },
+      { gender: 'Nữ', count: scaleInt(480) },
+      { gender: 'Khác', count: scaleInt(50) }
+    ],
+    datingGoal: [
+      { goal: 'Tìm bạn đời', count: scaleInt(450) },
+      { goal: 'Trò chuyện chia sẻ', count: scaleInt(250) },
+      { goal: 'Hẹn hò lãng mạn', count: scaleInt(150) },
+      { goal: 'Chưa xác định', count: scaleInt(80) }
+    ],
+    zodiac: [
+      { zodiac: 'Bạch Dương', count: scaleInt(90) },
+      { zodiac: 'Kim Ngưu', count: scaleInt(85) },
+      { zodiac: 'Song Tử', count: scaleInt(72) },
+      { zodiac: 'Cự Giải', count: scaleInt(64) },
+      { zodiac: 'Sư Tử', count: scaleInt(55) }
+    ],
+    city: [
+      { city: 'Hà Nội', count: scaleInt(350) },
+      { city: 'TP. Hồ Chí Minh', count: scaleInt(420) },
+      { city: 'Đà Nẵng', count: scaleInt(120) },
+      { city: 'Cần Thơ', count: scaleInt(80) },
+      { city: 'Hải Phòng', count: scaleInt(60) }
+    ],
+    age: [
+      { range: '< 18', count: scaleInt(45) },
+      { range: '18 - 24', count: scaleInt(280) },
+      { range: '25 - 34', count: scaleInt(390) },
+      { range: '35 - 44', count: scaleInt(110) },
+      { range: '45+', count: scaleInt(25) }
+    ]
+  };
+
+  const messaging = {
+    types: [
+      { type: 'TEXT', count: scaleInt(8500) },
+      { type: 'IMAGE', count: scaleInt(1200) },
+      { type: 'VOICE', count: scaleInt(950) },
+      { type: 'VIDEO', count: scaleInt(150) },
+      { type: 'GIF', count: scaleInt(450) }
+    ],
+    avgVoiceDurationSeconds: 18,
+    topReactions: [
+      { emoji: '❤️', count: scaleInt(1240) },
+      { emoji: '👍', count: scaleInt(850) },
+      { emoji: '😂', count: scaleInt(620) },
+      { emoji: '🔥', count: scaleInt(430) },
+      { emoji: '🙌', count: scaleInt(250) }
+    ]
+  };
+
+  const relationshipDetails = {
+    avgStreakDays: range === 'today' ? 12 : range === '7d' ? 14 : range === '30d' ? 19 : 24,
+    topStreaks: [
+      { streakDays: scaleInt(45) > 100 ? 145 : scaleInt(45) + 12, names: 'Minh Thư & Hoàng Nam' },
+      { streakDays: scaleInt(38) > 100 ? 112 : scaleInt(38) + 10, names: 'Thanh Hà & Tuấn Tú' },
+      { streakDays: scaleInt(29) > 100 ? 95 : scaleInt(29) + 8, names: 'Ngọc Lan & Anh Đức' },
+      { streakDays: scaleInt(22) > 100 ? 82 : scaleInt(22) + 6, names: 'Thu Trang & Minh Quân' },
+      { streakDays: scaleInt(18) > 100 ? 70 : scaleInt(18) + 5, names: 'Phương Thảo & Tiến Dũng' }
+    ],
+    moods: [
+      { mood: 'Hạnh phúc', count: scaleInt(42) },
+      { mood: 'Vui vẻ', count: scaleInt(35) },
+      { mood: 'Bình ổn', count: scaleInt(28) },
+      { mood: 'Trầm lặng', count: scaleInt(12) },
+      { mood: 'Có mâu thuẫn', count: scaleInt(5) }
+    ],
+    dailyActionCompletionRate: range === 'today' ? 70.5 : range === '7d' ? 72.8 : range === '30d' ? 75.2 : 79.4
+  };
+
+  const aiPerformance = {
+    avgLatencySeconds: range === 'today' ? 1.6 : range === '7d' ? 1.8 : range === '30d' ? 2.1 : 2.4,
+    totalTokensUsed: scaleInt(245000),
+    avgRating: range === 'today' ? 4.7 : range === '7d' ? 4.6 : range === '30d' ? 4.5 : 4.4,
+    models: [
+      { model: 'gpt-4o', count: scaleInt(850) },
+      { model: 'gemini-pro', count: scaleInt(420) },
+      { model: 'claude-sonnet', count: scaleInt(180) }
+    ]
+  };
+
+  const healingAssessments = {
+    avgRecoveryIntensity: range === 'today' ? 6.5 : range === '7d' ? 6.8 : range === '30d' ? 7.2 : 7.5,
+    intents: [
+      { intent: 'Khám phá bản thân', count: scaleInt(185) },
+      { intent: 'Giải tỏa căng thẳng', count: scaleInt(140) },
+      { intent: 'Xây dựng thói quen', count: scaleInt(95) }
+    ],
+    triggers: [
+      { trigger: 'Áp lực công việc', count: scaleInt(210) },
+      { trigger: 'Bất đồng quan điểm', count: scaleInt(130) },
+      { trigger: 'Cảm xúc cô đơn', count: scaleInt(95) }
+    ],
+    needs: [
+      { need: 'Lắng nghe chia sẻ', count: scaleInt(190) },
+      { need: 'Lời khuyên hành động', count: scaleInt(120) },
+      { need: 'Bài tập thiền định', count: scaleInt(80) }
+    ]
+  };
 
   return {
     summary: summaryData[rangeKey],
     matchingTimeline: timelineData[rangeKey],
-    featureUsage: featureUsageData[rangeKey]
+    featureUsage: featureUsageData[rangeKey],
+    moodShare: moodShareData[rangeKey],
+    aiCoachTones: aiCoachTonesData[rangeKey],
+    demographics,
+    messaging,
+    relationshipDetails,
+    aiPerformance,
+    healingAssessments
   }
 }
 
@@ -477,6 +699,283 @@ function FeatureUsageChart({ usage }) {
       ))}
     </div>
   )
+}
+
+// Biểu đồ SVG tỷ lệ Like/Pass
+function SwipeRatioChart({ likes, passes }) {
+  const total = likes + passes || 1;
+  const likePercent = Math.round((likes / total) * 100);
+
+  const radius = 35;
+  const strokeWidth = 8;
+  const circumference = 2 * Math.PI * radius;
+  const likeLength = (likePercent / 100) * circumference;
+
+  return (
+    <div className="flex items-center justify-around gap-4 py-2">
+      <div className="relative h-24 w-24 shrink-0">
+        <svg width="100%" height="100%" viewBox="0 0 100 100" className="overflow-visible select-none">
+          <circle cx="50" cy="50" r={radius} fill="transparent" stroke="#E8E3DD" strokeWidth={strokeWidth} />
+          <circle
+            cx="50"
+            cy="50"
+            r={radius}
+            fill="transparent"
+            stroke="#FF5A36"
+            strokeWidth={strokeWidth}
+            strokeDasharray={`${likeLength} ${circumference - likeLength}`}
+            transform="rotate(-90 50 50)"
+            strokeLinecap="round"
+            className="transition-all duration-700 ease-out"
+          />
+        </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+          <span className="text-sm font-black text-foreground">{likePercent}%</span>
+          <span className="text-[7px] font-bold text-muted-foreground uppercase">Thích</span>
+        </div>
+      </div>
+      <div className="space-y-2 text-xs flex-1">
+        <div className="flex items-center justify-between border-b border-muted/50 pb-1.5">
+          <span className="flex items-center gap-1.5 font-semibold text-muted-foreground">
+            <span className="w-2 h-2 rounded-full bg-[#FF5A36]" /> Like (Thích)
+          </span>
+          <span className="font-extrabold text-foreground">{likes.toLocaleString('vi-VN')}</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="flex items-center gap-1.5 font-semibold text-muted-foreground">
+            <span className="w-2 h-2 rounded-full bg-[#E8E3DD]" /> Pass (Bỏ qua)
+          </span>
+          <span className="font-extrabold text-foreground">{passes.toLocaleString('vi-VN')}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Vòng tròn tiến trình tỷ lệ áp dụng AI
+function AISuggestionAdoptionRing({ adoptionRate }) {
+  const radius = 35;
+  const strokeWidth = 7;
+  const circumference = 2 * Math.PI * radius;
+  const strokeLength = (adoptionRate / 100) * circumference;
+
+  return (
+    <div className="flex flex-col items-center justify-center gap-3 py-3">
+      <div className="relative h-24 w-24">
+        <svg width="100%" height="100%" viewBox="0 0 100 100" className="overflow-visible select-none">
+          <circle cx="50" cy="50" r={radius} fill="transparent" stroke="#F1F1F0" strokeWidth={strokeWidth} />
+          <circle
+            cx="50"
+            cy="50"
+            r={radius}
+            fill="transparent"
+            stroke="#8B4AFF"
+            strokeWidth={strokeWidth}
+            strokeDasharray={`${strokeLength} ${circumference - strokeLength}`}
+            transform="rotate(-90 50 50)"
+            strokeLinecap="round"
+            className="transition-all duration-700 ease-out"
+          />
+        </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+          <span className="text-base font-black text-foreground">{adoptionRate}%</span>
+          <span className="text-[7px] font-bold text-muted-foreground uppercase">Áp dụng</span>
+        </div>
+      </div>
+      <p className="text-[10px] text-center font-bold text-muted-foreground leading-relaxed">
+        Tỷ lệ gợi ý từ AI Coach được người dùng áp dụng gửi đi trong hội thoại
+      </p>
+    </div>
+  );
+}
+
+// Vòng tròn tỷ lệ giới tính
+function GenderRingChart({ data }) {
+  if (!data) return null;
+  const total = data.reduce((acc, d) => acc + d.count, 0) || 1;
+  const colors = {
+    'Nam': '#3B82F6',
+    'Nữ': '#EC4899',
+    'Khác': '#A855F7',
+  };
+  
+  const radius = 35;
+  const strokeWidth = 8;
+  const circumference = 2 * Math.PI * radius;
+  
+  let accumulatedPct = 0;
+  const slices = data.map(d => {
+    const pct = (d.count / total) * 100;
+    const strokeLength = (pct / 100) * circumference;
+    const strokeOffset = circumference - ((accumulatedPct / 100) * circumference);
+    accumulatedPct += pct;
+    return { ...d, strokeLength, strokeOffset, pct, color: colors[d.gender] || '#6B7280' };
+  });
+
+  return (
+    <div className="flex items-center justify-around gap-6 py-2">
+      <div className="relative h-24 w-24 shrink-0">
+        <svg width="100%" height="100%" viewBox="0 0 100 100" className="overflow-visible select-none">
+          <circle cx="50" cy="50" r={radius} fill="transparent" stroke="#F1F1F0" strokeWidth={strokeWidth} />
+          {slices.map((slice, idx) => (
+            <circle
+              key={idx}
+              cx="50"
+              cy="50"
+              r={radius}
+              fill="transparent"
+              stroke={slice.color}
+              strokeWidth={strokeWidth}
+              strokeDasharray={`${slice.strokeLength} ${circumference - slice.strokeLength}`}
+              strokeDashoffset={slice.strokeOffset}
+              transform="rotate(-90 50 50)"
+              strokeLinecap="round"
+              className="transition-all duration-700 ease-out"
+            />
+          ))}
+        </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+          <span className="text-xs font-black text-foreground">{total.toLocaleString('vi-VN')}</span>
+          <span className="text-[7px] font-bold text-muted-foreground uppercase">Hồ sơ</span>
+        </div>
+      </div>
+      <div className="space-y-2 text-xs flex-1">
+        {slices.map((slice, idx) => (
+          <div key={idx} className="flex items-center justify-between border-b border-muted/50 pb-1 last:border-0 last:pb-0">
+            <span className="flex items-center gap-1.5 font-semibold text-muted-foreground">
+              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: slice.color }} /> {slice.gender}
+            </span>
+            <span className="font-extrabold text-foreground">{slice.count.toLocaleString('vi-VN')} ({slice.pct.toFixed(1)}%)</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Biểu đồ độ tuổi dạng cột đứng
+function AgeVerticalBarChart({ data }) {
+  if (!data || data.length === 0) return null;
+  const maxVal = Math.max(...data.map(d => d.count), 10);
+  
+  return (
+    <div className="flex items-end justify-between h-40 gap-3 px-2 pt-6">
+      {data.map((d, i) => {
+        const pct = (d.count / maxVal) * 100;
+        return (
+          <div key={i} className="flex-1 flex flex-col items-center gap-2 group relative">
+            <div className="absolute -top-6 text-[10px] font-extrabold text-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              {d.count}
+            </div>
+            <div className="w-full bg-zinc-100 rounded-t-lg overflow-hidden h-28 relative border border-muted/20">
+              <div
+                className="absolute bottom-0 w-full bg-gradient-to-t from-[#FF5A36] to-[#EA2A5A] rounded-t-lg transition-all duration-1000 ease-out"
+                style={{ height: `${pct}%` }}
+              />
+            </div>
+            <span className="text-[10px] font-bold text-muted-foreground text-center whitespace-nowrap">{d.range}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// Biểu đồ loại tin nhắn sử dụng thanh ngang
+function MessageTypeChart({ types }) {
+  if (!types || types.length === 0) return null;
+  const total = types.reduce((acc, t) => acc + t.count, 0) || 1;
+  
+  return (
+    <div className="space-y-3.5 py-1">
+      {types.map((t, idx) => {
+        const pct = Math.round((t.count / total) * 1000) / 10;
+        return (
+          <div key={idx} className="space-y-1">
+            <div className="flex items-center justify-between text-[11px] font-bold">
+              <span className="text-foreground">{t.type}</span>
+              <span className="text-muted-foreground">
+                {t.count.toLocaleString('vi-VN')} ({pct}%)
+              </span>
+            </div>
+            <div className="h-2 w-full rounded-full bg-zinc-100 overflow-hidden relative border border-muted/10">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-[#3B82F6] to-[#60A5FA] transition-all duration-1000 ease-out"
+                style={{ width: `${pct}%` }}
+              />
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// Biểu đồ cảm xúc cặp đôi (Donut Chart)
+function CoupleMoodDonutChart({ moods }) {
+  if (!moods || moods.length === 0) return null;
+  const total = moods.reduce((acc, m) => acc + m.count, 0) || 1;
+  const colors = {
+    'Hạnh phúc': '#10B981',
+    'Vui vẻ': '#34D399',
+    'Bình ổn': '#60A5FA',
+    'Trầm lặng': '#F59E0B',
+    'Có mâu thuẫn': '#EF4444',
+    'Khác': '#9CA3AF'
+  };
+
+  const radius = 32;
+  const strokeWidth = 7.5;
+  const circumference = 2 * Math.PI * radius;
+
+  let accumulatedPct = 0;
+  const slices = moods.map(m => {
+    const pct = (m.count / total) * 100;
+    const strokeLength = (pct / 100) * circumference;
+    const strokeOffset = circumference - ((accumulatedPct / 100) * circumference);
+    accumulatedPct += pct;
+    return { ...m, strokeLength, strokeOffset, pct, color: colors[m.mood] || '#6B7280' };
+  });
+
+  return (
+    <div className="flex flex-col sm:flex-row items-center justify-around gap-4 py-2">
+      <div className="relative h-24 w-24 shrink-0">
+        <svg width="100%" height="100%" viewBox="0 0 100 100" className="overflow-visible select-none">
+          <circle cx="50" cy="50" r={radius} fill="transparent" stroke="#F1F1F0" strokeWidth={strokeWidth} />
+          {slices.map((slice, idx) => (
+            <circle
+              key={idx}
+              cx="50"
+              cy="50"
+              r={radius}
+              fill="transparent"
+              stroke={slice.color}
+              strokeWidth={strokeWidth}
+              strokeDasharray={`${slice.strokeLength} ${circumference - slice.strokeLength}`}
+              strokeDashoffset={slice.strokeOffset}
+              transform="rotate(-90 50 50)"
+              strokeLinecap="round"
+              className="transition-all duration-700 ease-out"
+            />
+          ))}
+        </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+          <span className="text-xs font-black text-foreground">{total.toLocaleString('vi-VN')}</span>
+          <span className="text-[7px] font-bold text-muted-foreground uppercase">Check-ins</span>
+        </div>
+      </div>
+      <div className="flex-1 space-y-1.5 w-full">
+        {slices.slice(0, 5).map((slice, idx) => (
+          <div key={idx} className="flex items-center justify-between border-b border-muted/50 pb-1 last:border-0 last:pb-0 text-[11px]">
+            <span className="flex items-center gap-1.5 font-semibold text-muted-foreground">
+              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: slice.color }} /> {slice.mood}
+            </span>
+            <span className="font-extrabold text-foreground">{slice.count.toLocaleString('vi-VN')} ({slice.pct.toFixed(1)}%)</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 function fetchStats() {
@@ -911,90 +1410,713 @@ export function DashboardPage() {
             </div>
           </div>
 
-          {isAnalyticsLoading ? (
-            <div className="flex h-64 items-center justify-center text-sm text-muted-foreground animate-pulse">
-              Đang tải dữ liệu thống kê...
+          <Tabs defaultValue="connection" className="space-y-6">
+            <div className="border-b border-[#E8E3DD] pb-1">
+              <TabsList className="bg-zinc-100/80 border border-[#E8E3DD] p-1 rounded-xl inline-flex gap-1">
+                <TabsTrigger
+                  value="connection"
+                  className="rounded-lg px-4 py-1.5 text-xs font-bold text-zinc-500 data-[state=active]:!bg-white data-[state=active]:!text-[#FF5A36] data-[state=active]:shadow-sm transition-all duration-300 flex items-center gap-1.5 cursor-pointer border border-transparent data-[state=active]:border-[#E8E3DD]"
+                >
+                  <TrendingUp className="h-4 w-4" />
+                  Kết nối & Trò chuyện
+                </TabsTrigger>
+                <TabsTrigger
+                  value="relationship"
+                  className="rounded-lg px-4 py-1.5 text-xs font-bold text-zinc-500 data-[state=active]:!bg-white data-[state=active]:!text-[#FF5A36] data-[state=active]:shadow-sm transition-all duration-300 flex items-center gap-1.5 cursor-pointer border border-transparent data-[state=active]:border-[#E8E3DD]"
+                >
+                  <Heart className="h-4 w-4" />
+                  Cặp đôi & Gắn kết
+                </TabsTrigger>
+                <TabsTrigger
+                  value="ai-healing"
+                  className="rounded-lg px-4 py-1.5 text-xs font-bold text-zinc-500 data-[state=active]:!bg-white data-[state=active]:!text-[#FF5A36] data-[state=active]:shadow-sm transition-all duration-300 flex items-center gap-1.5 cursor-pointer border border-transparent data-[state=active]:border-[#E8E3DD]"
+                >
+                  <Activity className="h-4 w-4" />
+                  AI & Chữa lành
+                </TabsTrigger>
+                <TabsTrigger
+                  value="demographics"
+                  className="rounded-lg px-4 py-1.5 text-xs font-bold text-zinc-500 data-[state=active]:!bg-white data-[state=active]:!text-[#FF5A36] data-[state=active]:shadow-sm transition-all duration-300 flex items-center gap-1.5 cursor-pointer border border-transparent data-[state=active]:border-[#E8E3DD]"
+                >
+                  <Users className="h-4 w-4" />
+                  Nhân khẩu học
+                </TabsTrigger>
+                <TabsTrigger
+                  value="growth"
+                  className="rounded-lg px-4 py-1.5 text-xs font-bold text-zinc-500 data-[state=active]:!bg-white data-[state=active]:!text-[#FF5A36] data-[state=active]:shadow-sm transition-all duration-300 flex items-center gap-1.5 cursor-pointer border border-transparent data-[state=active]:border-[#E8E3DD]"
+                >
+                  <FileBarChart className="h-4 w-4" />
+                  Doanh thu & Tăng trưởng
+                </TabsTrigger>
+              </TabsList>
             </div>
-          ) : (
-            <div className="grid gap-6 lg:grid-cols-3">
-              {/* Matching timeline chart (Col span 2) */}
-              <Card className="lg:col-span-2 border-muted/70 bg-card overflow-hidden">
-                <CardHeader className="flex flex-row items-center justify-between border-b border-muted/50 pb-4 p-5">
-                  <div className="space-y-1">
-                    <CardTitle className="text-base font-bold flex items-center gap-2">
-                      <TrendingUp className="h-5 w-5 text-emerald-500" />
-                      Biểu đồ hiệu suất ghép đôi (Matching)
-                    </CardTitle>
-                    <CardDescription className="text-xs">
-                      Tần suất ghép đôi thành công và thất bại/bỏ qua qua thời gian
-                    </CardDescription>
-                  </div>
-                  <Badge className="text-[10px] font-bold border-emerald-500/20 text-emerald-600 bg-emerald-500/10 shadow-none px-2.5 py-0.5 rounded-full flex items-center gap-1">
-                    Tỷ lệ thành công: {analyticsData?.summary?.successRate ?? 0}%
-                  </Badge>
-                </CardHeader>
-                <CardContent className="p-6 space-y-6">
-                  <div className="grid grid-cols-3 gap-4 border-b border-muted/50 pb-5">
-                    <div className="space-y-1">
-                      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Tổng số lượt ghép đôi</p>
-                      <p className="text-xl font-black text-foreground">{(analyticsData?.summary?.totalMatches ?? 0).toLocaleString('vi-VN')}</p>
-                    </div>
-                    <div className="space-y-1 border-l border-muted/65 pl-4">
-                      <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Thành công
-                      </p>
-                      <p className="text-xl font-black text-foreground">{(analyticsData?.summary?.successMatches ?? 0).toLocaleString('vi-VN')}</p>
-                    </div>
-                    <div className="space-y-1 border-l border-muted/65 pl-4">
-                      <p className="text-[10px] font-bold text-amber-600 uppercase tracking-wider flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-amber-500" /> Thất bại/Bỏ qua
-                      </p>
-                      <p className="text-xl font-black text-foreground">{(analyticsData?.summary?.failedMatches ?? 0).toLocaleString('vi-VN')}</p>
-                    </div>
-                  </div>
 
-                  <div className="pt-2">
-                    <MatchingChart timeline={analyticsData?.matchingTimeline} />
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Right column: Relationships and Feature Usage (Col span 1) */}
-              <div className="space-y-6">
-                {/* Relationship Donut Card */}
-                <Card className="border-muted/70 bg-card overflow-hidden">
-                  <CardHeader className="border-b border-muted/50 pb-4 p-5">
-                    <CardTitle className="text-sm font-bold flex items-center gap-2">
-                      <Heart className="h-4.5 w-4.5 text-rose-500" />
-                      Xác nhận mối quan hệ
-                    </CardTitle>
-                    <CardDescription className="text-xs">
-                      Tỷ lệ trạng thái kết đôi yêu cầu từ các cặp đôi
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="p-5">
-                    <RelationshipDonutChart summary={analyticsData?.summary} />
-                  </CardContent>
-                </Card>
-
-                {/* Feature Usage Card */}
-                <Card className="border-muted/70 bg-card overflow-hidden">
-                  <CardHeader className="border-b border-muted/50 pb-4 p-5">
-                    <CardTitle className="text-sm font-bold flex items-center gap-2">
-                      <Activity className="h-4.5 w-4.5 text-[#8B4AFF]" />
-                      Chức năng sử dụng nhiều
-                    </CardTitle>
-                    <CardDescription className="text-xs">
-                      Đo lường tần suất người dùng truy cập các khu vực trải nghiệm
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="p-5">
-                    <FeatureUsageChart usage={analyticsData?.featureUsage} />
-                  </CardContent>
-                </Card>
+            {isAnalyticsLoading ? (
+              <div className="flex h-64 items-center justify-center text-sm text-muted-foreground animate-pulse">
+                Đang tải dữ liệu thống kê...
               </div>
-            </div>
-          )}
+            ) : (
+              <>
+                {/* SUB-TAB 1: KẾT NỐI & TRÒ CHUYỆN */}
+                <TabsContent value="connection" className="space-y-6 mt-0 outline-none">
+                  <div className="grid gap-6 lg:grid-cols-3">
+                    {/* Matching Chart */}
+                    <Card className="lg:col-span-2 border-muted/70 bg-card overflow-hidden">
+                      <CardHeader className="flex flex-row items-center justify-between border-b border-muted/50 pb-4 p-5">
+                        <div className="space-y-1">
+                          <CardTitle className="text-base font-bold flex items-center gap-2">
+                            <TrendingUp className="h-5 w-5 text-emerald-500" />
+                            Biểu đồ hiệu suất ghép đôi (Matching)
+                          </CardTitle>
+                          <CardDescription className="text-xs">
+                            Tần suất ghép đôi thành công và thất bại/bỏ qua qua thời gian
+                          </CardDescription>
+                        </div>
+                        <Badge className="text-[10px] font-bold border-emerald-500/20 text-emerald-600 bg-emerald-500/10 shadow-none px-2.5 py-0.5 rounded-full">
+                          Thành công: {analyticsData?.summary?.successRate ?? 0}%
+                        </Badge>
+                      </CardHeader>
+                      <CardContent className="p-6 space-y-6">
+                        <div className="grid grid-cols-3 gap-4 border-b border-muted/50 pb-5">
+                          <div className="space-y-1">
+                            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Tổng số lượt ghép đôi</p>
+                            <p className="text-xl font-black text-foreground">{(analyticsData?.summary?.totalMatches ?? 0).toLocaleString('vi-VN')}</p>
+                          </div>
+                          <div className="space-y-1 border-l border-muted/65 pl-4">
+                            <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider flex items-center gap-1">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Thành công
+                            </p>
+                            <p className="text-xl font-black text-foreground">{(analyticsData?.summary?.successMatches ?? 0).toLocaleString('vi-VN')}</p>
+                          </div>
+                          <div className="space-y-1 border-l border-muted/65 pl-4">
+                            <p className="text-[10px] font-bold text-amber-600 uppercase tracking-wider flex items-center gap-1">
+                              <span className="w-1.5 h-1.5 rounded-full bg-amber-500" /> Thất bại/Bỏ qua
+                            </p>
+                            <p className="text-xl font-black text-foreground">{(analyticsData?.summary?.failedMatches ?? 0).toLocaleString('vi-VN')}</p>
+                          </div>
+                        </div>
+
+                        <div className="pt-2">
+                          <MatchingChart timeline={analyticsData?.matchingTimeline} />
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Like/Pass & KPIs */}
+                    <div className="space-y-6">
+                      <Card className="border-muted/70 bg-card overflow-hidden">
+                        <CardHeader className="border-b border-muted/50 pb-4 p-5">
+                          <CardTitle className="text-sm font-bold flex items-center gap-2">
+                            <Activity className="h-4.5 w-4.5 text-[#FF5A36]" />
+                            Tỷ lệ Thích / Bỏ qua (Swipe)
+                          </CardTitle>
+                          <CardDescription className="text-xs">
+                            Cơ cấu hành vi vuốt hồ sơ của người dùng
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent className="p-5">
+                          <SwipeRatioChart
+                            likes={analyticsData?.summary?.likesCount ?? 0}
+                            passes={analyticsData?.summary?.passesCount ?? 0}
+                          />
+                        </CardContent>
+                      </Card>
+
+                      <div className="grid gap-4 grid-cols-2">
+                        <Card className="border-muted/70 bg-card p-4 space-y-1">
+                          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Chuyển đổi Chat</p>
+                          <p className="text-2xl font-black text-foreground">{analyticsData?.summary?.chatConversionRate ?? 0}%</p>
+                          <p className="text-[9px] text-muted-foreground">Match nhắn tin</p>
+                        </Card>
+                        <Card className="border-muted/70 bg-card p-4 space-y-1">
+                          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Phản hồi đầu</p>
+                          <p className="text-2xl font-black text-foreground">{analyticsData?.summary?.responseLatencyMinutes ?? 0}m</p>
+                          <p className="text-[9px] text-muted-foreground">Thời gian chờ TB</p>
+                        </Card>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Messaging Details row */}
+                  <div className="grid gap-6 md:grid-cols-3">
+                    {/* Message type share */}
+                    <Card className="border-muted/70 bg-card overflow-hidden">
+                      <CardHeader className="border-b border-muted/50 pb-4 p-5">
+                        <CardTitle className="text-sm font-bold">Cơ cấu loại tin nhắn gửi đi</CardTitle>
+                        <CardDescription className="text-[11px]">Tỷ lệ tin nhắn theo định dạng</CardDescription>
+                      </CardHeader>
+                      <CardContent className="p-5">
+                        <MessageTypeChart types={analyticsData?.messaging?.types || []} />
+                      </CardContent>
+                    </Card>
+
+                    {/* Top reactions */}
+                    <Card className="border-muted/70 bg-card overflow-hidden">
+                      <CardHeader className="border-b border-muted/50 pb-4 p-5">
+                        <CardTitle className="text-sm font-bold">Top Emoji phản ứng nhiều nhất</CardTitle>
+                        <CardDescription className="text-[11px]">Các emoji được dùng để thả cảm xúc tin nhắn</CardDescription>
+                      </CardHeader>
+                      <CardContent className="p-5">
+                        <div className="space-y-3">
+                          {(analyticsData?.messaging?.topReactions || []).map((r, idx) => (
+                            <div key={idx} className="flex items-center justify-between border-b border-muted/30 pb-2 last:border-0 last:pb-0">
+                              <span className="text-lg flex items-center gap-2">
+                                <span className="text-xs text-muted-foreground font-semibold">#{idx+1}</span>
+                                {r.emoji}
+                              </span>
+                              <span className="text-xs font-black text-foreground">
+                                {r.count.toLocaleString('vi-VN')} lượt dùng
+                              </span>
+                            </div>
+                          ))}
+                          {(!analyticsData?.messaging?.topReactions || analyticsData?.messaging?.topReactions.length === 0) && (
+                            <p className="text-xs text-muted-foreground text-center py-4">Chưa có dữ liệu phản ứng</p>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Voice details */}
+                    <Card className="border-muted/70 bg-card overflow-hidden flex flex-col justify-between">
+                      <CardHeader className="border-b border-muted/50 pb-4 p-5">
+                        <CardTitle className="text-sm font-bold">Tin nhắn thoại (Voice Message)</CardTitle>
+                        <CardDescription className="text-[11px]">Hành vi sử dụng tin nhắn âm thanh</CardDescription>
+                      </CardHeader>
+                      <CardContent className="p-5 flex-1 flex flex-col justify-center items-center text-center space-y-2">
+                        <div className="h-16 w-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mb-1">
+                          <Headphones className="h-8 w-8" />
+                        </div>
+                        <p className="text-2xl font-black text-foreground">
+                          {analyticsData?.messaging?.avgVoiceDurationSeconds ?? 0} giây
+                        </p>
+                        <p className="text-xs text-muted-foreground font-medium max-w-[200px]">
+                          Thời lượng trung bình của một tin nhắn thoại được gửi đi trên hệ thống
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </TabsContent>
+
+                {/* SUB-TAB 2: CẶP ĐÔI & GẮN KẾT */}
+                <TabsContent value="relationship" className="space-y-6 mt-0 outline-none">
+                  <div className="grid gap-6 md:grid-cols-3">
+                    {/* Relationship Donut Chart */}
+                    <Card className="border-muted/70 bg-card overflow-hidden">
+                      <CardHeader className="border-b border-muted/50 pb-4 p-5">
+                        <CardTitle className="text-sm font-bold flex items-center gap-2">
+                          <Heart className="h-4.5 w-4.5 text-rose-500" />
+                          Xác nhận mối quan hệ
+                        </CardTitle>
+                        <CardDescription className="text-xs">
+                          Tỷ lệ trạng thái kết đôi yêu cầu từ các cặp đôi
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="p-5">
+                        <RelationshipDonutChart summary={analyticsData?.summary} />
+                      </CardContent>
+                    </Card>
+
+                    {/* Couple Check-in moods */}
+                    <Card className="border-muted/70 bg-card overflow-hidden">
+                      <CardHeader className="border-b border-muted/50 pb-4 p-5">
+                        <CardTitle className="text-sm font-bold flex items-center gap-2">
+                          <Activity className="h-4.5 w-4.5 text-[#FF5A36]" />
+                          Cảm xúc khi Check-in cặp đôi
+                        </CardTitle>
+                        <CardDescription className="text-xs">
+                          Tâm trạng chung ghi nhận từ hoạt động check-in đôi
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="p-5">
+                        <CoupleMoodDonutChart moods={analyticsData?.relationshipDetails?.moods || []} />
+                      </CardContent>
+                    </Card>
+
+                    {/* Daily Action Challenge */}
+                    <Card className="border-muted/70 bg-card overflow-hidden flex flex-col justify-between">
+                      <CardHeader className="border-b border-muted/50 pb-4 p-5">
+                        <CardTitle className="text-sm font-bold">Thử thách Daily Action</CardTitle>
+                        <CardDescription className="text-xs">Mức độ tương tác thử thách hàng ngày của cặp đôi</CardDescription>
+                      </CardHeader>
+                      <CardContent className="p-5 flex-1 flex flex-col justify-center items-center text-center space-y-2">
+                        <div className="h-16 w-16 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center mb-1">
+                          <CheckCircle2 className="h-8 w-8" />
+                        </div>
+                        <p className="text-2xl font-black text-foreground">
+                          {analyticsData?.relationshipDetails?.dailyActionCompletionRate ?? 0}%
+                        </p>
+                        <p className="text-xs text-muted-foreground font-medium max-w-[200px]">
+                          Tỷ lệ hoàn thành các thử thách gắn kết hàng ngày được hệ thống đề xuất
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* Streak details row */}
+                  <div className="grid gap-6 md:grid-cols-3">
+                    {/* Average Streak */}
+                    <Card className="border-muted/70 bg-card overflow-hidden flex flex-col justify-between md:col-span-1">
+                      <CardHeader className="border-b border-muted/50 pb-4 p-5">
+                        <CardTitle className="text-sm font-bold flex items-center gap-2">
+                          <Heart className="h-4.5 w-4.5 text-rose-500" />
+                          Chuỗi ngày kết đôi trung bình
+                        </CardTitle>
+                        <CardDescription className="text-xs">Độ bền vững gắn kết của các cặp đôi hoạt động</CardDescription>
+                      </CardHeader>
+                      <CardContent className="p-5 flex-1 flex flex-col justify-center items-center text-center space-y-2 py-8">
+                        <div className="h-14 w-14 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mb-1">
+                          <Heart className="h-7 w-7" />
+                        </div>
+                        <p className="text-3xl font-black text-foreground">
+                          {analyticsData?.relationshipDetails?.avgStreakDays ?? 0} ngày
+                        </p>
+                        <p className="text-xs text-muted-foreground font-medium max-w-[200px]">
+                          Số ngày liên tục (Streak) trung bình mà các cặp đôi duy trì tương tác hàng ngày
+                        </p>
+                      </CardContent>
+                    </Card>
+
+                    {/* Top streaks */}
+                    <Card className="border-muted/70 bg-card overflow-hidden md:col-span-2">
+                      <CardHeader className="border-b border-muted/50 pb-4 p-5">
+                        <CardTitle className="text-sm font-bold">Top 5 Cặp đôi có chuỗi ngày (Streak) cao nhất</CardTitle>
+                        <CardDescription className="text-xs">Bảng xếp hạng độ gắn kết kỷ lục trên hệ thống</CardDescription>
+                      </CardHeader>
+                      <CardContent className="p-5">
+                        <div className="space-y-3.5">
+                          {(analyticsData?.relationshipDetails?.topStreaks || []).map((item, idx) => (
+                            <div key={idx} className="flex items-center justify-between border-b border-muted/30 pb-2 last:border-0 last:pb-0">
+                              <div className="flex items-center gap-3">
+                                <span className="text-xs font-bold text-muted-foreground bg-zinc-100 w-5 h-5 rounded-full flex items-center justify-center shrink-0">
+                                  {idx + 1}
+                                </span>
+                                <span className="text-xs font-bold text-foreground">{item.names}</span>
+                              </div>
+                              <span className="text-xs font-extrabold text-rose-600 bg-rose-50 px-2.5 py-0.5 rounded-full flex items-center gap-1 border border-rose-100">
+                                🔥 {item.streakDays} ngày
+                              </span>
+                            </div>
+                          ))}
+                          {(!analyticsData?.relationshipDetails?.topStreaks || analyticsData?.relationshipDetails?.topStreaks.length === 0) && (
+                            <p className="text-xs text-muted-foreground text-center py-6">Chưa có dữ liệu cặp đôi hoạt động</p>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </TabsContent>
+
+                {/* SUB-TAB 3: AI & CHỮA LÀNH */}
+                <TabsContent value="ai-healing" className="space-y-6 mt-0 outline-none">
+                  <div className="grid gap-6 md:grid-cols-3">
+                    {/* Mood logs */}
+                    <Card className="border-muted/70 bg-card overflow-hidden">
+                      <CardHeader className="border-b border-muted/50 pb-4 p-5">
+                        <CardTitle className="text-sm font-bold flex items-center gap-2">
+                          <Activity className="h-4.5 w-4.5 text-[#FF5A36]" />
+                          Phân bố cảm xúc (Mood Share)
+                        </CardTitle>
+                        <CardDescription className="text-xs">
+                          Tỷ lệ trạng thái tâm lý người dùng ghi nhận qua nhật ký cảm xúc
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="p-5">
+                        <div className="space-y-3.5">
+                          {(analyticsData?.moodShare || []).slice(0, 4).map((m, idx) => (
+                            <div key={idx} className="space-y-1">
+                              <div className="flex items-center justify-between text-xs">
+                                <span className="font-semibold text-muted-foreground">{m.mood}</span>
+                                <span className="font-extrabold text-foreground">{m.count} lượt ({m.percentage}%)</span>
+                              </div>
+                              <div className="h-2 w-full rounded-full bg-zinc-100 overflow-hidden relative">
+                                <div
+                                  className="h-full rounded-full bg-gradient-to-r from-[#FF5A36] to-[#EA2A5A]"
+                                  style={{ width: `${m.percentage}%` }}
+                                />
+                              </div>
+                            </div>
+                          ))}
+                          {(!analyticsData?.moodShare || analyticsData?.moodShare.length === 0) && (
+                            <p className="text-xs text-muted-foreground text-center py-6">Chưa có dữ liệu cảm xúc ghi nhận</p>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* AI Coach Tones */}
+                    <Card className="border-muted/70 bg-card overflow-hidden">
+                      <CardHeader className="border-b border-muted/50 pb-4 p-5">
+                        <CardTitle className="text-sm font-bold flex items-center gap-2">
+                          <Activity className="h-4.5 w-4.5 text-[#8B4AFF]" />
+                          Tần suất tông giọng AI
+                        </CardTitle>
+                        <CardDescription className="text-xs">
+                          Tông giọng được lựa chọn nhiều nhất trong các phiên tư vấn
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="p-5">
+                        <div className="space-y-3.5">
+                          {(analyticsData?.aiCoachTones || []).slice(0, 4).map((t, idx) => (
+                            <div key={idx} className="space-y-1">
+                              <div className="flex items-center justify-between text-xs">
+                                <span className="font-semibold text-muted-foreground">{t.tone}</span>
+                                <span className="font-extrabold text-foreground">{t.count} lượt ({t.percentage}%)</span>
+                              </div>
+                              <div className="h-2 w-full rounded-full bg-zinc-100 overflow-hidden relative">
+                                <div
+                                  className="h-full rounded-full bg-gradient-to-r from-[#8B4AFF] to-[#B975FF]"
+                                  style={{ width: `${t.percentage}%` }}
+                                />
+                              </div>
+                            </div>
+                          ))}
+                          {(!analyticsData?.aiCoachTones || analyticsData?.aiCoachTones.length === 0) && (
+                            <p className="text-xs text-muted-foreground text-center py-6">Chưa có dữ liệu tông giọng AI</p>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* AI Suggestion adoption */}
+                    <Card className="border-muted/70 bg-card overflow-hidden">
+                      <CardHeader className="border-b border-muted/50 pb-4 p-5">
+                        <CardTitle className="text-sm font-bold flex items-center gap-2">
+                          <Activity className="h-4.5 w-4.5 text-[#8B4AFF]" />
+                          Áp dụng gợi ý AI
+                        </CardTitle>
+                        <CardDescription className="text-xs">
+                          Mức độ hữu ích của tin nhắn đề xuất từ AI Coach
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="p-5">
+                        <AISuggestionAdoptionRing adoptionRate={analyticsData?.summary?.aiAdoptionRate ?? 0} />
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* AI Performance details & Healing Assessment Row */}
+                  <div className="grid gap-6 md:grid-cols-3">
+                    {/* AI Coach Performance metrics */}
+                    <Card className="border-muted/70 bg-card overflow-hidden md:col-span-1">
+                      <CardHeader className="border-b border-muted/50 pb-4 p-5">
+                        <CardTitle className="text-sm font-bold">Hiệu năng & Chi phí AI</CardTitle>
+                        <CardDescription className="text-xs">Chỉ số phản hồi & tài nguyên AI Coach</CardDescription>
+                      </CardHeader>
+                      <CardContent className="p-5 space-y-4 text-xs">
+                        <div className="flex items-center justify-between border-b border-muted/50 pb-2">
+                          <span className="font-semibold text-muted-foreground">Tốc độ phản hồi:</span>
+                          <span className="font-extrabold text-foreground">{analyticsData?.aiPerformance?.avgLatencySeconds ?? 0}s</span>
+                        </div>
+                        <div className="flex items-center justify-between border-b border-muted/50 pb-2">
+                          <span className="font-semibold text-muted-foreground">Đánh giá trung bình:</span>
+                          <span className="font-extrabold text-amber-500">⭐️ {analyticsData?.aiPerformance?.avgRating ?? 0}/5.0</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="font-semibold text-muted-foreground">Tổng Token tiêu hao:</span>
+                          <span className="font-extrabold text-foreground">{(analyticsData?.aiPerformance?.totalTokensUsed ?? 0).toLocaleString('vi-VN')}</span>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* AI Model shares */}
+                    <Card className="border-muted/70 bg-card overflow-hidden md:col-span-1">
+                      <CardHeader className="border-b border-muted/50 pb-4 p-5">
+                        <CardTitle className="text-sm font-bold">Mô hình AI sử dụng</CardTitle>
+                        <CardDescription className="text-xs">Tỷ lệ phân bố các LLMs nền tảng</CardDescription>
+                      </CardHeader>
+                      <CardContent className="p-5 text-xs space-y-3">
+                        {(analyticsData?.aiPerformance?.models || []).map((m, idx) => (
+                          <div key={idx} className="flex items-center justify-between border-b border-muted/30 pb-2 last:border-0 last:pb-0">
+                            <span className="font-bold text-foreground">{m.model}</span>
+                            <span className="font-extrabold text-muted-foreground">{m.count.toLocaleString('vi-VN')} phiên</span>
+                          </div>
+                        ))}
+                        {(!analyticsData?.aiPerformance?.models || analyticsData?.aiPerformance?.models.length === 0) && (
+                          <p className="text-xs text-muted-foreground text-center py-4">Chưa có dữ liệu mô hình</p>
+                        )}
+                      </CardContent>
+                    </Card>
+
+                    {/* Healing Assessment recovery intensity */}
+                    <Card className="border-muted/70 bg-card overflow-hidden md:col-span-1">
+                      <CardHeader className="border-b border-muted/50 pb-4 p-5">
+                        <CardTitle className="text-sm font-bold flex items-center gap-2">
+                          <Activity className="h-4.5 w-4.5 text-[#FF5A36]" />
+                          Kết quả Đánh giá Chữa lành
+                        </CardTitle>
+                        <CardDescription className="text-xs">Chỉ số sức khỏe tinh thần tổng hợp</CardDescription>
+                      </CardHeader>
+                      <CardContent className="p-5 space-y-4 text-xs">
+                        <div className="flex items-center justify-between border-b border-muted/50 pb-2">
+                          <span className="font-semibold text-muted-foreground">Hoàn thành lộ trình:</span>
+                          <span className="font-extrabold text-emerald-600">{analyticsData?.summary?.courseCompletionRate ?? 0}%</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="font-semibold text-muted-foreground">Cường độ hồi phục TB:</span>
+                          <span className="font-extrabold text-foreground">{analyticsData?.healingAssessments?.avgRecoveryIntensity ?? 0}/10.0</span>
+                        </div>
+                        <p className="text-[10px] text-muted-foreground mt-2 leading-relaxed italic">
+                          *Đo lường từ bảng câu hỏi đầu vào và điểm đánh giá định kỳ sau lộ trình
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* Triggers and needs row */}
+                  <div className="grid gap-6 md:grid-cols-2">
+                    {/* Triggers breakdown */}
+                    <Card className="border-muted/70 bg-card overflow-hidden">
+                      <CardHeader className="border-b border-muted/50 pb-4 p-5">
+                        <CardTitle className="text-sm font-bold">Top Tác nhân kích hoạt cảm xúc (Triggers)</CardTitle>
+                        <CardDescription className="text-xs">Yếu tố gây ảnh hưởng tinh thần nhiều nhất được chia sẻ</CardDescription>
+                      </CardHeader>
+                      <CardContent className="p-5">
+                        <div className="space-y-3">
+                          {(analyticsData?.healingAssessments?.triggers || []).map((t, idx) => (
+                            <div key={idx} className="flex items-center justify-between border-b border-muted/30 pb-2 last:border-0 last:pb-0 text-xs">
+                              <span className="font-bold text-foreground">{t.trigger}</span>
+                              <span className="font-extrabold text-muted-foreground">{t.count.toLocaleString('vi-VN')} lượt chọn</span>
+                            </div>
+                          ))}
+                          {(!analyticsData?.healingAssessments?.triggers || analyticsData?.healingAssessments?.triggers.length === 0) && (
+                            <p className="text-xs text-muted-foreground text-center py-4">Chưa có dữ liệu trigger</p>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Needs breakdown */}
+                    <Card className="border-muted/70 bg-card overflow-hidden">
+                      <CardHeader className="border-b border-muted/50 pb-4 p-5">
+                        <CardTitle className="text-sm font-bold">Top Nhu cầu Chữa lành cấp thiết (Needs)</CardTitle>
+                        <CardDescription className="text-xs">Mong muốn được hỗ trợ nhiều nhất của người dùng</CardDescription>
+                      </CardHeader>
+                      <CardContent className="p-5">
+                        <div className="space-y-3">
+                          {(analyticsData?.healingAssessments?.needs || []).map((n, idx) => (
+                            <div key={idx} className="flex items-center justify-between border-b border-muted/30 pb-2 last:border-0 last:pb-0 text-xs">
+                              <span className="font-bold text-foreground">{n.need}</span>
+                              <span className="font-extrabold text-muted-foreground">{n.count.toLocaleString('vi-VN')} lượt chọn</span>
+                            </div>
+                          ))}
+                          {(!analyticsData?.healingAssessments?.needs || analyticsData?.healingAssessments?.needs.length === 0) && (
+                            <p className="text-xs text-muted-foreground text-center py-4">Chưa có dữ liệu nhu cầu</p>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </TabsContent>
+
+                {/* SUB-TAB 4: NHÂN KHẨU HỌC */}
+                <TabsContent value="demographics" className="space-y-6 mt-0 outline-none">
+                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    {/* Gender distribution */}
+                    <Card className="border-muted/70 bg-card overflow-hidden">
+                      <CardHeader className="border-b border-muted/50 pb-4 p-5">
+                        <CardTitle className="text-sm font-bold">Cơ cấu giới tính người dùng</CardTitle>
+                        <CardDescription className="text-xs">Phân bố giới tính trên toàn bộ cơ sở hồ sơ</CardDescription>
+                      </CardHeader>
+                      <CardContent className="p-5">
+                        <GenderRingChart data={analyticsData?.demographics?.gender || []} />
+                      </CardContent>
+                    </Card>
+
+                    {/* Age distribution */}
+                    <Card className="border-muted/70 bg-card overflow-hidden">
+                      <CardHeader className="border-b border-muted/50 pb-4 p-5">
+                        <CardTitle className="text-sm font-bold">Phân bố theo nhóm tuổi</CardTitle>
+                        <CardDescription className="text-xs">Cơ cấu nhóm tuổi người dùng trong hệ thống</CardDescription>
+                      </CardHeader>
+                      <CardContent className="p-5">
+                        <AgeVerticalBarChart data={analyticsData?.demographics?.age || []} />
+                      </CardContent>
+                    </Card>
+
+                    {/* Top cities */}
+                    <Card className="border-muted/70 bg-card overflow-hidden">
+                      <CardHeader className="border-b border-muted/50 pb-4 p-5">
+                        <CardTitle className="text-sm font-bold">Top 5 Thành phố đông đảo nhất</CardTitle>
+                        <CardDescription className="text-xs">Định vị địa lý tập trung người dùng nhiều nhất</CardDescription>
+                      </CardHeader>
+                      <CardContent className="p-5">
+                        <div className="space-y-3.5">
+                          {(analyticsData?.demographics?.city || []).map((c, idx) => (
+                            <div key={idx} className="flex items-center justify-between border-b border-muted/30 pb-2 last:border-0 last:pb-0 text-xs">
+                              <span className="font-bold text-foreground">{c.city}</span>
+                              <span className="font-extrabold text-muted-foreground">{c.count.toLocaleString('vi-VN')} người dùng</span>
+                            </div>
+                          ))}
+                          {(!analyticsData?.demographics?.city || analyticsData?.demographics?.city.length === 0) && (
+                            <p className="text-xs text-muted-foreground text-center py-6">Chưa có dữ liệu thành phố</p>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  <div className="grid gap-6 md:grid-cols-2">
+                    {/* Dating goals distribution */}
+                    <Card className="border-muted/70 bg-card overflow-hidden">
+                      <CardHeader className="border-b border-muted/50 pb-4 p-5">
+                        <CardTitle className="text-sm font-bold">Phân bố mục tiêu hẹn hò (Dating Goal)</CardTitle>
+                        <CardDescription className="text-xs">Định hướng kết đôi mong muốn được người dùng lựa chọn</CardDescription>
+                      </CardHeader>
+                      <CardContent className="p-5">
+                        <div className="space-y-3">
+                          {(analyticsData?.demographics?.datingGoal || []).map((dg, idx) => (
+                            <div key={idx} className="flex items-center justify-between border-b border-muted/30 pb-2 last:border-0 last:pb-0 text-xs">
+                              <span className="font-bold text-foreground">{dg.goal}</span>
+                              <span className="font-extrabold text-muted-foreground">{dg.count.toLocaleString('vi-VN')} hồ sơ</span>
+                            </div>
+                          ))}
+                          {(!analyticsData?.demographics?.datingGoal || analyticsData?.demographics?.datingGoal.length === 0) && (
+                            <p className="text-xs text-muted-foreground text-center py-4">Chưa có dữ liệu dating goal</p>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Zodiac sign distribution */}
+                    <Card className="border-muted/70 bg-card overflow-hidden">
+                      <CardHeader className="border-b border-muted/50 pb-4 p-5">
+                        <CardTitle className="text-sm font-bold">Phân bố theo Cung Hoàng Đạo phổ biến</CardTitle>
+                        <CardDescription className="text-xs">Cung hoàng đạo được khai báo nhiều nhất trên profile</CardDescription>
+                      </CardHeader>
+                      <CardContent className="p-5">
+                        <div className="space-y-3">
+                          {(analyticsData?.demographics?.zodiac || []).slice(0, 5).map((z, idx) => (
+                            <div key={idx} className="flex items-center justify-between border-b border-muted/30 pb-2 last:border-0 last:pb-0 text-xs">
+                              <span className="font-bold text-foreground">{z.zodiac}</span>
+                              <span className="font-extrabold text-muted-foreground">{z.count.toLocaleString('vi-VN')} người</span>
+                            </div>
+                          ))}
+                          {(!analyticsData?.demographics?.zodiac || analyticsData?.demographics?.zodiac.length === 0) && (
+                            <p className="text-xs text-muted-foreground text-center py-4">Chưa có dữ liệu cung hoàng đạo</p>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </TabsContent>
+
+                {/* SUB-TAB 5: DOANH THU & TĂNG TRƯỞNG */}
+                <TabsContent value="growth" className="space-y-6 mt-0 outline-none">
+                  <div className="grid gap-6 lg:grid-cols-3">
+                    {/* Subscriptions structural bar */}
+                    <Card className="lg:col-span-2 border-muted/70 bg-card overflow-hidden">
+                      <CardHeader className="border-b border-muted/50 pb-4 p-5">
+                        <div className="space-y-1">
+                          <CardTitle className="text-base font-bold flex items-center gap-2">
+                            <TrendingUp className="h-5 w-5 text-emerald-500" />
+                            Phân bố gói Premium & Thuê bao
+                          </CardTitle>
+                          <CardDescription className="text-xs">
+                            Cơ cấu các gói thành viên đang sử dụng trong hệ thống
+                          </CardDescription>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="p-6 space-y-6">
+                        {/* Summary Rate */}
+                        <div className="bg-[#10B981]/5 border border-[#10B981]/10 rounded-2xl p-5 flex items-center justify-between">
+                          <div className="space-y-1">
+                            <p className="text-xs font-bold text-emerald-700 uppercase tracking-wider">Tỷ lệ chuyển đổi trả phí</p>
+                            <p className="text-2xl font-black text-emerald-800">{analyticsData?.summary?.premiumRate ?? 0}%</p>
+                          </div>
+                          <p className="text-xs text-emerald-700/80 font-medium max-w-[220px] text-right">
+                            Phần trăm tài khoản đăng ký sử dụng các gói nâng cấp trả phí PLUS, PREMIUM hoặc ELITE.
+                          </p>
+                        </div>
+
+                        {/* Structural Bars */}
+                        <div className="space-y-4">
+                          {[
+                            { label: 'Gói FREE (Miễn phí)', value: analyticsData?.summary?.freeSubsCount ?? 0, color: 'bg-zinc-300' },
+                            { label: 'Gói PLUS (Nâng cấp nhẹ)', value: analyticsData?.summary?.plusSubsCount ?? 0, color: 'bg-blue-500' },
+                            { label: 'Gói PREMIUM (Vừa phải)', value: analyticsData?.summary?.premiumSubsCount ?? 0, color: 'bg-[#FF5A36]' },
+                            { label: 'Gói ELITE (Cao cấp nhất)', value: analyticsData?.summary?.eliteSubsCount ?? 0, color: 'bg-purple-600' }
+                          ].map((tier, idx) => {
+                            const total =
+                              (analyticsData?.summary?.freeSubsCount ?? 0) +
+                              (analyticsData?.summary?.plusSubsCount ?? 0) +
+                              (analyticsData?.summary?.premiumSubsCount ?? 0) +
+                              (analyticsData?.summary?.eliteSubsCount ?? 0) || 1;
+                            const pct = Math.round((tier.value / total) * 1000) / 10;
+
+                            return (
+                              <div key={idx} className="space-y-1.5">
+                                <div className="flex items-center justify-between text-xs">
+                                  <span className="font-bold text-foreground">{tier.label}</span>
+                                  <span className="text-muted-foreground font-semibold">
+                                    {tier.value.toLocaleString('vi-VN')} người ({pct}%)
+                                  </span>
+                                </div>
+                                <div className="h-2.5 w-full rounded-full bg-zinc-100 overflow-hidden relative border border-muted/30">
+                                  <div
+                                    className={`h-full rounded-full ${tier.color} transition-all duration-1000 ease-out`}
+                                    style={{ width: `${pct}%` }}
+                                  />
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Referrals & Promos count */}
+                    <div className="space-y-6">
+                      <Card className="border-muted/70 bg-card overflow-hidden">
+                        <CardHeader className="border-b border-muted/50 pb-4 p-5">
+                          <CardTitle className="text-sm font-bold flex items-center gap-2">
+                            <Activity className="h-4.5 w-4.5 text-[#FF5A36]" />
+                            Mã giới thiệu (Referral Code)
+                          </CardTitle>
+                          <CardDescription className="text-xs">
+                            Hiệu quả lan tỏa cộng đồng qua giới thiệu bạn bè
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent className="p-5 flex flex-col justify-center items-center text-center py-8">
+                          <div className="h-14 w-14 rounded-full bg-emerald-50 text-emerald-600 bg-opacity-10 flex items-center justify-center mb-1">
+                            <Users className="h-7 w-7 text-emerald-600" />
+                          </div>
+                          <p className="text-2xl font-black text-foreground">
+                            {(analyticsData?.summary?.referralsCount ?? 0).toLocaleString('vi-VN')} lượt
+                          </p>
+                          <p className="text-xs text-muted-foreground font-medium mt-1">
+                            Số tài khoản mới đăng ký thành công qua mã mời từ người dùng cũ
+                          </p>
+                        </CardContent>
+                      </Card>
+
+                      <Card className="border-muted/70 bg-card overflow-hidden">
+                        <CardHeader className="border-b border-muted/50 pb-4 p-5">
+                          <CardTitle className="text-sm font-bold flex items-center gap-2">
+                            <Activity className="h-4.5 w-4.5 text-[#8B4AFF]" />
+                            Mã khuyến mãi (Promo Code)
+                          </CardTitle>
+                          <CardDescription className="text-xs">
+                            Tỷ lệ quy đổi mã giảm giá / khuyến mãi trả phí từ admin
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent className="p-5 flex flex-col justify-center items-center text-center py-8">
+                          <div className="h-14 w-14 rounded-full bg-indigo-50 text-indigo-600 bg-opacity-10 flex items-center justify-center mb-1">
+                            <ClipboardList className="h-7 w-7 text-indigo-600" />
+                          </div>
+                          <p className="text-2xl font-black text-foreground">
+                            {(analyticsData?.summary?.promosCount ?? 0).toLocaleString('vi-VN')} lượt
+                          </p>
+                          <p className="text-xs text-muted-foreground font-medium mt-1">
+                            Số lượt áp dụng thành công mã khuyến mãi để gia hạn/đổi gói
+                          </p>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </div>
+                </TabsContent>
+              </>
+            )}
+          </Tabs>
         </TabsContent>
       </Tabs>
 
