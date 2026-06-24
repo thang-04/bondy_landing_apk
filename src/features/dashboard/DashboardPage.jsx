@@ -225,7 +225,7 @@ function MatchingChart({ timeline }) {
               stroke="currentColor"
               strokeDasharray="4 4"
               strokeWidth={1}
-              className="text-zinc-200 dark:text-zinc-800"
+              className="text-zinc-200"
             />
             <text
               x={padding.left - 10}
@@ -278,7 +278,7 @@ function MatchingChart({ timeline }) {
                   y2={padding.top + chartHeight}
                   stroke="currentColor"
                   strokeWidth={1}
-                  className="text-zinc-300 dark:text-zinc-700"
+                  className="text-zinc-200"
                 />
               )}
               
@@ -335,7 +335,7 @@ function MatchingChart({ timeline }) {
       {/* Tooltip Overlay */}
       {hoveredIdx !== null && points[hoveredIdx] && (
         <div
-          className="absolute z-20 pointer-events-none rounded-xl border border-muted/80 bg-white/95 dark:bg-zinc-900/95 p-3 shadow-lg backdrop-blur-sm text-xs space-y-1.5 min-w-[140px] transition-all duration-100"
+          className="absolute z-20 pointer-events-none rounded-xl border border-muted bg-white p-3 shadow-lg backdrop-blur-sm text-xs space-y-1.5 min-w-[140px] transition-all duration-100"
           style={{
             left: `${Math.min(
               85,
@@ -402,7 +402,7 @@ function RelationshipDonutChart({ summary }) {
             fill="transparent"
             stroke="currentColor"
             strokeWidth={strokeWidth}
-            className="text-zinc-100 dark:text-zinc-800"
+            className="text-zinc-100"
           />
           
           {donutSlices.map((slice, idx) => (
@@ -467,7 +467,7 @@ function FeatureUsageChart({ usage }) {
               {f.uses.toLocaleString('vi-VN')} lượt ({f.percentage}%)
             </span>
           </div>
-          <div className="h-2.5 w-full rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden relative border border-muted/30">
+          <div className="h-2.5 w-full rounded-full bg-zinc-100 overflow-hidden relative border border-muted/30">
             <div
               className="h-full rounded-full bg-gradient-to-r from-[#FF5A36] via-[#EA2A5A] to-[#8B4AFF] transition-all duration-1000 ease-out"
               style={{ width: `${f.percentage}%` }}
@@ -659,18 +659,18 @@ export function DashboardPage() {
       </div>
 
       <Tabs defaultValue="overview" className="space-y-6">
-        <div className="border-b border-muted/50 pb-1">
-          <TabsList className="bg-muted/50 border border-muted/30 p-1 rounded-xl inline-flex gap-1">
+        <div className="border-b border-[#E8E3DD] pb-1">
+          <TabsList className="bg-zinc-100/80 border border-[#E8E3DD] p-1 rounded-xl inline-flex gap-1">
             <TabsTrigger
               value="overview"
-              className="rounded-lg px-5 py-2 text-xs font-bold text-muted-foreground data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-900 data-[state=active]:text-foreground data-[state=active]:shadow-sm transition-all duration-300 flex items-center gap-2 cursor-pointer"
+              className="rounded-lg px-5 py-2 text-xs font-bold text-zinc-500 data-[state=active]:!bg-white data-[state=active]:!text-[#FF5A36] data-[state=active]:shadow-sm transition-all duration-300 flex items-center gap-2 cursor-pointer border border-transparent data-[state=active]:border-[#E8E3DD]"
             >
               <LayoutDashboard className="h-4 w-4" />
               Tổng quan chung
             </TabsTrigger>
             <TabsTrigger
               value="analytics"
-              className="rounded-lg px-5 py-2 text-xs font-bold text-muted-foreground data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-900 data-[state=active]:text-foreground data-[state=active]:shadow-sm transition-all duration-300 flex items-center gap-2 cursor-pointer"
+              className="rounded-lg px-5 py-2 text-xs font-bold text-zinc-500 data-[state=active]:!bg-white data-[state=active]:!text-[#FF5A36] data-[state=active]:shadow-sm transition-all duration-300 flex items-center gap-2 cursor-pointer border border-transparent data-[state=active]:border-[#E8E3DD]"
             >
               <BarChart3 className="h-4 w-4" />
               Thống kê chi tiết
@@ -880,7 +880,7 @@ export function DashboardPage() {
 
         <TabsContent value="analytics" className="space-y-6 mt-0 outline-none">
           {/* Time-Range Filter bar */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white/40 dark:bg-zinc-900/40 p-4 rounded-2xl border border-[#E8E3DD] dark:border-zinc-800/80 backdrop-blur-md">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-5 rounded-2xl border border-[#E8E3DD] shadow-sm">
             <div>
               <h2 className="text-sm font-bold text-foreground flex items-center gap-2">
                 <Calendar className="h-4.5 w-4.5 text-[#FF5A36]" />
@@ -889,7 +889,7 @@ export function DashboardPage() {
               <p className="text-[11px] text-muted-foreground mt-0.5">Lọc dữ liệu báo cáo hệ thống theo các mốc thời gian khác nhau</p>
             </div>
             
-            <div className="flex bg-zinc-100 dark:bg-zinc-800/80 p-1 rounded-xl w-fit border border-muted/30 self-start sm:self-auto">
+            <div className="flex bg-zinc-100 p-1 rounded-xl w-fit border border-[#E8E3DD] self-start sm:self-auto">
               {[
                 { value: 'today', label: 'Hôm nay' },
                 { value: '7d', label: '7 ngày qua' },
@@ -901,8 +901,8 @@ export function DashboardPage() {
                   onClick={() => setTimeRange(btn.value)}
                   className={`px-4 py-1.5 text-xs font-bold rounded-lg cursor-pointer transition-all duration-300 ${
                     timeRange === btn.value
-                      ? 'bg-white dark:bg-zinc-900 text-foreground shadow-sm'
-                      : 'text-muted-foreground hover:text-foreground'
+                      ? 'bg-white text-zinc-900 shadow-sm border border-[#E8E3DD]'
+                      : 'text-zinc-500 hover:text-zinc-900'
                   }`}
                 >
                   {btn.label}
