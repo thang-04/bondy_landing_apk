@@ -46,6 +46,12 @@ jobs:
             type=sha,prefix=
             type=raw,value=latest,enable={{is_default_branch}}
 
+      - name: Verify analytics variables
+        run: |
+          test "${{ vars.NEXT_PUBLIC_ANALYTICS_ENABLED }}" = "true"
+          test -n "${{ vars.NEXT_PUBLIC_GA_MEASUREMENT_ID }}"
+          test -n "${{ vars.NEXT_PUBLIC_ANALYTICS_DOMAINS }}"
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
@@ -53,6 +59,10 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            NEXT_PUBLIC_ANALYTICS_ENABLED=${{ vars.NEXT_PUBLIC_ANALYTICS_ENABLED }}
+            NEXT_PUBLIC_GA_MEASUREMENT_ID=${{ vars.NEXT_PUBLIC_GA_MEASUREMENT_ID }}
+            NEXT_PUBLIC_ANALYTICS_DOMAINS=${{ vars.NEXT_PUBLIC_ANALYTICS_DOMAINS }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
