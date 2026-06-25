@@ -804,13 +804,15 @@ function GenderRingChart({ data }) {
   const circumference = 2 * Math.PI * radius;
   
   let accumulatedPct = 0;
-  const slices = data.map(d => {
+  const slices = [];
+  for (let i = 0; i < data.length; i++) {
+    const d = data[i];
     const pct = (d.count / total) * 100;
     const strokeLength = (pct / 100) * circumference;
     const strokeOffset = circumference - ((accumulatedPct / 100) * circumference);
     accumulatedPct += pct;
-    return { ...d, strokeLength, strokeOffset, pct, color: colors[d.gender] || '#6B7280' };
-  });
+    slices.push({ ...d, strokeLength, strokeOffset, pct, color: colors[d.gender] || '#6B7280' });
+  }
 
   return (
     <div className="flex items-center justify-around gap-6 py-2">
@@ -929,13 +931,15 @@ function CoupleMoodDonutChart({ moods }) {
   const circumference = 2 * Math.PI * radius;
 
   let accumulatedPct = 0;
-  const slices = moods.map(m => {
+  const slices = [];
+  for (let i = 0; i < moods.length; i++) {
+    const m = moods[i];
     const pct = (m.count / total) * 100;
     const strokeLength = (pct / 100) * circumference;
     const strokeOffset = circumference - ((accumulatedPct / 100) * circumference);
     accumulatedPct += pct;
-    return { ...m, strokeLength, strokeOffset, pct, color: colors[m.mood] || '#6B7280' };
-  });
+    slices.push({ ...m, strokeLength, strokeOffset, pct, color: colors[m.mood] || '#6B7280' });
+  }
 
   return (
     <div className="flex flex-col sm:flex-row items-center justify-around gap-4 py-2">
