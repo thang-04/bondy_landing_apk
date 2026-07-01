@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import {
@@ -22,7 +22,10 @@ import {
   TrendingUp,
   BarChart3,
   Calendar,
+  SlidersHorizontal,
 } from 'lucide-react'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
 import { api, unwrap } from '@/lib/api'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -1011,6 +1014,13 @@ export function DashboardPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [timeRange, setTimeRange] = useState('7d')
 
+  // Edit Landing Page Stats State
+  const [editDownloads, setEditDownloads] = useState('')
+  const [editRating, setEditRating] = useState('')
+  const [editConnections, setEditConnections] = useState('')
+  const [editPeace, setEditPeace] = useState('')
+  const [isUpdatingStats, setIsUpdatingStats] = useState(false)
+
   // Fetch Stats
   const { data: statsData, isLoading: isStatsLoading, isError: isStatsError, error: statsError } = useQuery({
     queryKey: ['admin', 'stats'],
@@ -1045,6 +1055,39 @@ export function DashboardPage() {
     },
     refetchInterval: 15_000,
   })
+
+  // Sync edit states when localStatsData loads
+  useEffect(() => {
+    if (localStatsData) {
+      setEditDownloads(localStatsData.downloads ?? '')
+      setEditRating(localStatsData.rating ?? '')
+      setEditConnections(localStatsData.connections ?? '')
+      setEditPeace(localStatsData.peacePercentage ?? '')
+    }
+  }, [localStatsData])
+
+  const handleUpdateLandingStats = async (e) => {
+    e.preventDefault()
+    setIsUpdatingStats(true)
+    try {
+      const res = await api.post('/admin/landing-stats', {
+        downloads: Number(editDownloads),
+        rating: Number(editRating),
+        connections: Number(editConnections),
+        peacePercentage: Number(editPeace),
+      })
+      if (res.data?.success) {
+        toast.success('Cập nhật chỉ số Landing Page thành công!')
+        queryClient.invalidateQueries({ queryKey: ['admin', 'localStats'] })
+      } else {
+        throw new Error(res.data?.error || 'Lỗi từ server')
+      }
+    } catch (err) {
+      toast.error(err.message || 'Không thể cập nhật chỉ số Landing Page')
+    } finally {
+      setIsUpdatingStats(false)
+    }
+  }
 
   // Fetch Reports
   const { data: reportsData, isLoading: isReportsLoading } = useQuery({
@@ -1355,6 +1398,81 @@ export function DashboardPage() {
                       Tạo lộ trình chữa lành
                     </Link>
                   </Button>
+                </CardContent>
+              </Card>
+
+              {/* Landing Page Stats Config Card */}
+              <Card className="border-muted/70 bg-card overflow-hidden">
+                <CardHeader className="pb-3 border-b border-muted/50 p-5">
+                  <CardTitle className="text-sm font-bold flex items-center gap-2">
+                    <SlidersHorizontal className="h-4.5 w-4.5 text-[#FF5A36]" />
+                    Cấu hình chỉ số Landing
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-5">
+                  <form onSubmit={handleUpdateLandingStats} className="space-y-4">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="stats-downloads" className="text-xs font-bold text-muted-foreground uppercase">Lượt tải ứng dụng</Label>
+                      <Input
+                        id="stats-downloads"
+                        type="number"
+                        required
+                        value={editDownloads}
+                        onChange={(e) => setEditDownloads(e.target.value)}
+                        placeholder="Ví dụ: 135"
+                        className="h-9 text-xs rounded-xl border-[#E8E3DD] focus-visible:ring-[#FF5A36]"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="stats-rating" className="text-xs font-bold text-muted-foreground uppercase">Đánh giá cộng đồng</Label>
+                      <Input
+                        id="stats-rating"
+                        type="number"
+                        step="0.1"
+                        min="1"
+                        max="5"
+                        required
+                        value={editRating}
+                        onChange={(e) => setEditRating(e.target.value)}
+                        placeholder="Ví dụ: 4.8"
+                        className="h-9 text-xs rounded-xl border-[#E8E3DD] focus-visible:ring-[#FF5A36]"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="stats-connections" className="text-xs font-bold text-muted-foreground uppercase">Kết nối thấu cảm</Label>
+                      <Input
+                        id="stats-connections"
+                        type="number"
+                        required
+                        value={editConnections}
+                        onChange={(e) => setEditConnections(e.target.value)}
+                        placeholder="Ví dụ: 1200000"
+                        className="h-9 text-xs rounded-xl border-[#E8E3DD] focus-visible:ring-[#FF5A36]"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="stats-peace" className="text-xs font-bold text-muted-foreground uppercase">Cảm thấy bình yên (%)</Label>
+                      <Input
+                        id="stats-peace"
+                        type="number"
+                        min="0"
+                        max="100"
+                        required
+                        value={editPeace}
+                        onChange={(e) => setEditPeace(e.target.value)}
+                        placeholder="Ví dụ: 92"
+                        className="h-9 text-xs rounded-xl border-[#E8E3DD] focus-visible:ring-[#FF5A36]"
+                      />
+                    </div>
+                    <Button 
+                      type="submit" 
+                      size="sm" 
+                      className="w-full h-9 rounded-xl font-bold text-xs active:scale-[0.98] transition-all cursor-pointer" 
+                      disabled={isUpdatingStats}
+                    >
+                      {isUpdatingStats ? 'Đang cập nhật...' : 'Cập nhật chỉ số'}
+                    </Button>
+                  </form>
                 </CardContent>
               </Card>
 
