@@ -186,7 +186,7 @@ const Navbar = () => {
   );
 }
 
-const Hero = ({ downloadCount, onDownload }: { downloadCount: number; onDownload: () => void }) => {
+const Hero = ({ downloads, onDownload }: { downloads: number; onDownload: () => void }) => {
   const [mockupTab, setMockupTab] = useState<'home' | 'explore' | 'healing' | 'chat' | 'profile'>('home');
   const [profileIndex, setProfileIndex] = useState(0);
   const [showMatchOverlay, setShowMatchOverlay] = useState(false);
@@ -283,7 +283,7 @@ const Hero = ({ downloadCount, onDownload }: { downloadCount: number; onDownload
                 Download Android APK
               </a>
               <p className="text-xs text-brand-on-surface-variant/85 font-medium text-center sm:text-left pl-4">
-                Đã có <span className="font-semibold text-brand-primary">{(100 + downloadCount).toLocaleString()}</span> lượt tải về
+                Đã có <span className="font-semibold text-brand-primary">{downloads.toLocaleString()}</span> lượt tải về
               </p>
             </div>
             <a 
@@ -1696,17 +1696,17 @@ const Security = () => {
     );
 }
 
-const DownloadSection = ({ downloadCount, onDownload }: { downloadCount: number; onDownload: () => void }) => {
+const DownloadSection = ({ downloadCount, onDownload, stats }: { downloadCount: number; onDownload: () => void; stats: { downloads: number; rating: number; connections: number; peacePercentage: number } }) => {
   return (
     <section id="download" className="py-24 max-w-7xl mx-auto px-6">
       {/* Thống kê chỉ số uy tín (Social Proof Stats) */}
       <div className="mb-24">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
-            { value: 100 + downloadCount, suffix: "+", label: "Lượt tải ứng dụng", desc: "Android APK & iOS PWA", color: "text-brand-primary" },
-            { value: 4.8, suffix: "★", label: "Đánh giá cộng đồng", desc: "Trên AppStore / PlayStore", color: "text-amber-500", isDecimal: true },
-            { value: 1200000, suffix: "+", label: "Kết nối thấu cảm", desc: "Ghép đôi thành công", color: "text-brand-secondary" },
-            { value: 92, suffix: "%", label: "Cảm thấy bình yên hơn", desc: "Giảm lo âu & stress", color: "text-brand-tertiary" }
+            { value: stats.downloads, suffix: "+", label: "Lượt tải ứng dụng", desc: "Android APK & iOS PWA", color: "text-brand-primary" },
+            { value: stats.rating, suffix: "★", label: "Đánh giá cộng đồng", desc: "Trên AppStore / PlayStore", color: "text-amber-500", isDecimal: true },
+            { value: stats.connections, suffix: "+", label: "Kết nối thấu cảm", desc: "Ghép đôi thành công", color: "text-brand-secondary" },
+            { value: stats.peacePercentage, suffix: "%", label: "Cảm thấy bình yên hơn", desc: "Giảm lo âu & stress", color: "text-brand-tertiary" }
           ].map((item, i) => (
             <motion.div
               key={i}
@@ -1718,11 +1718,7 @@ const DownloadSection = ({ downloadCount, onDownload }: { downloadCount: number;
             >
               <div className="absolute inset-0 bg-brand-primary/3 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               <h3 className={`text-2xl sm:text-3xl md:text-4xl lg:text-3xl xl:text-4xl font-extrabold mb-2 tracking-tight font-display ${item.color}`}>
-                {item.isDecimal ? (
-                  <span>4.8★</span>
-                ) : (
-                  <AnimatedCounter value={item.value} suffix={item.suffix} />
-                )}
+                <AnimatedCounter value={item.value} suffix={item.suffix} isDecimal={item.isDecimal} />
               </h3>
               <p className="font-bold text-brand-on-surface text-sm mb-1">{item.label}</p>
               <p className="text-xs text-brand-on-surface-variant font-medium">{item.desc}</p>
@@ -1800,7 +1796,7 @@ const DownloadSection = ({ downloadCount, onDownload }: { downloadCount: number;
                 <Download size={20} /> Download Android APK
               </a>
               <p className="text-xs text-brand-on-surface-variant/85 font-medium text-center sm:text-left pl-4">
-                Đã có <span className="font-semibold text-brand-primary">{(100 + downloadCount).toLocaleString()}</span> lượt tải về
+                Đã có <span className="font-semibold text-brand-primary">{stats.downloads.toLocaleString()}</span> lượt tải về
               </p>
             </div>
             <div className="flex items-center gap-4 bg-white p-3 rounded-2xl border border-neutral-100 shadow-sm">
@@ -2056,7 +2052,7 @@ const ScrollToTopButton = () => {
 };
 
 // --- ANIME COUNTER COMPONENT ---
-const AnimatedCounter = ({ value, duration = 2000, suffix = "" }: { value: number; duration?: number; suffix?: string }) => {
+const AnimatedCounter = ({ value, duration = 2000, suffix = "", isDecimal = false }: { value: number; duration?: number; suffix?: string; isDecimal?: boolean }) => {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
@@ -2072,7 +2068,7 @@ const AnimatedCounter = ({ value, duration = 2000, suffix = "" }: { value: numbe
       const rate = Math.min(progress / duration, 1);
       
       const easeRate = rate * (2 - rate);
-      const currentCount = Math.floor(easeRate * (end - start) + start);
+      const currentCount = easeRate * (end - start) + start;
       
       setCount(currentCount);
 
@@ -2086,7 +2082,7 @@ const AnimatedCounter = ({ value, duration = 2000, suffix = "" }: { value: numbe
     requestAnimationFrame(animate);
   }, [value, duration]);
 
-  const formattedCount = count.toLocaleString('en-US');
+  const formattedCount = isDecimal ? count.toFixed(1) : Math.floor(count).toLocaleString('en-US');
 
   return <span>{formattedCount}{suffix}</span>;
 };
@@ -2258,6 +2254,7 @@ const FeedbackSection = () => {
 
   const [reviews, setReviews] = useState<typeof defaultReviews>([]);
   const [showForm, setShowForm] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   
   // Form states
   const [name, setName] = useState("");
@@ -2360,6 +2357,8 @@ const FeedbackSection = () => {
   } else {
     reviewsToShow = realReviews;
   }
+
+  const visibleReviews = isExpanded ? reviewsToShow : reviewsToShow.slice(0, 3);
 
   return (
     <section id="feedback" className="py-24 max-w-7xl mx-auto px-6 relative overflow-hidden">
@@ -2527,7 +2526,7 @@ const FeedbackSection = () => {
       {/* Grid of Reviews Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left items-stretch">
         <AnimatePresence mode="popLayout">
-          {reviewsToShow.map((item, index) => (
+          {visibleReviews.map((item, index) => (
             <motion.div
               key={item.id}
               initial={{ opacity: 0, scale: 0.9, y: 30 }}
@@ -2573,23 +2572,44 @@ const FeedbackSection = () => {
           ))}
         </AnimatePresence>
       </div>
+
+      {reviewsToShow.length > 3 && (
+        <div className="text-center mt-12">
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="bg-brand-surface-container hover:bg-brand-surface-container-high text-brand-primary font-bold py-3 px-8 rounded-full border border-brand-outline hover:scale-105 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-2"
+          >
+            {isExpanded ? "Thu gọn đánh giá" : `Xem thêm đánh giá (${reviewsToShow.length - 3})`}
+          </button>
+        </div>
+      )}
     </section>
   );
 };
 
 export default function App() {
-  const [downloadCount, setDownloadCount] = useState<number>(0);
+  const [stats, setStats] = useState({
+    downloads: 135,
+    rating: 4.8,
+    connections: 1200000,
+    peacePercentage: 92
+  });
 
   useEffect(() => {
     // Tải số lượt tải hiện có từ backend
     fetch('/api-proxy/landing-stats', { cache: 'no-store' })
       .then(res => res.json())
       .then(data => {
-        if (data.success && typeof data.downloads === 'number') {
-          setDownloadCount(data.downloads);
+        if (data.success) {
+          setStats({
+            downloads: typeof data.downloads === 'number' ? data.downloads : (typeof data.count === 'number' ? data.count : 135),
+            rating: typeof data.rating === 'number' ? data.rating : 4.8,
+            connections: typeof data.connections === 'number' ? data.connections : 1200000,
+            peacePercentage: typeof data.peacePercentage === 'number' ? data.peacePercentage : 92
+          });
         }
       })
-      .catch(err => console.error("Lỗi khi tải lượt tải về từ backend:", err));
+      .catch(err => console.error("Lỗi khi tải số liệu thống kê từ backend:", err));
 
     // Ghi nhận lượt truy cập web mới vào database của backend
     fetch('/api-proxy/landing-stats', {
@@ -2602,7 +2622,7 @@ export default function App() {
   }, []);
 
   const handleDownload = () => {
-    setDownloadCount(prev => prev + 1);
+    setStats(prev => ({ ...prev, downloads: prev.downloads + 1 }));
     fetch('/api-proxy/landing-stats', {
       method: 'POST',
       headers: {
@@ -2612,8 +2632,11 @@ export default function App() {
     })
       .then(res => res.json())
       .then(data => {
-        if (data.success && typeof data.count === 'number') {
-          setDownloadCount(data.count);
+        if (data.success) {
+          const finalCount = typeof data.downloads === 'number' ? data.downloads : (typeof data.count === 'number' ? data.count : null);
+          if (finalCount !== null) {
+            setStats(prev => ({ ...prev, downloads: finalCount }));
+          }
         }
       })
       .catch(err => console.error("Lỗi khi cập nhật lượt tải về vào backend:", err));
@@ -2626,7 +2649,7 @@ export default function App() {
       <div className="vibrant-blob w-[300px] h-[300px] bg-brand-secondary -bottom-[50px] -left-[50px]"></div>
       
       <Navbar />
-      <Hero downloadCount={downloadCount} onDownload={handleDownload} />
+      <Hero downloads={stats.downloads} onDownload={handleDownload} />
       <SmartMatching />
       <AICoach />
       <HealingSpace />
@@ -2634,7 +2657,7 @@ export default function App() {
       <BentoFeatures />
       <ComparisonSection />
       <Security />
-      <DownloadSection downloadCount={downloadCount} onDownload={handleDownload} />
+      <DownloadSection downloadCount={stats.downloads} onDownload={handleDownload} stats={stats} />
       <FeedbackSection />
       <FAQ />
       <Footer />
