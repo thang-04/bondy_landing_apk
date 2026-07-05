@@ -5,6 +5,10 @@ services:
     restart: unless-stopped
     ports:
       - "3001:3000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - LOGS_API_TOKEN=${LOGS_API_TOKEN:-default_secret_token_123}
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:3000/"]
       interval: 30s
