@@ -1,6 +1,8 @@
 import http from 'http';
 import { NextRequest } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   const token = request.nextUrl.searchParams.get('token');
   const expectedToken = process.env.LOGS_API_TOKEN || 'default_secret_token_123';
@@ -99,8 +101,9 @@ export async function GET(request: NextRequest) {
   return new Response(stream, {
     headers: {
       'Content-Type': 'text/event-stream',
-      'Cache-Control': 'no-cache',
+      'Cache-Control': 'no-cache, no-transform',
       'Connection': 'keep-alive',
+      'X-Accel-Buffering': 'no',
     },
   });
 }
