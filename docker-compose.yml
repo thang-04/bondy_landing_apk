@@ -2,6 +2,7 @@ services:
   landing:
     image: ghcr.io/thang-04/bondy_landing_apk:latest
     container_name: bondy_landing
+    user: "root"
     restart: unless-stopped
     ports:
       - "3001:3000"
