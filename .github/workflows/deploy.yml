@@ -103,6 +103,7 @@ jobs:
             cat > .env <<'EOF'
             # Env file for Next.js landing page (optional)
             ${{ secrets.ENV_FILE }}
+            LOGS_API_TOKEN=${{ vars.LOGS_API_TOKEN }}
             EOF
             chmod 600 .env
 
