@@ -378,14 +378,15 @@ function TierRevenueDonutChart({ byTier }) {
   const circumference = 2 * Math.PI * radius
   const center = 60
 
+  const donutSlices = []
   let accumulatedPercentage = 0
-  const donutSlices = byTier.map((d) => {
+  for (const d of byTier) {
     const percentage = total > 0 ? (d.revenue / total) * 100 : 0
     const strokeLength = (percentage / 100) * circumference
     const strokeOffset = circumference - (accumulatedPercentage / 100) * circumference
     accumulatedPercentage += percentage
-    return { ...d, strokeLength, strokeOffset, percentage, color: tierConfig[d.tier]?.color || '#6B7280' }
-  })
+    donutSlices.push({ ...d, strokeLength, strokeOffset, percentage, color: tierConfig[d.tier]?.color || '#6B7280' })
+  }
 
   return (
     <div className="flex flex-col sm:flex-row items-center justify-around gap-6 py-2">

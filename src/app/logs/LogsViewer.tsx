@@ -55,7 +55,6 @@ export default function LogsViewer({ initialToken }: { initialToken?: string }) 
         eventSourceRef.current.close();
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
