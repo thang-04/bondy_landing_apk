@@ -8,6 +8,7 @@ import {
   Activity,
   Route,
   MessageSquare,
+  Wallet,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import logo from '@/assets/logo.png'
@@ -16,6 +17,7 @@ const navItems = [
   { to: '/', label: 'Tổng quan', icon: LayoutDashboard, end: true },
   { to: '/users', label: 'Người dùng', icon: Users },
   { to: '/reviews', label: 'Đánh giá', icon: MessageSquare },
+  { to: '/revenue', label: 'Doanh thu', icon: Wallet },
   { section: 'Khảo sát' },
   { to: '/surveys', label: 'Surveys', icon: ClipboardList },
   { to: '/survey-templates', label: 'Templates', icon: ClipboardList },
