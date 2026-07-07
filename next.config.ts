@@ -1,5 +1,11 @@
 import type { NextConfig } from "next";
 
+// Backend API base URL. Overridable via env (build-time for Docker/standalone);
+// falls back to the production VPS.
+const API_PROXY_TARGET = (
+  process.env.API_PROXY_TARGET || "https://103.149.86.25/api"
+).replace(/\/+$/, "");
+
 const nextConfig: NextConfig = {
   output: "standalone",
   async rewrites() {
@@ -14,7 +20,7 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/api-proxy/:path*",
-        destination: "https://103.149.86.25/api/:path*",
+        destination: `${API_PROXY_TARGET}/:path*`,
       },
       {
         source: "/web/assets/.env",
@@ -22,11 +28,11 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/uploads/:path*",
-        destination: "https://103.149.86.25/api/uploads/:path*",
+        destination: `${API_PROXY_TARGET}/uploads/:path*`,
       },
       {
         source: "/api/uploads/:path*",
-        destination: "https://103.149.86.25/api/uploads/:path*",
+        destination: `${API_PROXY_TARGET}/uploads/:path*`,
       },
     ];
   },

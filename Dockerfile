@@ -14,6 +14,10 @@ COPY . .
 ENV NODE_ENV=production
 # Disable Next.js telemetry during build
 ENV NEXT_TELEMETRY_DISABLED=1
+# Backend API target for /api-proxy rewrites — resolved at build time (standalone output).
+# Empty ARG falls back to the default in next.config.ts.
+ARG API_PROXY_TARGET
+ENV API_PROXY_TARGET=${API_PROXY_TARGET}
 ARG NEXT_PUBLIC_ANALYTICS_ENABLED=false
 ARG NEXT_PUBLIC_GA_MEASUREMENT_ID
 ARG NEXT_PUBLIC_ANALYTICS_DOMAINS

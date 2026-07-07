@@ -12,7 +12,7 @@ import {
   History,
   Download,
 } from 'lucide-react'
-import { api } from '@/lib/api'
+import { api, unwrap } from '@/lib/api'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -70,6 +70,12 @@ const tierConfig = {
     color: '#F59E0B',
     badge: 'bg-amber-500/10 text-amber-600 border border-amber-500/20',
   },
+  AI_CHAT_PASS: {
+    name: 'Gói AI Chat',
+    price: null,
+    color: '#10B981',
+    badge: 'bg-emerald-500/10 text-emerald-600 border border-emerald-500/20',
+  },
 }
 
 // ===== Cấu hình trạng thái thanh toán (khớp PaymentStatus phía server) =====
@@ -80,120 +86,6 @@ const paymentStatusConfig = {
   CANCELLED: { label: 'Đã hủy', className: 'bg-zinc-500/10 text-zinc-500 border border-zinc-500/20', icon: XCircle },
   FAILED: { label: 'Thất bại', className: 'bg-rose-500/10 text-rose-600 border border-rose-500/20', icon: XCircle },
 }
-
-// ===== Sinh dữ liệu doanh thu mô phỏng theo khoảng thời gian =====
-function getMockRevenueData(range) {
-  // Mỗi dòng: [nhãn, số đơn PLUS, số đơn PREMIUM, số đơn ELITE]
-  const rowsByRange = {
-    today: [
-      ['02h', 1, 0, 0], ['04h', 0, 0, 0], ['06h', 1, 0, 0], ['08h', 3, 1, 0],
-      ['10h', 4, 1, 1], ['12h', 5, 2, 0], ['14h', 3, 1, 0], ['16h', 4, 2, 1],
-      ['18h', 6, 2, 1], ['20h', 8, 3, 1], ['22h', 4, 1, 0], ['24h', 2, 0, 0],
-    ],
-    '7d': [
-      ['Thứ 2', 14, 4, 1], ['Thứ 3', 18, 5, 2], ['Thứ 4', 22, 7, 2],
-      ['Thứ 5', 19, 6, 1], ['Thứ 6', 26, 8, 3], ['Thứ 7', 32, 11, 4],
-      ['Chủ Nhật', 35, 12, 5],
-    ],
-    '30d': [
-      ['Tuần 1', 95, 32, 10], ['Tuần 2', 110, 38, 12],
-      ['Tuần 3', 128, 44, 15], ['Tuần 4', 145, 52, 18],
-    ],
-    all: [
-      ['Tháng 1', 320, 105, 30], ['Tháng 2', 385, 128, 38],
-      ['Tháng 3', 450, 152, 45], ['Tháng 4', 520, 178, 55],
-      ['Tháng 5', 610, 215, 68], ['Tháng 6', 730, 260, 85],
-    ],
-  }
-
-  const rows = rowsByRange[range] || rowsByRange['7d']
-
-  const timeline = []
-  const tierTotals = {
-    PLUS: { count: 0, revenue: 0 },
-    PREMIUM: { count: 0, revenue: 0 },
-    ELITE: { count: 0, revenue: 0 },
-  }
-
-  for (const [label, plus, premium, elite] of rows) {
-    const revenue =
-      plus * tierConfig.PLUS.price +
-      premium * tierConfig.PREMIUM.price +
-      elite * tierConfig.ELITE.price
-    timeline.push({ label, revenue, paidCount: plus + premium + elite })
-    tierTotals.PLUS.count += plus
-    tierTotals.PLUS.revenue += plus * tierConfig.PLUS.price
-    tierTotals.PREMIUM.count += premium
-    tierTotals.PREMIUM.revenue += premium * tierConfig.PREMIUM.price
-    tierTotals.ELITE.count += elite
-    tierTotals.ELITE.revenue += elite * tierConfig.ELITE.price
-  }
-
-  const totalRevenue = timeline.reduce((acc, t) => acc + t.revenue, 0)
-  const paidCount = timeline.reduce((acc, t) => acc + t.paidCount, 0)
-
-  const extraByRange = {
-    today: { pendingCount: 6, failedCount: 3, growthPercent: 8.4 },
-    '7d': { pendingCount: 14, failedCount: 9, growthPercent: 12.6 },
-    '30d': { pendingCount: 42, failedCount: 28, growthPercent: 15.2 },
-    all: { pendingCount: 120, failedCount: 85, growthPercent: 18.9 },
-  }
-  const extra = extraByRange[range] || extraByRange['7d']
-
-  const summary = {
-    totalRevenue,
-    paidCount,
-    pendingCount: extra.pendingCount,
-    failedCount: extra.failedCount,
-    avgOrderValue: paidCount > 0 ? Math.round(totalRevenue / paidCount) : 0,
-    growthPercent: extra.growthPercent,
-  }
-
-  const byTier = Object.entries(tierTotals).map(([tier, t]) => ({
-    tier,
-    name: tierConfig[tier].name,
-    count: t.count,
-    revenue: t.revenue,
-  }))
-
-  // Lịch sử giao dịch mô phỏng (mới nhất trước)
-  const now = Date.now()
-  const hours = (h) => new Date(now - h * 3600_000).toISOString()
-  const mockTx = [
-    ['BONDYK3J9F2QX', 'Minh Thư', 'minhthu@gmail.com', 'PREMIUM', 'PAID', 1],
-    ['BONDYA7M2P5RD', 'Hoàng Nam', 'hoangnam.dev@gmail.com', 'PLUS', 'PAID', 3],
-    ['BONDYQ8T4W6ZE', 'Thanh Hà', 'thanhha95@gmail.com', 'ELITE', 'PAID', 5],
-    ['BONDYH2N7V9SF', 'Tuấn Tú', 'tuantu.work@gmail.com', 'PLUS', 'PENDING', 6],
-    ['BONDYB5X1C8LG', 'Ngọc Lan', 'ngoclan.ng@gmail.com', 'PLUS', 'PAID', 9],
-    ['BONDYD9K6R3MH', 'Anh Đức', 'anhduc.le@gmail.com', 'PREMIUM', 'PAID', 12],
-    ['BONDYF4W8J2TI', 'Thu Trang', 'thutrang.p@gmail.com', 'PLUS', 'EXPIRED', 16],
-    ['BONDYM1S5Y7QJ', 'Minh Quân', 'minhquan.vo@gmail.com', 'ELITE', 'PAID', 20],
-    ['BONDYP6Z3E9NK', 'Phương Thảo', 'pthao.nguyen@gmail.com', 'PLUS', 'PAID', 26],
-    ['BONDYT2C7U4WL', 'Tiến Dũng', 'tiendung.tr@gmail.com', 'PREMIUM', 'FAILED', 31],
-    ['BONDYV8B4I1XM', 'Khánh Linh', 'khanhlinh.dt@gmail.com', 'PLUS', 'PAID', 38],
-    ['BONDYR3G9O6ZN', 'Quốc Bảo', 'quocbao.h@gmail.com', 'PLUS', 'CANCELLED', 45],
-    ['BONDYL7D2A5VO', 'Hải Yến', 'haiyen.vu@gmail.com', 'PREMIUM', 'PAID', 52],
-    ['BONDYY4H8Q1BP', 'Đức Thịnh', 'ducthinh.ng@gmail.com', 'ELITE', 'PAID', 61],
-    ['BONDYW9E5N3KQ', 'Mai Anh', 'maianh.tran@gmail.com', 'PLUS', 'PAID', 70],
-  ]
-
-  const transactions = mockTx.map(([code, userName, userEmail, tier, status, hoursAgo], idx) => ({
-    id: `mock-${idx}`,
-    code,
-    userName,
-    userEmail,
-    tier,
-    amount: tierConfig[tier].price,
-    status,
-    gateway: status === 'PAID' ? 'MBBank' : null,
-    referenceCode: status === 'PAID' ? `FT${25000000 + idx * 137}` : null,
-    createdAt: hours(hoursAgo + 1),
-    paidAt: status === 'PAID' ? hours(hoursAgo) : null,
-  }))
-
-  return { summary, timeline, byTier, transactions }
-}
-
 // ===== Biểu đồ vùng SVG: Doanh thu theo thời gian =====
 function RevenueAreaChart({ timeline }) {
   const [hoveredIdx, setHoveredIdx] = useState(null)
@@ -481,16 +373,8 @@ function TierCountBarChart({ byTier }) {
   )
 }
 
-async function fetchRevenue(range) {
-  try {
-    const res = await api.get('/admin/revenue', { params: { range } })
-    const body = res.data
-    if (body && body.success && body.data) return body.data
-    return { ...getMockRevenueData(range), isMock: true }
-  } catch (e) {
-    console.warn('API `/admin/revenue` chưa hoạt động. Đang sử dụng Mock Data.', e)
-    return { ...getMockRevenueData(range), isMock: true }
-  }
+function fetchRevenue(range) {
+  return unwrap(api.get('/admin/revenue', { params: { range } }))
 }
 
 export function RevenuePage() {
@@ -498,7 +382,7 @@ export function RevenuePage() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('ALL')
 
-  const { data: revenueData, isLoading } = useQuery({
+  const { data: revenueData, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['admin', 'revenue', timeRange],
     queryFn: () => fetchRevenue(timeRange),
     refetchInterval: 60_000,
@@ -549,7 +433,10 @@ export function RevenuePage() {
         {
           label: 'Tổng doanh thu',
           value: formatVND(summary.totalRevenue),
-          hint: summary.growthPercent != null ? `+${summary.growthPercent}% so với kỳ trước` : 'trong khoảng đã chọn',
+          hint:
+            summary.growthPercent != null
+              ? `${summary.growthPercent >= 0 ? '+' : ''}${summary.growthPercent}% so với kỳ trước`
+              : 'trong khoảng đã chọn',
           icon: Wallet,
           gradient: 'from-[#FF5A36]/8 to-transparent border-t-2 border-t-[#FF5A36]/60',
           iconBg: 'bg-[#FF5A36]/10 text-[#FF5A36]',
@@ -631,14 +518,22 @@ export function RevenuePage() {
           ))}
         </div>
 
-        {revenueData?.isMock && (
-          <Badge className="bg-amber-500/10 text-amber-600 border border-amber-500/20 text-[10px] font-bold">
-            Dữ liệu mô phỏng — API /admin/revenue chưa sẵn sàng
-          </Badge>
-        )}
       </div>
 
-      {isLoading ? (
+      {isError ? (
+        <Card className="border border-rose-200 bg-rose-50/50">
+          <CardContent className="flex flex-col items-center gap-3 py-12 text-center">
+            <XCircle className="h-8 w-8 text-rose-500" />
+            <p className="text-sm font-bold text-foreground">Không tải được dữ liệu doanh thu từ máy chủ</p>
+            <p className="text-xs text-muted-foreground max-w-md">
+              {error?.message || 'Vui lòng kiểm tra kết nối tới server hoặc thử lại sau.'}
+            </p>
+            <Button variant="outline" size="sm" onClick={() => refetch()} className="text-xs font-bold mt-1">
+              Thử lại
+            </Button>
+          </CardContent>
+        </Card>
+      ) : isLoading ? (
         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
           {Array.from({ length: 5 }).map((_, i) => (
             <div key={i} className="h-32 rounded-xl bg-zinc-100 animate-pulse" />
