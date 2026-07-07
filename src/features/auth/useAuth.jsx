@@ -15,7 +15,16 @@ function readStoredUser() {
 }
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(() => readStoredUser())
+  const [user, setUser] = useState(() => {
+    if (typeof window === 'undefined') return null
+    // Chỉ tin user đã lưu khi còn token — user "mồ côi" (không token) sẽ gây
+    // vòng lặp redirect login ↔ dashboard làm trắng trang
+    if (!localStorage.getItem(TOKEN_KEY)) {
+      localStorage.removeItem(USER_KEY)
+      return null
+    }
+    return readStoredUser()
+  })
   const [token, setToken] = useState(() => {
     if (typeof window === 'undefined') return null
     return localStorage.getItem(TOKEN_KEY)
@@ -48,6 +57,7 @@ export function AuthProvider({ children }) {
       } catch (meError) {
         console.error('/auth/me error in login:', meError)
         localStorage.removeItem(TOKEN_KEY)
+        localStorage.removeItem(USER_KEY)
         throw new Error('Không thể lấy thông tin người dùng từ server')
       }
 
@@ -57,6 +67,7 @@ export function AuthProvider({ children }) {
 
       if (!userInfo || !ALLOWED_ROLES.includes(userInfo.role)) {
         localStorage.removeItem(TOKEN_KEY)
+        localStorage.removeItem(USER_KEY)
         console.warn('Role validation failed. Allowed:', ALLOWED_ROLES, 'User Role:', userInfo?.role)
         throw new Error('Tài khoản không có quyền truy cập admin')
       }

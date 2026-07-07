@@ -9,13 +9,15 @@ import { useAuth } from './useAuth'
 import logo from '@/assets/logo.png'
 
 export function LoginPage() {
-  const { user, login, loading, error } = useAuth()
+  const { user, token, login, loading, error } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
-  if (user) {
+  // Phải có cả user lẫn token mới coi là đã đăng nhập — nếu chỉ có user
+  // (token đã bị xóa) mà redirect đi sẽ bị ProtectedRoute đá ngược lại → lặp vô hạn
+  if (user && token) {
     const from = location.state?.from?.pathname || '/'
     return <Navigate to={from} replace />
   }

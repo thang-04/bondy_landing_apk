@@ -18,7 +18,9 @@ export function ProtectedRoute({ children, requiredRole = 'MODERATOR' }) {
   }
 
   if (!token || !user) {
-    return <Navigate to="/admin/login" replace state={{ from: location }} />
+    // Router có basename="/admin" nên path nội bộ là "/login"
+    // ("/admin/login" sẽ thành URL /admin/admin/login → rơi vào catch-all → lặp redirect)
+    return <Navigate to="/login" replace state={{ from: location }} />
   }
 
   const order = { USER: 0, MODERATOR: 1, ADMIN: 2 }
